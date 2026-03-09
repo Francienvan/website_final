@@ -10,7 +10,6 @@ let pdfDoc = null;
 let pdfPageRendering = false;
 let pdfPageNumPending = null;
 let pdfPageNum = 1;
-
 async function renderPDF(url) {
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -98,3 +97,4 @@ fetch('https://api.counterapi.dev/v1/francienvaneverdingen.nl/visits/up')
       alert("Visitors: " + data.count);
     }
   });
+
