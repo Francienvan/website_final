@@ -715,7 +715,7 @@ body::before {
     --dur: 152s;
     --delay: -12s;
     left: 29%;
-    top: 23%;
+    top: 25%;
   }
 
   .node:nth-child(4) {
@@ -723,7 +723,7 @@ body::before {
     --dur: 152s;
     --delay: -12s;
     left: 54%;
-    top: 48%;
+    top: 52%;
     z-index: 1;
   }
 
@@ -732,15 +732,15 @@ body::before {
     --dur: 152s;
     --delay: -12s;
     left: 30%;
-    top: 62%;
+    top: 68%;
   }
 
   .node:nth-child(6) {
     --size: 43px;
     --dur: 133s;
     --delay: -15s;
-    left: 81%;
-    top: 94%;
+    left: 84%;
+    top: 102%;
   }
 
   .node:nth-child(7) {
@@ -748,16 +748,16 @@ body::before {
     --dur: 152s;
     --delay: -12s;
     left: 27%;
-    top: 95%;
+    top: 103%;
   }
 
 
   .node:nth-child(8) {
-    --size: 77px;
+    --size: 81px;
     --dur: 141s;
     --delay: -18s;
     left: 66%;
-    top: 114%;
+    top: 122%;
 
   }
 
@@ -766,7 +766,7 @@ body::before {
     --dur: 157s;
     --delay: -25s;
     left: 28%;
-    top: 135%;
+    top: 145%;
   }
 
   .node:nth-child(10) {
@@ -774,7 +774,7 @@ body::before {
     --dur: 132s;
     --delay: -6s;
     left: 87%;
-    top: 155%;
+    top: 167%;
   }
 
   .node:nth-child(11) {
@@ -782,7 +782,7 @@ body::before {
     --dur: 132s;
     --delay: -6s;
     left: 34%;
-    top: 181%;
+    top: 193%;
   }
 
   .node:nth-child(12) {
@@ -790,7 +790,7 @@ body::before {
     --dur: 132s;
     --delay: -6s;
     left: 86%;
-    top: 191%;
+    top: 206%;
   }
 
   .node:nth-child(13) {
@@ -798,7 +798,7 @@ body::before {
     --dur: 132s;
     --delay: -6s;
     left: 73%;
-    top: 234%;
+    top: 251%;
   }
 
   .node:nth-child(14) {
@@ -806,7 +806,7 @@ body::before {
     --dur: 132s;
     --delay: -6s;
     left: 1%;
-    top: 210%;
+    top: 227%;
   }
 
   .mobile-floating-links a.node:nth-child(1) .tooltips {
