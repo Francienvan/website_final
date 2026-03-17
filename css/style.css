@@ -707,7 +707,7 @@ body::before {
     --dur: 152s;
     --delay: -12s;
     left: 80%;
-    top: 9%;
+    top: 10%;
   }
 
   .node:nth-child(3) {
