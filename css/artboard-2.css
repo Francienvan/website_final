@@ -165,3 +165,26 @@ body {
     max-width: 700px;
   }
 }
+
+
+/* Fix for dot centering */
+.hotspot__dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  transition: transform 0.2s ease;
+}
+
+/* Ensure decorative dots are properly positioned */
+.hotspot--decor {
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+}
