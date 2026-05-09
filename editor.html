@@ -3,129 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Visual Hotspot Editor - Francien van Everdingen</title>
+  <title>Pro Hotspot Editor - Francien van Everdingen</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #1a1a2e; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+    body { background: #0a0a1a; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+    
+    /* Main Layout */
     .editor-container { display: flex; height: 100vh; width: 100vw; }
-    .toolbar { background: #16213e; color: white; width: 340px; display: flex; flex-direction: column; border-right: 2px solid #0f3460; overflow-y: auto; z-index: 100; }
-    .toolbar-header { padding: 20px; background: #0f3460; border-bottom: 1px solid #1a5276; }
-    .toolbar-header h2 { margin: 0 0 5px 0; font-size: 1.3rem; }
-    .toolbar-header p { margin: 0; font-size: 0.8rem; opacity: 0.8; }
-    .device-selector { padding: 15px 20px; background: #0f3460; border-bottom: 1px solid #1a5276; }
-    .device-buttons { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-    .device-btn { background: #16213e; border: 1px solid #2c5f8a; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+    
+    /* Toolbar - Left Side */
+    .toolbar { background: #1a1a2e; color: white; width: 380px; display: flex; flex-direction: column; border-right: 2px solid #16213e; overflow-y: auto; z-index: 100; }
+    .toolbar-header { padding: 20px; background: #0f3460; }
+    .toolbar-header h2 { margin: 0 0 5px; font-size: 1.3rem; }
+    .toolbar-header p { margin: 0; font-size: 0.75rem; opacity: 0.7; }
+    
+    /* Device Selector */
+    .device-section { padding: 15px 20px; background: #16213e; border-bottom: 1px solid #0f3460; }
+    .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; color: #e94560; }
+    .device-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
+    .device-btn { background: #0f3460; border: 1px solid #2c5f8a; color: white; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; text-align: center; }
     .device-btn:hover { background: #1a5276; }
     .device-btn.active { background: #e94560; border-color: #e94560; }
-    .hotspot-list { flex: 1; overflow-y: auto; padding: 15px 20px; }
-    .hotspot-list h4 { margin-bottom: 15px; font-size: 0.9rem; }
-    .hotspot-item { background: #0f3460; border-radius: 8px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
-    .hotspot-item:hover { background: #1a5276; transform: translateX(5px); }
+    .orientation-toggle { display: flex; gap: 10px; margin-top: 10px; }
+    .ori-btn { flex: 1; background: #0f3460; border: 1px solid #2c5f8a; color: white; padding: 6px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; text-align: center; }
+    .ori-btn.active { background: #e94560; }
+    
+    /* Hotspot List */
+    .hotspot-section { flex: 1; overflow-y: auto; padding: 15px 20px; }
+    .hotspot-item { background: #0f3460; border-radius: 8px; padding: 10px; margin-bottom: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+    .hotspot-item:hover { background: #1a5276; transform: translateX(3px); }
     .hotspot-item.selected { border-color: #e94560; background: #1a5276; }
-    .hotspot-name { font-weight: bold; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-    .hotspot-name .badge { background: #e94560; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
-    .hotspot-coords { font-size: 0.75rem; opacity: 0.8; font-family: monospace; }
-    .hotspot-actions { margin-top: 8px; display: flex; gap: 5px; }
-    .hotspot-actions button { background: #16213e; border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
-    .hotspot-actions button:hover { background: #e94560; }
+    .hotspot-name { font-weight: bold; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+    .hotspot-name .badge { background: #e94560; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; }
+    .hotspot-coords { font-size: 0.65rem; opacity: 0.7; font-family: monospace; margin-top: 4px; }
+    
+    /* Property Editor */
+    .property-editor { background: #0f3460; border-top: 1px solid #16213e; padding: 15px 20px; max-height: 380px; overflow-y: auto; }
+    .prop-group { margin-bottom: 12px; }
+    .prop-group label { display: block; font-size: 0.7rem; margin-bottom: 4px; opacity: 0.8; }
+    .prop-group input, .prop-group select { width: 100%; padding: 6px 10px; background: #1a1a2e; border: 1px solid #2c5f8a; color: white; border-radius: 4px; font-size: 0.8rem; }
+    .prop-row { display: flex; gap: 10px; }
+    .prop-row .prop-group { flex: 1; }
+    .section-divider { font-size: 0.7rem; margin: 12px 0 8px; color: #e94560; border-bottom: 1px solid #2c5f8a; padding-bottom: 4px; }
+    
+    /* Preview Area */
     .preview-area { flex: 1; background: #2c3e50; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative; }
-    .artboard-frame { background: #1a1a2e; box-shadow: 0 10px 40px rgba(0,0,0,0.3); position: relative; transition: all 0.3s ease; }
+    .artboard-frame { background: #1a1a2e; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; transition: all 0.2s ease; }
     .artwork-container { position: relative; display: inline-block; }
     .artwork-image { display: block; width: 100%; height: auto; user-select: none; pointer-events: none; }
-    .hotspot-editor { position: absolute; cursor: move; z-index: 50; }
-    .hotspot-editor.selected { z-index: 100; }
-    .hotspot-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center; }
-    .hotspot-dot::after { content: ''; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px; border: 2px solid #e94560; border-radius: 50%; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
-    .hotspot-editor.selected .hotspot-dot::after { opacity: 1; }
-    .resize-handle { position: absolute; width: 14px; height: 14px; background: #e94560; border: 2px solid white; border-radius: 50%; pointer-events: auto; z-index: 101; cursor: se-resize; }
-    .resize-handle.se { bottom: -7px; right: -7px; }
-    .label-editor { position: absolute; pointer-events: auto; cursor: move; }
-    .label-editor img { display: block; max-width: none; pointer-events: none; }
-    .property-editor { padding: 15px 20px; background: #0f3460; border-top: 1px solid #1a5276; }
-    .property-group { margin-bottom: 12px; }
-    .property-group label { display: block; font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8; }
-    .property-group input, .property-group select { width: 100%; padding: 6px 10px; background: #16213e; border: 1px solid #2c5f8a; color: white; border-radius: 4px; font-size: 0.85rem; }
-    .property-group input:focus, .property-group select:focus { outline: none; border-color: #e94560; }
-    .property-row { display: flex; gap: 10px; }
-    .property-row .property-group { flex: 1; }
-    .status { padding: 10px 20px; background: #0f3460; font-size: 0.7rem; text-align: center; border-top: 1px solid #1a5276; }
-    .control-panel { position: fixed; bottom: 20px; right: 20px; background: #16213e; border-radius: 12px; padding: 15px; display: flex; gap: 10px; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-    .control-panel button { background: #e94560; border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-    .control-panel button:hover { background: #ff6b6b; transform: scale(1.05); }
+    .hotspots-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    
+    /* Hotspot Editor Elements */
+    .hotspot-edit { position: absolute; z-index: 50; }
+    .hotspot-edit.selected { z-index: 100; }
+    .hotspot-dot-edit { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-size: contain; background-repeat: no-repeat; background-position: center; cursor: move; }
+    .hotspot-dot-edit::after { content: ''; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px; border: 2px solid #e94560; border-radius: 50%; opacity: 0; pointer-events: none; }
+    .hotspot-edit.selected .hotspot-dot-edit::after { opacity: 1; }
+    .dot-resize { position: absolute; width: 14px; height: 14px; background: #e94560; border: 2px solid white; border-radius: 50%; bottom: -7px; right: -7px; cursor: se-resize; z-index: 102; }
+    .label-edit { position: absolute; cursor: move; }
+    .label-edit img { display: block; max-width: none; pointer-events: none; }
+    .label-resize { position: absolute; width: 12px; height: 12px; background: #3498db; border: 2px solid white; border-radius: 50%; bottom: -6px; right: -6px; cursor: se-resize; z-index: 102; }
+    .label-rotate { position: absolute; width: 12px; height: 12px; background: #f39c12; border: 2px solid white; border-radius: 50%; top: -6px; right: -6px; cursor: grab; z-index: 102; }
+    
+    /* Control Panel */
+    .control-panel { position: fixed; bottom: 20px; right: 20px; background: #1a1a2e; border-radius: 12px; padding: 12px 20px; display: flex; gap: 10px; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    .control-panel button { background: #e94560; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
     .control-panel button.secondary { background: #0f3460; }
-    .control-panel button.secondary:hover { background: #1a5276; }
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; }
-    .modal-content { background: #16213e; border-radius: 16px; max-width: 90%; max-height: 90%; width: 900px; overflow: hidden; display: flex; flex-direction: column; }
-    .modal-header { padding: 20px; border-bottom: 1px solid #0f3460; display: flex; justify-content: space-between; align-items: center; }
+    .control-panel button:hover { opacity: 0.9; transform: scale(1.02); }
+    
+    /* Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-content { background: #1a1a2e; border-radius: 16px; max-width: 95%; max-height: 90%; width: 1000px; overflow: hidden; display: flex; flex-direction: column; }
+    .modal-header { padding: 20px; border-bottom: 1px solid #0f3460; display: flex; justify-content: space-between; }
     .modal-body { padding: 20px; overflow-y: auto; max-height: 70vh; }
-    .modal-body pre { background: #0f3460; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 11px; color: #a8e6cf; white-space: pre-wrap; word-wrap: break-word; }
+    .modal-body pre { background: #0f3460; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 11px; color: #a8e6cf; white-space: pre-wrap; }
     .modal-footer { padding: 20px; border-top: 1px solid #0f3460; display: flex; gap: 10px; justify-content: flex-end; }
     .close-modal { background: #e94560; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-    .tab-buttons { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #0f3460; padding-bottom: 10px; }
-    .tab-btn { background: none; border: none; color: white; cursor: pointer; padding: 5px 15px; border-radius: 4px; }
-    .tab-btn.active { background: #e94560; }
+    .tab-btn { background: none; border: none; color: white; cursor: pointer; padding: 5px 15px; margin-right: 5px; }
+    .tab-btn.active { background: #e94560; border-radius: 4px; }
     .code-content { display: none; }
     .code-content.active { display: block; }
-    ::-webkit-scrollbar { width: 8px; }
+    
+    .status-bar { padding: 8px 20px; background: #0f3460; font-size: 0.7rem; text-align: center; border-top: 1px solid #16213e; }
+    ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #16213e; }
-    ::-webkit-scrollbar-thumb { background: #e94560; border-radius: 4px; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(233,69,96,0.8); } 100% { transform: scale(1); } }
+    ::-webkit-scrollbar-thumb { background: #e94560; border-radius: 3px; }
   </style>
 </head>
 <body>
 <div class="editor-container">
   <div class="toolbar">
     <div class="toolbar-header">
-      <h2><i class="fas fa-paintbrush"></i> Hotspot Editor</h2>
-      <p>Drag · Resize · Position · Generate</p>
+      <h2><i class="fas fa-paintbrush"></i> Pro Hotspot Editor</h2>
+      <p>Drag · Resize · Rotate · Generate</p>
     </div>
-    <div class="device-selector">
-      <label style="font-size: 0.8rem;">📱 Device Preview</label>
-      <div class="device-buttons">
-        <button class="device-btn active" data-device="desktop">🖥️ Desktop</button>
-        <button class="device-btn" data-device="mobile">📱 Mobile</button>
-        <button class="device-btn" data-device="tablet">📟 Tablet</button>
+    
+    <div class="device-section">
+      <div class="section-title">📱 DEVICE PRESETS</div>
+      <div class="device-grid" id="deviceGrid">
+        <button class="device-btn" data-device="mobile-portrait">📱 Mobile Portrait</button>
+        <button class="device-btn" data-device="mobile-landscape">📱 Mobile Landscape</button>
+        <button class="device-btn" data-device="tablet-portrait">📟 Tablet Portrait</button>
+        <button class="device-btn" data-device="tablet-landscape">📟 Tablet Landscape</button>
+        <button class="device-btn" data-device="laptop">💻 Laptop (1366×768)</button>
+        <button class="device-btn active" data-device="desktop">🖥️ Desktop (1920×1080)</button>
+        <button class="device-btn" data-device="ultrawide">🖥️ Ultrawide (2560×1080)</button>
+        <button class="device-btn" data-device="tv">📺 Smart TV (3840×2160)</button>
       </div>
     </div>
-    <div class="hotspot-list">
-      <h4><i class="fas fa-circle-dot"></i> Hotspots</h4>
+    
+    <div class="hotspot-section">
+      <div class="section-title">🎯 HOTSPOTS</div>
       <div id="hotspotList"></div>
-      <button id="addHotspotBtn" style="width: 100%; margin-top: 10px; background: #e94560; border: none; color: white; padding: 8px; border-radius: 6px; cursor: pointer;">
-        <i class="fas fa-plus"></i> Add Hotspot
-      </button>
+      <button id="addHotspotBtn" style="width:100%; margin-top:10px; background:#e94560; border:none; color:white; padding:8px; border-radius:6px; cursor:pointer;"><i class="fas fa-plus"></i> Add Hotspot</button>
     </div>
-    <div class="property-editor" id="propertyEditor" style="display: none;">
-      <h4 style="font-size: 0.85rem; margin-bottom: 10px;"><i class="fas fa-sliders-h"></i> Properties</h4>
-      <div class="property-group"><label>Name</label><input type="text" id="propName" placeholder="Hotspot name"></div>
-      <div class="property-row"><div class="property-group"><label>X (%)</label><input type="number" id="propX" step="0.1" min="0" max="100"></div><div class="property-group"><label>Y (%)</label><input type="number" id="propY" step="0.1" min="0" max="100"></div></div>
-      <div class="property-group"><label>Dot Size (px)</label><input type="number" id="propDotSize" step="1" min="20" max="200"></div>
-      <div class="property-row"><div class="property-group"><label>Label X (px)</label><input type="number" id="propLabelX" step="1"></div><div class="property-group"><label>Label Y (px)</label><input type="number" id="propLabelY" step="1"></div></div>
-      <div class="property-group"><label>Label Scale</label><input type="number" id="propLabelScale" step="0.05" min="0.2" max="2"></div>
-      <div class="property-group"><label>Type</label><select id="propType"><option value="external">External Link</option><option value="video">YouTube Video</option><option value="pdf">PDF Document</option><option value="image">Image</option><option value="exit">Exit</option></select></div>
-      <div class="property-group"><label>URL / Path</label><input type="text" id="propUrl" placeholder="https://..."></div>
+    
+    <div class="property-editor" id="propertyEditor">
+      <div class="section-title">✏️ DOT PROPERTIES</div>
+      <div class="prop-row">
+        <div class="prop-group"><label>X (%)</label><input type="number" id="dotX" step="0.1" min="0" max="100"></div>
+        <div class="prop-group"><label>Y (%)</label><input type="number" id="dotY" step="0.1" min="0" max="100"></div>
+      </div>
+      <div class="prop-group"><label>Dot Size (px)</label><input type="number" id="dotSize" step="1" min="20" max="200"></div>
+      
+      <div class="section-divider">🏷️ LABEL PROPERTIES</div>
+      <div class="prop-row">
+        <div class="prop-group"><label>Label X offset (px)</label><input type="number" id="labelX" step="1"></div>
+        <div class="prop-group"><label>Label Y offset (px)</label><input type="number" id="labelY" step="1"></div>
+      </div>
+      <div class="prop-row">
+        <div class="prop-group"><label>Label Scale</label><input type="number" id="labelScale" step="0.05" min="0.2" max="3"></div>
+        <div class="prop-group"><label>Label Rotation (°)</label><input type="number" id="labelRotate" step="5" min="-360" max="360"></div>
+      </div>
+      
+      <div class="section-divider">🔗 LINK PROPERTIES</div>
+      <div class="prop-group"><label>Name</label><input type="text" id="hotspotName" placeholder="Hotspot name"></div>
+      <div class="prop-group"><label>Type</label><select id="hotspotType"><option value="external">External Link</option><option value="video">YouTube Video</option><option value="pdf">PDF Document</option><option value="image">Image</option><option value="exit">Exit</option></select></div>
+      <div class="prop-group"><label>URL / Path</label><input type="text" id="hotspotUrl" placeholder="https://..."></div>
     </div>
-    <div class="status" id="status">✅ Ready · Click hotspots to edit</div>
+    
+    <div class="status-bar" id="status">✅ Ready · Click hotspots to edit · Changes auto-save</div>
   </div>
+  
   <div class="preview-area">
     <div class="artboard-frame" id="artboardFrame">
       <div class="artwork-container" id="artworkContainer">
         <img class="artwork-image" id="artworkImage" src="images/bg.jpg" alt="Artwork">
-        <div id="hotspotsLayer"></div>
+        <div class="hotspots-layer" id="hotspotsLayer"></div>
       </div>
     </div>
   </div>
 </div>
+
 <div class="control-panel">
-  <button id="generateCodeBtn" class="secondary"><i class="fas fa-code"></i> Generate Code</button>
-  <button id="resetViewBtn" class="secondary"><i class="fas fa-sync-alt"></i> Reset</button>
+  <button id="importConfigBtn" class="secondary"><i class="fas fa-upload"></i> Import</button>
+  <button id="exportConfigBtn" class="secondary"><i class="fas fa-download"></i> Export</button>
+  <button id="generateCodeBtn" class="secondary"><i class="fas fa-code"></i> Generate</button>
+  <button id="resetViewBtn"><i class="fas fa-sync-alt"></i> Reset All</button>
 </div>
+
 <div class="modal-overlay" id="codeModal">
   <div class="modal-content">
-    <div class="modal-header"><h3><i class="fas fa-download"></i> Generated Website Code</h3><button class="close-modal" onclick="closeModal()">×</button></div>
+    <div class="modal-header"><h3><i class="fas fa-code"></i> Generated Code</h3><button class="close-modal" onclick="closeModal()">×</button></div>
     <div class="modal-body">
-      <div class="tab-buttons"><button class="tab-btn active" data-tab="html">HTML</button><button class="tab-btn" data-tab="css">CSS</button><button class="tab-btn" data-tab="js">JavaScript</button></div>
+      <div><button class="tab-btn active" data-tab="html">HTML</button><button class="tab-btn" data-tab="css">CSS</button><button class="tab-btn" data-tab="js">JavaScript</button></div>
       <div id="htmlCode" class="code-content active"><pre id="htmlPre"></pre></div>
       <div id="cssCode" class="code-content"><pre id="cssPre"></pre></div>
       <div id="jsCode" class="code-content"><pre id="jsPre"></pre></div>
@@ -136,389 +179,312 @@
 
 <script>
 // ============================================
-// HOTSPOT DATA
+// COMPLETE HOTSPOT CONFIGURATION
 // ============================================
-let hotspots = [];
-let selectedHotspotId = null;
-let currentArtboard = 'desktop';
-let isDragging = false;
-let dragTarget = null;
-let dragStartX = 0, dragStartY = 0;
-let dragStartLeft = 0, dragStartTop = 0;
-let isResizing = false;
-let resizeTarget = null;
-let resizeStartX = 0, resizeStartY = 0;
-let resizeStartSize = 0;
 
-const labelImages = {
-  'Boek Een Naslagwerkje': 'images/Boek-naslagwerkje.png',
-  'Light Cone': 'images/LightCone.png',
-  'Allerlei': 'images/Allerlei.png',
-  'Stof': 'images/Stof.png',
-  'Contact': 'images/Contact.png',
-  'Stichting Lezeren': 'images/StichtingLezeren.png',
-  'Nederlandse Les': 'images/Nederlandseles.png',
-  'Boek Letters': 'images/Boek-letters.png',
-  'Films': 'images/Films.png',
-  'CV': 'images/CV.png',
-  'Exit': 'images/Exit.png'
+// All 11 desktop hotspots with full data
+const fullHotspotsList = [
+  { id: 'hotspot-1', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', defaultDesktop: { x: 15, y: 26, dotSize: 75, labelX: 0, labelY: 40, labelScale: 0.6, labelRotate: 0 }, defaultMobile: { x: 54, y: 33, dotSize: 70, labelX: -10, labelY: 10, labelScale: 0.62, labelRotate: 0 } },
+  { id: 'hotspot-2', name: 'Light Cone', type: 'external', url: 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen', dotImage: 'reddot-02.png', labelImage: 'images/LightCone.png', defaultDesktop: { x: 37, y: 70, dotSize: 50, labelX: -225, labelY: -160, labelScale: 0.65, labelRotate: 0 }, defaultMobile: { x: 22, y: 53, dotSize: 38, labelX: -6, labelY: -12, labelScale: 0.5, labelRotate: 0 } },
+  { id: 'hotspot-3', name: 'Allerlei', type: 'external', url: 'https://artoffice.info/kunstenaar/francien-van-everdingen/', dotImage: 'reddot-03.png', labelImage: 'images/Allerlei.png', defaultDesktop: { x: 33.7, y: 40.2, dotSize: 59, labelX: -220, labelY: 25, labelScale: 0.7, labelRotate: 0 }, defaultMobile: { x: 69, y: 64, dotSize: 30, labelX: 40, labelY: -10, labelScale: 0.44, labelRotate: 0 } },
+  { id: 'hotspot-4', name: 'Stof', type: 'external', url: 'https://www.etsy.com/shop/hitchhikehijabi', dotImage: 'reddot-04.png', labelImage: 'images/Stof.png', defaultDesktop: { x: 46, y: 53, dotSize: 59, labelX: 1, labelY: 45, labelScale: 0.5, labelRotate: 0 }, defaultMobile: { x: 49, y: 15, dotSize: 64, labelX: -18, labelY: -6, labelScale: 0.6, labelRotate: 0 } },
+  { id: 'hotspot-5', name: 'Contact', type: 'image', url: 'images/contact-emailadres.png', dotImage: 'reddot-04.png', labelImage: 'images/Contact.png', defaultDesktop: { x: 85, y: 25, dotSize: 95, labelX: -275, labelY: 5, labelScale: 0.9, labelRotate: 0 }, defaultMobile: { x: 67, y: 74, dotSize: 28, labelX: -18, labelY: -10, labelScale: 0.54, labelRotate: 0 } },
+  { id: 'hotspot-6', name: 'Stichting Lezeren', type: 'external', url: 'http://www.lezeren.nl', dotImage: 'reddot-05.png', labelImage: 'images/StichtingLezeren.png', defaultDesktop: { x: 17, y: 56.8, dotSize: 125, labelX: -115, labelY: 85, labelScale: 0.4, labelRotate: 0 }, defaultMobile: { x: 86, y: 7, dotSize: 62, labelX: -96, labelY: -8, labelScale: 0.5, labelRotate: 0 } },
+  { id: 'hotspot-7', name: 'Nederlandse Les', type: 'external', url: 'https://preply.in/FRANCIEN6NL3194022810', dotImage: 'reddot-06.png', labelImage: 'images/Nederlandseles.png', defaultDesktop: { x: 26, y: 80, dotSize: 60, labelX: -470, labelY: -165, labelScale: 1, labelRotate: 0 }, defaultMobile: { x: 23, y: 88, dotSize: 30, labelX: -4, labelY: -10, labelScale: 0.58, labelRotate: 0 } },
+  { id: 'hotspot-8', name: 'Boek Letters', type: 'video', url: 'https://www.youtube-nocookie.com/embed/ELwjwDY3hUg', dotImage: 'reddot-08.png', labelImage: 'images/Boek-letters.png', defaultDesktop: { x: 57.5, y: 50, dotSize: 80, labelX: -180, labelY: -185, labelScale: 0.6, labelRotate: 0 }, defaultMobile: { x: 77, y: 109, dotSize: 34, labelX: -16, labelY: -10, labelScale: 0.48, labelRotate: 0 } },
+  { id: 'hotspot-9', name: 'Films', type: 'pdf', url: '/images/Filmografie-Francien-van-Everdingen.pdf', dotImage: 'reddot-09.png', labelImage: 'images/Films.png', defaultDesktop: { x: 69, y: 40, dotSize: 70, labelX: -100, labelY: 75, labelScale: 1, labelRotate: 0 }, defaultMobile: { x: 29, y: 2, dotSize: 44, labelX: -24, labelY: 16, labelScale: 0.56, labelRotate: 0 } },
+  { id: 'hotspot-10', name: 'CV', type: 'pdf', url: '/images/CV-Francien-van-Everdingen-website.pdf', dotImage: 'reddot-10.png', labelImage: 'images/CV.png', defaultDesktop: { x: 38.1, y: 36, dotSize: 120, labelX: 62, labelY: -265, labelScale: 0.85, labelRotate: 0 }, defaultMobile: { x: 31, y: 96, dotSize: 26, labelX: -2, labelY: -12, labelScale: 0.5, labelRotate: 0 } },
+  { id: 'hotspot-11', name: 'Exit', type: 'exit', url: '#', dotImage: 'reddot-10.png', labelImage: 'images/Exit.png', defaultDesktop: { x: 83.1, y: 83.5, dotSize: 75, labelX: -225, labelY: -95, labelScale: 0.75, labelRotate: 0 }, defaultMobile: { x: 86, y: 132, dotSize: 34, labelX: -22, labelY: -10, labelScale: 0.5, labelRotate: 0 } }
+];
+
+// Device configurations
+const devices = {
+  'mobile-portrait': { name: 'Mobile Portrait', width: 375, height: 667, image: 'images/mobile-bg.jpg', isMobile: true },
+  'mobile-landscape': { name: 'Mobile Landscape', width: 667, height: 375, image: 'images/mobile-bg.jpg', isMobile: true },
+  'tablet-portrait': { name: 'Tablet Portrait', width: 768, height: 1024, image: 'images/bg.jpg', isMobile: false },
+  'tablet-landscape': { name: 'Tablet Landscape', width: 1024, height: 768, image: 'images/bg.jpg', isMobile: false },
+  'laptop': { name: 'Laptop', width: 1366, height: 768, image: 'images/bg.jpg', isMobile: false },
+  'desktop': { name: 'Desktop', width: 1920, height: 1080, image: 'images/bg.jpg', isMobile: false },
+  'ultrawide': { name: 'Ultrawide', width: 2560, height: 1080, image: 'images/bg.jpg', isMobile: false },
+  'tv': { name: 'Smart TV', width: 3840, height: 2160, image: 'images/bg.jpg', isMobile: false }
 };
 
-const defaultHotspots = [
-  { id: 'hotspot-1', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', x: 15, y: 26, dotSize: 75, dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', labelX: 0, labelY: 40, labelScale: 0.6 },
-  { id: 'hotspot-2', name: 'Light Cone', type: 'external', url: 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen', x: 37, y: 70, dotSize: 50, dotImage: 'reddot-02.png', labelImage: 'images/LightCone.png', labelX: -225, labelY: -160, labelScale: 0.65 },
-  { id: 'hotspot-3', name: 'Allerlei', type: 'external', url: 'https://artoffice.info/kunstenaar/francien-van-everdingen/', x: 33.7, y: 40.2, dotSize: 59, dotImage: 'reddot-03.png', labelImage: 'images/Allerlei.png', labelX: -220, labelY: 25, labelScale: 0.7 },
-  { id: 'hotspot-4', name: 'Stof', type: 'external', url: 'https://www.etsy.com/shop/hitchhikehijabi', x: 46, y: 53, dotSize: 59, dotImage: 'reddot-04.png', labelImage: 'images/Stof.png', labelX: 1, labelY: 45, labelScale: 0.5 },
-  { id: 'hotspot-5', name: 'Contact', type: 'image', url: 'images/contact-emailadres.png', x: 85, y: 25, dotSize: 95, dotImage: 'reddot-04.png', labelImage: 'images/Contact.png', labelX: -275, labelY: 5, labelScale: 0.9 },
-  { id: 'hotspot-6', name: 'Stichting Lezeren', type: 'external', url: 'http://www.lezeren.nl', x: 17, y: 56.8, dotSize: 125, dotImage: 'reddot-05.png', labelImage: 'images/StichtingLezeren.png', labelX: -115, labelY: 85, labelScale: 0.4 },
-  { id: 'hotspot-7', name: 'Nederlandse Les', type: 'external', url: 'https://preply.in/FRANCIEN6NL3194022810', x: 26, y: 80, dotSize: 60, dotImage: 'reddot-06.png', labelImage: 'images/Nederlandseles.png', labelX: -470, labelY: -165, labelScale: 1 },
-  { id: 'hotspot-8', name: 'Boek Letters', type: 'video', url: 'https://www.youtube-nocookie.com/embed/ELwjwDY3hUg', x: 57.5, y: 50, dotSize: 80, dotImage: 'reddot-08.png', labelImage: 'images/Boek-letters.png', labelX: -180, labelY: -185, labelScale: 0.6 },
-  { id: 'hotspot-9', name: 'Films', type: 'pdf', url: '/images/Filmografie-Francien-van-Everdingen.pdf', x: 69, y: 40, dotSize: 70, dotImage: 'reddot-09.png', labelImage: 'images/Films.png', labelX: -100, labelY: 75, labelScale: 1 },
-  { id: 'hotspot-10', name: 'CV', type: 'pdf', url: '/images/CV-Francien-van-Everdingen-website.pdf', x: 38.1, y: 36, dotSize: 120, dotImage: 'reddot-10.png', labelImage: 'images/CV.png', labelX: 62, labelY: -265, labelScale: 0.85 },
-  { id: 'hotspot-11', name: 'Exit', type: 'exit', url: '#', x: 83.1, y: 83.5, dotSize: 75, dotImage: 'reddot-10.png', labelImage: 'images/Exit.png', labelX: -225, labelY: -95, labelScale: 0.75 }
-];
+// State
+let hotspots = [];
+let selectedId = null;
+let currentDevice = 'desktop';
+let isDraggingDot = false, isDraggingLabel = false, isResizingDot = false, isResizingLabel = false, isRotatingLabel = false;
+let dragTargetId = null, dragStart = { x: 0, y: 0, startX: 0, startY: 0, startVal1: 0, startVal2: 0, startAngle: 0 };
 
-const defaultMobileHotspots = [
-  { id: 'mob-hotspot-1', name: 'Films', type: 'pdf', url: '/images/Filmografie-Francien-van-Everdingen.pdf', x: 29, y: 2, dotSize: 44, dotImage: 'reddot-09.png', labelImage: 'images/Films.png', labelX: -24, labelY: 16, labelScale: 0.56 },
-  { id: 'mob-hotspot-2', name: 'Stichting Lezeren', type: 'external', url: 'http://www.lezeren.nl', x: 86, y: 7, dotSize: 62, dotImage: 'reddot-05.png', labelImage: 'images/StichtingLezeren.png', labelX: -96, labelY: -8, labelScale: 0.5 },
-  { id: 'mob-hotspot-3', name: 'Stof', type: 'external', url: 'https://www.etsy.com/shop/hitchhikehijabi', x: 49, y: 15, dotSize: 64, dotImage: 'reddot-04.png', labelImage: 'images/Stof.png', labelX: -18, labelY: -6, labelScale: 0.6 },
-  { id: 'mob-hotspot-4', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', x: 54, y: 33, dotSize: 70, dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', labelX: -10, labelY: 10, labelScale: 0.62 }
-];
-
-function initHotspots() {
-  if (currentArtboard === 'desktop') {
-    hotspots = JSON.parse(JSON.stringify(defaultHotspots));
-  } else {
-    hotspots = JSON.parse(JSON.stringify(defaultMobileHotspots));
+// Load from localStorage or initialize
+function loadConfig() {
+  const saved = localStorage.getItem('hotspotEditorConfig');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      hotspots = parsed;
+      updateStatus('Config loaded from storage');
+      return;
+    } catch(e) {}
   }
-  renderHotspotList();
-  renderHotspotsOnCanvas();
-  updateStatus('Hotspots loaded');
+  // Initialize with default values
+  hotspots = fullHotspotsList.map(h => ({
+    id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, labelImage: h.labelImage,
+    desktop: { ...h.defaultDesktop }, mobile: { ...h.defaultMobile }
+  }));
+  saveConfig();
 }
 
+function saveConfig() { localStorage.setItem('hotspotEditorConfig', JSON.stringify(hotspots)); updateStatus('Auto-saved'); }
+
+function getCurrentSettings(hotspot) { return hotspot[currentDevice.includes('mobile') ? 'mobile' : 'desktop']; }
+
+function updateStatus(msg) { const el = document.getElementById('status'); if(el) { el.innerHTML = '✅ ' + msg; setTimeout(() => { if(el.innerHTML === '✅ ' + msg) el.innerHTML = '✅ Ready · Auto-save enabled'; }, 2000); } }
+
+// Rendering
 function renderHotspotList() {
   const container = document.getElementById('hotspotList');
   if (!container) return;
   container.innerHTML = '';
-  hotspots.forEach((hotspot) => {
+  hotspots.forEach(h => {
+    const settings = getCurrentSettings(h);
     const item = document.createElement('div');
-    item.className = 'hotspot-item' + (selectedHotspotId === hotspot.id ? ' selected' : '');
-    item.onclick = () => selectHotspot(hotspot.id);
-    item.innerHTML = '<div class="hotspot-name"><span>' + escapeHtml(hotspot.name) + '</span><span class="badge">' + hotspot.type + '</span></div><div class="hotspot-coords">X: ' + hotspot.x + '% | Y: ' + hotspot.y + '% | Size: ' + hotspot.dotSize + 'px</div><div class="hotspot-actions"><button onclick="event.stopPropagation(); deleteHotspot(\'' + hotspot.id + '\')">🗑️ Delete</button><button onclick="event.stopPropagation(); focusHotspot(\'' + hotspot.id + '\')">🔍 Focus</button></div>';
+    item.className = 'hotspot-item' + (selectedId === h.id ? ' selected' : '');
+    item.onclick = () => selectHotspot(h.id);
+    item.innerHTML = '<div class="hotspot-name"><span>' + h.name + '</span><span class="badge">' + h.type + '</span></div><div class="hotspot-coords">X:' + settings.x + '% Y:' + settings.y + '% | Dot:' + settings.dotSize + 'px</div>';
     container.appendChild(item);
   });
 }
 
-function escapeHtml(str) {
-  return str.replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-  });
-}
-
 function selectHotspot(id) {
-  selectedHotspotId = id;
+  selectedId = id;
   const hotspot = hotspots.find(h => h.id === id);
   if (hotspot) {
-    document.getElementById('propertyEditor').style.display = 'block';
-    document.getElementById('propName').value = hotspot.name;
-    document.getElementById('propX').value = hotspot.x;
-    document.getElementById('propY').value = hotspot.y;
-    document.getElementById('propDotSize').value = hotspot.dotSize;
-    document.getElementById('propLabelX').value = hotspot.labelX;
-    document.getElementById('propLabelY').value = hotspot.labelY;
-    document.getElementById('propLabelScale').value = hotspot.labelScale;
-    document.getElementById('propType').value = hotspot.type;
-    document.getElementById('propUrl').value = hotspot.url || '';
+    const s = getCurrentSettings(hotspot);
+    document.getElementById('dotX').value = s.x;
+    document.getElementById('dotY').value = s.y;
+    document.getElementById('dotSize').value = s.dotSize;
+    document.getElementById('labelX').value = s.labelX;
+    document.getElementById('labelY').value = s.labelY;
+    document.getElementById('labelScale').value = s.labelScale;
+    document.getElementById('labelRotate').value = s.labelRotate || 0;
+    document.getElementById('hotspotName').value = hotspot.name;
+    document.getElementById('hotspotType').value = hotspot.type;
+    document.getElementById('hotspotUrl').value = hotspot.url;
   }
   renderHotspotList();
-  renderHotspotsOnCanvas();
-  updateStatus('Selected: ' + hotspot.name);
+  renderCanvas();
 }
 
-function updateHotspotFromProps() {
-  if (!selectedHotspotId) return;
-  const hotspot = hotspots.find(h => h.id === selectedHotspotId);
+function updateFromProps() {
+  if (!selectedId) return;
+  const hotspot = hotspots.find(h => h.id === selectedId);
   if (hotspot) {
-    hotspot.name = document.getElementById('propName').value;
-    hotspot.x = parseFloat(document.getElementById('propX').value);
-    hotspot.y = parseFloat(document.getElementById('propY').value);
-    hotspot.dotSize = parseInt(document.getElementById('propDotSize').value);
-    hotspot.labelX = parseInt(document.getElementById('propLabelX').value);
-    hotspot.labelY = parseInt(document.getElementById('propLabelY').value);
-    hotspot.labelScale = parseFloat(document.getElementById('propLabelScale').value);
-    hotspot.type = document.getElementById('propType').value;
-    hotspot.url = document.getElementById('propUrl').value;
-    if (labelImages[hotspot.name]) hotspot.labelImage = labelImages[hotspot.name];
+    const s = getCurrentSettings(hotspot);
+    s.x = parseFloat(document.getElementById('dotX').value);
+    s.y = parseFloat(document.getElementById('dotY').value);
+    s.dotSize = parseInt(document.getElementById('dotSize').value);
+    s.labelX = parseInt(document.getElementById('labelX').value);
+    s.labelY = parseInt(document.getElementById('labelY').value);
+    s.labelScale = parseFloat(document.getElementById('labelScale').value);
+    s.labelRotate = parseInt(document.getElementById('labelRotate').value);
+    hotspot.name = document.getElementById('hotspotName').value;
+    hotspot.type = document.getElementById('hotspotType').value;
+    hotspot.url = document.getElementById('hotspotUrl').value;
+    saveConfig();
     renderHotspotList();
-    renderHotspotsOnCanvas();
+    renderCanvas();
   }
 }
 
-function deleteHotspot(id) {
-  hotspots = hotspots.filter(h => h.id !== id);
-  if (selectedHotspotId === id) {
-    selectedHotspotId = null;
-    document.getElementById('propertyEditor').style.display = 'none';
-  }
-  renderHotspotList();
-  renderHotspotsOnCanvas();
-  updateStatus('Deleted hotspot');
-}
-
-function focusHotspot(id) {
-  const hotspot = hotspots.find(h => h.id === id);
-  if (hotspot) {
-    updateStatus('Focused on ' + hotspot.name + ' - X:' + hotspot.x + '%, Y:' + hotspot.y + '%');
-    const dotElement = document.querySelector('[data-hotspot-id="' + id + '"]');
-    if (dotElement) {
-      dotElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      dotElement.style.animation = 'pulse 0.5s ease';
-      setTimeout(function() { if (dotElement) dotElement.style.animation = ''; }, 500);
-    }
-  }
-}
-
-function addHotspot() {
-  const newId = 'hotspot-' + Date.now();
-  const newHotspot = { id: newId, name: 'New Hotspot', type: 'external', url: 'https://example.com', x: 50, y: 50, dotSize: 60, dotImage: 'reddot-01.png', labelImage: 'images/placeholder.png', labelX: 0, labelY: 40, labelScale: 0.6 };
-  hotspots.push(newHotspot);
-  selectHotspot(newId);
-  updateStatus('Added new hotspot');
-}
-
-function renderHotspotsOnCanvas() {
+function renderCanvas() {
   const container = document.getElementById('hotspotsLayer');
   if (!container) return;
   container.innerHTML = '';
-  hotspots.forEach(function(hotspot) {
+  hotspots.forEach(hotspot => {
+    const s = getCurrentSettings(hotspot);
     const wrapper = document.createElement('div');
-    wrapper.className = 'hotspot-editor' + (selectedHotspotId === hotspot.id ? ' selected' : '');
-    wrapper.setAttribute('data-hotspot-id', hotspot.id);
+    wrapper.className = 'hotspot-edit' + (selectedId === hotspot.id ? ' selected' : '');
+    wrapper.setAttribute('data-id', hotspot.id);
     wrapper.style.position = 'absolute';
-    wrapper.style.left = 'calc(' + hotspot.x + '% - ' + (hotspot.dotSize / 2) + 'px)';
-    wrapper.style.top = 'calc(' + hotspot.y + '% - ' + (hotspot.dotSize / 2) + 'px)';
-    wrapper.style.width = hotspot.dotSize + 'px';
-    wrapper.style.height = hotspot.dotSize + 'px';
-    wrapper.style.cursor = 'move';
+    wrapper.style.left = `calc(${s.x}% - ${s.dotSize / 2}px)`;
+    wrapper.style.top = `calc(${s.y}% - ${s.dotSize / 2}px)`;
+    wrapper.style.width = `${s.dotSize}px`;
+    wrapper.style.height = `${s.dotSize}px`;
+    
     const dot = document.createElement('div');
-    dot.className = 'hotspot-dot';
-    dot.style.backgroundImage = 'url(\'images/' + hotspot.dotImage + '\')';
+    dot.className = 'hotspot-dot-edit';
+    dot.style.width = '100%';
+    dot.style.height = '100%';
+    dot.style.backgroundImage = `url('images/${hotspot.dotImage}')`;
     wrapper.appendChild(dot);
-    const resizeHandle = document.createElement('div');
-    resizeHandle.className = 'resize-handle se';
-    resizeHandle.onmousedown = function(e) { startResize(e, hotspot.id); };
-    wrapper.appendChild(resizeHandle);
-    const label = document.createElement('div');
-    label.className = 'label-editor';
-    label.style.position = 'absolute';
-    label.style.left = hotspot.labelX + 'px';
-    label.style.top = hotspot.labelY + 'px';
-    label.style.transform = 'scale(' + hotspot.labelScale + ')';
-    label.style.transformOrigin = 'top left';
-    label.style.cursor = 'move';
-    const labelImg = document.createElement('img');
-    labelImg.src = hotspot.labelImage;
-    labelImg.alt = hotspot.name;
-    labelImg.style.maxWidth = 'none';
-    label.appendChild(labelImg);
-    wrapper.appendChild(label);
-    wrapper.onmousedown = function(e) {
-      if (e.target === resizeHandle) return;
-      e.preventDefault();
-      startDrag(e, hotspot.id);
-    };
+    
+    const dotResize = document.createElement('div');
+    dotResize.className = 'dot-resize';
+    dotResize.onmousedown = (e) => { e.stopPropagation(); startDotResize(e, hotspot.id); };
+    wrapper.appendChild(dotResize);
+    
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'label-edit';
+    labelDiv.style.position = 'absolute';
+    labelDiv.style.left = `${s.labelX}px`;
+    labelDiv.style.top = `${s.labelY}px`;
+    labelDiv.style.transform = `scale(${s.labelScale}) rotate(${s.labelRotate || 0}deg)`;
+    labelDiv.style.transformOrigin = 'top left';
+    const img = document.createElement('img');
+    img.src = hotspot.labelImage;
+    img.alt = hotspot.name;
+    img.style.maxWidth = 'none';
+    labelDiv.appendChild(img);
+    wrapper.appendChild(labelDiv);
+    
+    const labelResize = document.createElement('div');
+    labelResize.className = 'label-resize';
+    labelResize.onmousedown = (e) => { e.stopPropagation(); startLabelResize(e, hotspot.id); };
+    wrapper.appendChild(labelResize);
+    
+    const labelRotate = document.createElement('div');
+    labelRotate.className = 'label-rotate';
+    labelRotate.onmousedown = (e) => { e.stopPropagation(); startLabelRotate(e, hotspot.id); };
+    wrapper.appendChild(labelRotate);
+    
+    wrapper.onmousedown = (e) => { if(e.target === dotResize || e.target === labelResize || e.target === labelRotate) return; startDragDot(e, hotspot.id); };
+    labelDiv.onmousedown = (e) => { e.stopPropagation(); startDragLabel(e, hotspot.id); };
+    
     container.appendChild(wrapper);
   });
 }
 
-function startDrag(e, id) {
-  isDragging = true;
-  dragTarget = id;
-  const hotspot = hotspots.find(h => h.id === id);
-  if (!hotspot) return;
-  dragStartX = e.clientX;
-  dragStartY = e.clientY;
-  dragStartLeft = hotspot.x;
-  dragStartTop = hotspot.y;
-  document.addEventListener('mousemove', onDrag);
-  document.addEventListener('mouseup', stopDrag);
-  updateStatus('Dragging ' + hotspot.name + '...');
+// Drag handlers
+function startDragDot(e, id) { isDraggingDot = true; dragTargetId = id; const h = hotspots.find(h=>h.id===id); const s=getCurrentSettings(h); dragStart = { x: e.clientX, y: e.clientY, startX: s.x, startY: s.y }; document.addEventListener('mousemove', onDragDot); document.addEventListener('mouseup', stopDragDot); }
+function onDragDot(e) { if(!isDraggingDot) return; const h=hotspots.find(h=>h.id===dragTargetId); if(!h) return; const s=getCurrentSettings(h); const rect=document.getElementById('artworkContainer').getBoundingClientRect(); let newX = dragStart.startX + ((e.clientX - dragStart.x) / rect.width) * 100; let newY = dragStart.startY + ((e.clientY - dragStart.y) / rect.height) * 100; s.x = Math.min(100, Math.max(0, newX)); s.y = Math.min(100, Math.max(0, newY)); if(selectedId===dragTargetId) { document.getElementById('dotX').value = s.x; document.getElementById('dotY').value = s.y; } renderCanvas(); saveConfig(); }
+function stopDragDot() { isDraggingDot = false; document.removeEventListener('mousemove', onDragDot); document.removeEventListener('mouseup', stopDragDot); updateStatus('Dot moved'); }
+
+function startDragLabel(e, id) { isDraggingLabel = true; dragTargetId = id; const h=hotspots.find(h=>h.id===id); const s=getCurrentSettings(h); dragStart = { x: e.clientX, y: e.clientY, startX: s.labelX, startY: s.labelY }; document.addEventListener('mousemove', onDragLabel); document.addEventListener('mouseup', stopDragLabel); }
+function onDragLabel(e) { if(!isDraggingLabel) return; const h=hotspots.find(h=>h.id===dragTargetId); if(!h) return; const s=getCurrentSettings(h); s.labelX = dragStart.startX + (e.clientX - dragStart.x); s.labelY = dragStart.startY + (e.clientY - dragStart.y); if(selectedId===dragTargetId) { document.getElementById('labelX').value = s.labelX; document.getElementById('labelY').value = s.labelY; } renderCanvas(); saveConfig(); }
+function stopDragLabel() { isDraggingLabel = false; document.removeEventListener('mousemove', onDragLabel); document.removeEventListener('mouseup', stopDragLabel); updateStatus('Label moved'); }
+
+function startDotResize(e, id) { isResizingDot = true; dragTargetId = id; const h=hotspots.find(h=>h.id===id); const s=getCurrentSettings(h); dragStart = { x: e.clientX, y: e.clientY, startVal: s.dotSize }; document.addEventListener('mousemove', onDotResize); document.addEventListener('mouseup', stopDotResize); }
+function onDotResize(e) { if(!isResizingDot) return; const h=hotspots.find(h=>h.id===dragTargetId); if(!h) return; const s=getCurrentSettings(h); let delta = (e.clientX - dragStart.x + e.clientY - dragStart.y)/2; let newSize = dragStart.startVal + delta; s.dotSize = Math.min(200, Math.max(20, newSize)); if(selectedId===dragTargetId) document.getElementById('dotSize').value = s.dotSize; renderCanvas(); saveConfig(); }
+function stopDotResize() { isResizingDot = false; document.removeEventListener('mousemove', onDotResize); document.removeEventListener('mouseup', stopDotResize); updateStatus('Dot resized'); }
+
+function startLabelResize(e, id) { isResizingLabel = true; dragTargetId = id; const h=hotspots.find(h=>h.id===id); const s=getCurrentSettings(h); dragStart = { x: e.clientX, y: e.clientY, startVal: s.labelScale }; document.addEventListener('mousemove', onLabelResize); document.addEventListener('mouseup', stopLabelResize); }
+function onLabelResize(e) { if(!isResizingLabel) return; const h=hotspots.find(h=>h.id===dragTargetId); if(!h) return; const s=getCurrentSettings(h); let delta = (e.clientX - dragStart.x + e.clientY - dragStart.y)/100; let newScale = dragStart.startVal + delta; s.labelScale = Math.min(3, Math.max(0.2, newScale)); if(selectedId===dragTargetId) document.getElementById('labelScale').value = s.labelScale; renderCanvas(); saveConfig(); }
+function stopLabelResize() { isResizingLabel = false; document.removeEventListener('mousemove', onLabelResize); document.removeEventListener('mouseup', stopLabelResize); updateStatus('Label resized'); }
+
+function startLabelRotate(e, id) { isRotatingLabel = true; dragTargetId = id; const h=hotspots.find(h=>h.id===id); const s=getCurrentSettings(h); const rect = document.getElementById(`hotspotsLayer`).getBoundingClientRect(); const centerX = dragStart.startX; const centerY = dragStart.startY; dragStart = { x: e.clientX, y: e.clientY, startAngle: s.labelRotate || 0 }; document.addEventListener('mousemove', onLabelRotate); document.addEventListener('mouseup', stopLabelRotate); }
+function onLabelRotate(e) { if(!isRotatingLabel) return; const h=hotspots.find(h=>h.id===dragTargetId); if(!h) return; const s=getCurrentSettings(h); const deltaX = e.clientX - dragStart.x; let newAngle = dragStart.startAngle + deltaX / 2; s.labelRotate = newAngle % 360; if(selectedId===dragTargetId) document.getElementById('labelRotate').value = s.labelRotate; renderCanvas(); saveConfig(); }
+function stopLabelRotate() { isRotatingLabel = false; document.removeEventListener('mousemove', onLabelRotate); document.removeEventListener('mouseup', stopLabelRotate); updateStatus('Label rotated'); }
+
+function addHotspot() {
+  const newId = 'custom-' + Date.now();
+  hotspots.push({ id: newId, name: 'New Hotspot', type: 'external', url: 'https://example.com', dotImage: 'reddot-01.png', labelImage: 'images/placeholder.png', desktop: { x: 50, y: 50, dotSize: 60, labelX: 0, labelY: 40, labelScale: 0.6, labelRotate: 0 }, mobile: { x: 50, y: 50, dotSize: 60, labelX: 0, labelY: 40, labelScale: 0.6, labelRotate: 0 } });
+  selectHotspot(newId);
+  saveConfig();
+  updateStatus('Added new hotspot');
 }
 
-function onDrag(e) {
-  if (!isDragging || !dragTarget) return;
-  const hotspot = hotspots.find(h => h.id === dragTarget);
-  if (!hotspot) return;
-  const container = document.getElementById('artworkContainer');
-  const rect = container.getBoundingClientRect();
-  const deltaX = e.clientX - dragStartX;
-  const deltaY = e.clientY - dragStartY;
-  let newX = dragStartLeft + (deltaX / rect.width) * 100;
-  let newY = dragStartTop + (deltaY / rect.height) * 100;
-  hotspot.x = Math.min(100, Math.max(0, newX));
-  hotspot.y = Math.min(100, Math.max(0, newY));
-  if (selectedHotspotId === dragTarget) {
-    document.getElementById('propX').value = hotspot.x.toFixed(1);
-    document.getElementById('propY').value = hotspot.y.toFixed(1);
-  }
-  renderHotspotsOnCanvas();
-}
-
-function stopDrag() {
-  isDragging = false;
-  dragTarget = null;
-  document.removeEventListener('mousemove', onDrag);
-  document.removeEventListener('mouseup', stopDrag);
-  if (selectedHotspotId) {
-    const hotspot = hotspots.find(h => h.id === selectedHotspotId);
-    if (hotspot) updateStatus('Position: X=' + hotspot.x.toFixed(1) + '%, Y=' + hotspot.y.toFixed(1) + '%');
-  }
-}
-
-function startResize(e, id) {
-  e.preventDefault();
-  e.stopPropagation();
-  isResizing = true;
-  resizeTarget = id;
-  const hotspot = hotspots.find(h => h.id === id);
-  if (!hotspot) return;
-  resizeStartX = e.clientX;
-  resizeStartY = e.clientY;
-  resizeStartSize = hotspot.dotSize;
-  document.addEventListener('mousemove', onResize);
-  document.addEventListener('mouseup', stopResize);
-}
-
-function onResize(e) {
-  if (!isResizing || !resizeTarget) return;
-  const hotspot = hotspots.find(h => h.id === resizeTarget);
-  if (!hotspot) return;
-  const delta = (e.clientX - resizeStartX + e.clientY - resizeStartY) / 2;
-  let newSize = resizeStartSize + delta;
-  hotspot.dotSize = Math.min(200, Math.max(20, newSize));
-  if (selectedHotspotId === resizeTarget) document.getElementById('propDotSize').value = hotspot.dotSize;
-  renderHotspotsOnCanvas();
-}
-
-function stopResize() {
-  isResizing = false;
-  resizeTarget = null;
-  document.removeEventListener('mousemove', onResize);
-  document.removeEventListener('mouseup', stopResize);
-  if (selectedHotspotId) {
-    const hotspot = hotspots.find(h => h.id === selectedHotspotId);
-    if (hotspot) updateStatus('Dot size: ' + hotspot.dotSize + 'px');
-  }
-}
-
-function switchDevice(device) {
+function switchDevice(deviceId) {
+  currentDevice = deviceId;
+  const device = devices[deviceId];
   const frame = document.getElementById('artboardFrame');
   const image = document.getElementById('artworkImage');
-  if (device === 'mobile') {
-    frame.style.width = '375px';
-    image.src = 'images/mobile-bg.jpg';
-    currentArtboard = 'mobile';
-  } else if (device === 'tablet') {
-    frame.style.width = '768px';
-    image.src = 'images/bg.jpg';
-    currentArtboard = 'desktop';
-  } else {
-    frame.style.width = 'auto';
-    frame.style.maxWidth = '95%';
-    image.src = 'images/bg.jpg';
-    currentArtboard = 'desktop';
-  }
-  initHotspots();
-  updateStatus('Switched to ' + device + ' view');
+  frame.style.width = device.width + 'px';
+  frame.style.maxWidth = '95%';
+  image.src = device.image;
+  document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`[data-device="${deviceId}"]`).classList.add('active');
+  if(selectedId) selectHotspot(selectedId);
+  renderHotspotList();
+  renderCanvas();
+  updateStatus(`Switched to ${device.name}`);
 }
 
-function updateStatus(msg) {
-  const statusDiv = document.getElementById('status');
-  if (statusDiv) {
-    statusDiv.innerHTML = '✅ ' + msg;
-    setTimeout(function() {
-      if (statusDiv.innerHTML === '✅ ' + msg) statusDiv.innerHTML = '✅ Ready · Click hotspots to edit';
-    }, 3000);
-  }
+function resetAll() {
+  hotspots = fullHotspotsList.map(h => ({ id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, labelImage: h.labelImage, desktop: { ...h.defaultDesktop }, mobile: { ...h.defaultMobile } }));
+  saveConfig();
+  if(selectedId) selectHotspot(selectedId);
+  renderHotspotList();
+  renderCanvas();
+  updateStatus('Reset to defaults');
+}
+
+function exportConfig() {
+  const data = JSON.stringify(hotspots, null, 2);
+  const blob = new Blob([data], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'hotspot-config.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  updateStatus('Config exported');
+}
+
+function importConfig() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const imported = JSON.parse(ev.target.result);
+        hotspots = imported;
+        saveConfig();
+        if(selectedId) selectHotspot(selectedId);
+        renderHotspotList();
+        renderCanvas();
+        updateStatus('Config imported');
+      } catch(err) { updateStatus('Invalid config file'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// Code Generation
+function generateHTML() { return '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Francien van Everdingen</title>\n  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n  <link rel="stylesheet" href="css/artboard-2.css">\n</head>\n<body>\n  <main>\n    <div class="artboard artboard--desktop">\n      <div class="artboard__container">\n        <img src="images/bg.jpg" alt="Desktop artwork">\n        <div class="hotspots-container"></div>\n      </div>\n    </div>\n    <div class="artboard artboard--mobile">\n      <div class="artboard__container">\n        <img src="images/mobile-bg.jpg" alt="Mobile artwork">\n        <div class="hotspots-container"></div>\n      </div>\n    </div>\n  </main>\n  <div class="modal fade" id="mediaModal" tabindex="-1">\n    <div class="modal-dialog modal-xl">\n      <div class="modal-content bg-dark text-white">\n        <div class="modal-body p-0">\n          <div id="videoContainer" class="ratio ratio-16x9 d-none">\n            <iframe id="youtubeVideo" allowfullscreen></iframe>\n          </div>\n          <div id="pdfContainer" class="d-none"></div>\n          <div id="imageContainer" class="d-none text-center p-2">\n            <img id="modalImage" style="max-width:100%">\n          </div>\n        </div>\n        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"></button>\n      </div>\n    </div>\n  </div>\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"><\/script>\n  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n  <script src="js/artboard-2.js"><\/script>\n</body>\n</html>'; }
+function generateCSS() { return '*{margin:0;padding:0;box-sizing:border-box}body{background:#dbe4f3;min-height:100vh}.artboard{display:none;width:100%}.artboard--desktop.active,.artboard--mobile.active{display:block}.artboard__container{position:relative;margin:0 auto}.artboard--desktop .artboard__container{max-width:1400px}.artboard--mobile .artboard__container{max-width:480px}.artboard__image{display:block;width:100%;height:auto;pointer-events:none}.hotspots-container{position:absolute;top:0;left:0;width:100%;height:100%}.hotspot{position:absolute;cursor:pointer;z-index:10}.hotspot__dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;transition:transform 0.2s}.hotspot:hover .hotspot__dot{transform:translate(-50%,-50%) scale(1.1)}.hotspot__label{position:absolute;pointer-events:none;transform-origin:top left}.hotspot__label img{display:block}#pdfContainer{max-height:80vh;overflow-y:auto;background:#111;padding:10px}#pdfContainer canvas{display:block;width:100%;height:auto;margin:0 auto 20px}@media(min-width:768px)and(orientation:landscape){.artboard--desktop.active{display:block}.artboard--mobile.active{display:none}}@media(max-width:767px),(orientation:portrait){.artboard--desktop.active{display:none}.artboard--mobile.active{display:block}}'; }
+function generateJS() {
+  const desktopConfig = hotspots.map(h => ({ id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, labelImage: h.labelImage, ...h.desktop }));
+  const mobileConfig = hotspots.map(h => ({ id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, labelImage: h.labelImage, ...h.mobile }));
+  return 'var hotspotsConfig={desktop:' + JSON.stringify(desktopConfig) + ',mobile:' + JSON.stringify(mobileConfig) + '};\nvar decorativeDots={desktop:[{x:43,y:9,size:60,dotImage:"reddot-11.png"},{x:59.8,y:72.7,size:50,dotImage:"reddot-15.png"},{x:57,y:29.5,size:70,dotImage:"reddot-16.png"},{x:77.1,y:63,size:60,dotImage:"reddot-17.png"},{x:96.2,y:41,size:54,dotImage:"reddot-18.png"},{x:56.5,y:20,size:59,dotImage:"reddot-19.png"},{x:48,y:85,size:55,dotImage:"reddot-20.png"},{x:72,y:14,size:80,dotImage:"reddot-21.png"},{x:4.5,y:86,size:59,dotImage:"reddot-22.png"},{x:37.5,y:64,size:59,dotImage:"reddot-23.png"}],mobile:[{x:28,y:40,size:28,dotImage:"reddot-08.png"},{x:56,y:86,size:24,dotImage:"reddot-11.png"}]};\npdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";\nfunction createHotspot(c){var a=document.createElement("a");a.className="hotspot";a.style.left=c.x+"%";a.style.top=c.y+"%";var d=document.createElement("div");d.className="hotspot__dot";d.style.backgroundImage="url(\'images/"+c.dotImage+"\')";d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";var l=document.createElement("div");l.className="hotspot__label";var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;l.appendChild(i);l.style.left=c.labelX+"px";l.style.top=c.labelY+"px";l.style.transform="scale("+c.labelScale+") rotate("+(c.labelRotate||0)+"deg)";a.appendChild(d);a.appendChild(l);if(c.type==="external"){a.href=c.url;a.target="_blank"}else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close()}}else{a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}return a}\nfunction renderArtboard(t){var a=document.querySelector(".artboard--"+t);if(!a)return;var c=a.querySelector(".hotspots-container");if(!c)return;c.innerHTML="";(hotspotsConfig[t]||[]).forEach(function(h){c.appendChild(createHotspot(h))});(decorativeDots[t]||[]).forEach(function(d){var s=document.createElement("span");s.className="hotspot";s.style.position="absolute";s.style.left=d.x+"%";s.style.top=d.y+"%";s.style.width=d.size+"px";s.style.height=d.size+"px";s.style.marginLeft=-(d.size/2)+"px";s.style.marginTop=-(d.size/2)+"px";s.style.backgroundImage="url(\'images/"+d.dotImage+"\')";s.style.backgroundSize="contain";s.style.pointerEvents="none";c.appendChild(s)})}\nasync function renderPDF(u){var c=document.getElementById("pdfContainer");c.innerHTML="<div class=\"text-center p-4\">Loading...</div>";try{var r=await fetch(u);var b=await r.arrayBuffer();var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";for(var i=1;i<=p.numPages;i++){var page=await p.getPage(i);var v=page.getViewport({scale:1.5});var can=document.createElement("canvas");can.width=v.width;can.height=v.height;can.style.width="100%";await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;c.appendChild(can)}}catch(e){c.innerHTML="<div class=\"alert alert-danger\">Error</div>"}}\ndocument.addEventListener("DOMContentLoaded",function(){renderArtboard("desktop");renderArtboard("mobile");var setActive=function(){var m=window.innerWidth<=767||matchMedia("(orientation: portrait)").matches;var d=document.querySelector(".artboard--desktop");var mb=document.querySelector(".artboard--mobile");if(d&&mb){d.classList.toggle("active",!m);mb.classList.toggle("active",m)}};setActive();window.addEventListener("resize",setActive)});\nvar modal=document.getElementById("mediaModal");if(modal){modal.addEventListener("show.bs.modal",async function(e){var t=e.relatedTarget;var type=t?.getAttribute("data-type");var src=t?.getAttribute("data-src");var vc=document.getElementById("videoContainer");var pc=document.getElementById("pdfContainer");var ic=document.getElementById("imageContainer");vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");if(type==="video"&&src){vc.classList.remove("d-none");var yt=document.getElementById("youtubeVideo");yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1"}else if(type==="pdf"&&src){pc.classList.remove("d-none");await renderPDF(src)}else if(type==="image"&&src){ic.classList.remove("d-none");document.getElementById("modalImage").src=src}});modal.addEventListener("hidden.bs.modal",function(){var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";document.getElementById("pdfContainer").innerHTML="";document.getElementById("modalImage").src=""})}';
 }
 
 function generateFinalCode() {
-  const desktopConfig = hotspots.filter(function(h) { return h.id.startsWith('hotspot-'); }).map(function(h) {
-    return { id: h.id, name: h.name, type: h.type, url: h.url, x: h.x, y: h.y, dotSize: h.dotSize, dotImage: h.dotImage, labelImage: h.labelImage, labelX: h.labelX, labelY: h.labelY, labelScale: h.labelScale };
-  });
-  const mobileConfig = hotspots.filter(function(h) { return h.id.startsWith('mob-hotspot-'); }).map(function(h) {
-    return { id: h.id, name: h.name, type: h.type, url: h.url, x: h.x, y: h.y, dotSize: h.dotSize, dotImage: h.dotImage, labelImage: h.labelImage, labelX: h.labelX, labelY: h.labelY, labelScale: h.labelScale };
-  });
   document.getElementById('htmlPre').textContent = generateHTML();
   document.getElementById('cssPre').textContent = generateCSS();
-  document.getElementById('jsPre').textContent = generateJS(desktopConfig, mobileConfig);
+  document.getElementById('jsPre').textContent = generateJS();
   document.getElementById('codeModal').style.display = 'flex';
   updateStatus('Code generated!');
 }
+function copyCode() { navigator.clipboard.writeText(document.getElementById('htmlPre').textContent + '\n\n' + document.getElementById('cssPre').textContent + '\n\n' + document.getElementById('jsPre').textContent); updateStatus('Copied!'); }
+function closeModal() { document.getElementById('codeModal').style.display = 'none'; }
 
-function generateHTML() {
-  return '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Francien van Everdingen</title>\n  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n  <link rel="stylesheet" href="css/artboard-2.css">\n</head>\n<body>\n  <main>\n    <div class="artboard artboard--desktop">\n      <div class="artboard__container">\n        <img src="images/bg.jpg" alt="Desktop artwork">\n        <div class="hotspots-container"></div>\n      </div>\n    </div>\n    <div class="artboard artboard--mobile">\n      <div class="artboard__container">\n        <img src="images/mobile-bg.jpg" alt="Mobile artwork">\n        <div class="hotspots-container"></div>\n      </div>\n    </div>\n  </main>\n  <div class="modal fade" id="mediaModal" tabindex="-1">\n    <div class="modal-dialog modal-xl">\n      <div class="modal-content bg-dark text-white">\n        <div class="modal-body p-0">\n          <div id="videoContainer" class="ratio ratio-16x9 d-none">\n            <iframe id="youtubeVideo" allowfullscreen></iframe>\n          </div>\n          <div id="pdfContainer" class="d-none"></div>\n          <div id="imageContainer" class="d-none text-center p-2">\n            <img id="modalImage" style="max-width:100%">\n          </div>\n        </div>\n        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"></button>\n      </div>\n    </div>\n  </div>\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"><\/script>\n  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n  <script src="js/artboard-2.js"><\/script>\n</body>\n</html>';
-}
-
-function generateCSS() {
-  return '*{margin:0;padding:0;box-sizing:border-box}body{background:#dbe4f3;min-height:100vh}.artboard{display:none;width:100%}.artboard--desktop.active,.artboard--mobile.active{display:block}.artboard__container{position:relative;margin:0 auto}.artboard--desktop .artboard__container{max-width:1400px}.artboard--mobile .artboard__container{max-width:480px}.artboard__image{display:block;width:100%;height:auto;pointer-events:none}.hotspots-container{position:absolute;top:0;left:0;width:100%;height:100%}.hotspot{position:absolute;cursor:pointer;z-index:10}.hotspot__dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;transition:transform 0.2s}.hotspot:hover .hotspot__dot{transform:translate(-50%,-50%) scale(1.1)}.hotspot__label{position:absolute;pointer-events:none;transform-origin:top left}.hotspot__label img{display:block}#pdfContainer{max-height:80vh;overflow-y:auto;background:#111;padding:10px}#pdfContainer canvas{display:block;width:100%;height:auto;margin:0 auto 20px}@media(min-width:768px)and(orientation:landscape){.artboard--desktop.active{display:block}.artboard--mobile.active{display:none}}@media(max-width:767px),(orientation:portrait){.artboard--desktop.active{display:none}.artboard--mobile.active{display:block}}';
-}
-
-function generateJS(desktopConfig, mobileConfig) {
-  var desktopStr = JSON.stringify(desktopConfig, null, 2);
-  var mobileStr = JSON.stringify(mobileConfig, null, 2);
-  return 'var hotspotsConfig={desktop:' + desktopStr + ',mobile:' + mobileStr + '};\nvar decorativeDots={desktop:[{x:43,y:9,size:60,dotImage:"reddot-11.png"},{x:59.8,y:72.7,size:50,dotImage:"reddot-15.png"},{x:57,y:29.5,size:70,dotImage:"reddot-16.png"},{x:77.1,y:63,size:60,dotImage:"reddot-17.png"},{x:96.2,y:41,size:54,dotImage:"reddot-18.png"},{x:56.5,y:20,size:59,dotImage:"reddot-19.png"},{x:48,y:85,size:55,dotImage:"reddot-20.png"},{x:72,y:14,size:80,dotImage:"reddot-21.png"},{x:4.5,y:86,size:59,dotImage:"reddot-22.png"},{x:37.5,y:64,size:59,dotImage:"reddot-23.png"}],mobile:[{x:28,y:40,size:28,dotImage:"reddot-08.png"},{x:56,y:86,size:24,dotImage:"reddot-11.png"}]};\npdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";\nfunction createHotspot(c){var a=document.createElement("a");a.className="hotspot";a.style.left=c.x+"%";a.style.top=c.y+"%";var d=document.createElement("div");d.className="hotspot__dot";d.style.backgroundImage="url(\'images/"+c.dotImage+"\')";d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";var l=document.createElement("div");l.className="hotspot__label";var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;l.appendChild(i);l.style.left=c.labelX+"px";l.style.top=c.labelY+"px";l.style.transform="scale("+c.labelScale+")";a.appendChild(d);a.appendChild(l);if(c.type==="external"){a.href=c.url;a.target="_blank";a.rel="noopener noreferrer"}else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close();return false}}else{a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}return a}\nfunction renderArtboard(t){var a=document.querySelector(".artboard--"+t);if(!a)return;var c=a.querySelector(".hotspots-container");if(!c)return;c.innerHTML="";(hotspotsConfig[t]||[]).forEach(function(h){c.appendChild(createHotspot(h))});(decorativeDots[t]||[]).forEach(function(d){var s=document.createElement("span");s.className="hotspot";s.style.position="absolute";s.style.left=d.x+"%";s.style.top=d.y+"%";s.style.width=d.size+"px";s.style.height=d.size+"px";s.style.marginLeft=-(d.size/2)+"px";s.style.marginTop=-(d.size/2)+"px";s.style.backgroundImage="url(\'images/"+d.dotImage+"\')";s.style.backgroundSize="contain";s.style.backgroundRepeat="no-repeat";s.style.pointerEvents="none";c.appendChild(s)})}\nasync function renderPDF(u){var c=document.getElementById("pdfContainer");c.innerHTML=\'<div class="text-center p-4">Loading...</div>\';try{var r=await fetch(u);var b=await r.arrayBuffer();var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";for(var i=1;i<=p.numPages;i++){var page=await p.getPage(i);var v=page.getViewport({scale:1.5});var can=document.createElement("canvas");can.width=v.width;can.height=v.height;can.style.width="100%";await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;c.appendChild(can)}}catch(e){c.innerHTML=\'<div class="alert alert-danger">Error loading PDF</div>\'}}\ndocument.addEventListener("DOMContentLoaded",function(){renderArtboard("desktop");renderArtboard("mobile");var setActive=function(){var m=window.innerWidth<=767||matchMedia("(orientation: portrait)").matches;var d=document.querySelector(".artboard--desktop");var mb=document.querySelector(".artboard--mobile");if(d&&mb){d.classList.toggle("active",!m);mb.classList.toggle("active",m)}};setActive();window.addEventListener("resize",setActive)});\nvar modal=document.getElementById("mediaModal");if(modal){modal.addEventListener("show.bs.modal",async function(e){var t=e.relatedTarget;var type=t?.getAttribute("data-type");var src=t?.getAttribute("data-src");var vc=document.getElementById("videoContainer");var pc=document.getElementById("pdfContainer");var ic=document.getElementById("imageContainer");vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");if(type==="video"&&src){vc.classList.remove("d-none");var yt=document.getElementById("youtubeVideo");yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1"}else if(type==="pdf"&&src){pc.classList.remove("d-none");await renderPDF(src)}else if(type==="image"&&src){ic.classList.remove("d-none");document.getElementById("modalImage").src=src}});modal.addEventListener("hidden.bs.modal",function(){var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";document.getElementById("pdfContainer").innerHTML="";document.getElementById("modalImage").src=""})}';
-}
-
-function copyCode() {
-  var html = document.getElementById('htmlPre').textContent;
-  var css = document.getElementById('cssPre').textContent;
-  var js = document.getElementById('jsPre').textContent;
-  navigator.clipboard.writeText('<!-- HTML -->\n' + html + '\n\n<!-- CSS -->\n' + css + '\n\n<!-- JavaScript -->\n' + js);
-  updateStatus('Code copied to clipboard!');
-}
-
-function closeModal() {
-  document.getElementById('codeModal').style.display = 'none';
-}
-
-// Event listeners
-document.getElementById('propName')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propX')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propY')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propDotSize')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propLabelX')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propLabelY')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propLabelScale')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propType')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propUrl')?.addEventListener('change', updateHotspotFromProps);
+// Event Listeners
+document.getElementById('dotX')?.addEventListener('change', updateFromProps);
+document.getElementById('dotY')?.addEventListener('change', updateFromProps);
+document.getElementById('dotSize')?.addEventListener('change', updateFromProps);
+document.getElementById('labelX')?.addEventListener('change', updateFromProps);
+document.getElementById('labelY')?.addEventListener('change', updateFromProps);
+document.getElementById('labelScale')?.addEventListener('change', updateFromProps);
+document.getElementById('labelRotate')?.addEventListener('change', updateFromProps);
+document.getElementById('hotspotName')?.addEventListener('change', updateFromProps);
+document.getElementById('hotspotType')?.addEventListener('change', updateFromProps);
+document.getElementById('hotspotUrl')?.addEventListener('change', updateFromProps);
 document.getElementById('addHotspotBtn')?.addEventListener('click', addHotspot);
 document.getElementById('generateCodeBtn')?.addEventListener('click', generateFinalCode);
-document.getElementById('resetViewBtn')?.addEventListener('click', function() { initHotspots(); updateStatus('Reset to defaults'); });
-
-document.querySelectorAll('.device-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.device-btn').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    switchDevice(btn.getAttribute('data-device'));
-  });
-});
-
-document.querySelectorAll('.tab-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    document.querySelectorAll('.code-content').forEach(function(c) { c.classList.remove('active'); });
-    document.getElementById(btn.getAttribute('data-tab') + 'Code').classList.add('active');
-  });
-});
+document.getElementById('resetViewBtn')?.addEventListener('click', resetAll);
+document.getElementById('exportConfigBtn')?.addEventListener('click', exportConfig);
+document.getElementById('importConfigBtn')?.addEventListener('click', importConfig);
+document.querySelectorAll('.device-btn').forEach(btn => btn.addEventListener('click', () => switchDevice(btn.getAttribute('data-device'))));
+document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', function() { document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); document.querySelectorAll('.code-content').forEach(c=>c.classList.remove('active')); document.getElementById(this.getAttribute('data-tab')+'Code').classList.add('active'); }));
 
 // Initialize
-document.getElementById('artworkImage').src = 'images/bg.jpg';
-initHotspots();
+loadConfig();
+switchDevice('desktop');
 </script>
 </body>
 </html>
