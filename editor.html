@@ -25,7 +25,6 @@
       width: 100vw;
     }
 
-    /* Toolbar */
     .toolbar {
       background: #16213e;
       color: white;
@@ -652,7 +651,7 @@ function renderHotspotList() {
     
     item.innerHTML = `
       <div class="hotspot-name">
-        <span>${hotspot.name}</span>
+        <span>${escapeHtml(hotspot.name)}</span>
         <span class="badge">${hotspot.type}</span>
       </div>
       <div class="hotspot-coords">X: ${hotspot.x}% | Y: ${hotspot.y}% | Size: ${hotspot.dotSize}px</div>
@@ -662,6 +661,15 @@ function renderHotspotList() {
       </div>
     `;
     container.appendChild(item);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
   });
 }
 
@@ -1029,13 +1037,16 @@ body{background:#dbe4f3;min-height:100vh}
 }
 
 function generateJS(desktopConfig, mobileConfig) {
-  return `const hotspotsConfig={desktop:${JSON.stringify(desktopConfig,null,2)},mobile:${JSON.stringify(mobileConfig,null,2)}};
+  const configStr = JSON.stringify(desktopConfig, null, 2);
+  const mobileStr = JSON.stringify(mobileConfig, null, 2);
+  
+  return `const hotspotsConfig={desktop:${configStr},mobile:${mobileStr}};
 const decorativeDots={desktop:[{x:43,y:9,size:60,dotImage:"reddot-11.png"},{x:59.8,y:72.7,size:50,dotImage:"reddot-15.png"},{x:57,y:29.5,size:70,dotImage:"reddot-16.png"},{x:77.1,y:63,size:60,dotImage:"reddot-17.png"},{x:96.2,y:41,size:54,dotImage:"reddot-18.png"},{x:56.5,y:20,size:59,dotImage:"reddot-19.png"},{x:48,y:85,size:55,dotImage:"reddot-20.png"},{x:72,y:14,size:80,dotImage:"reddot-21.png"},{x:4.5,y:86,size:59,dotImage:"reddot-22.png"},{x:37.5,y:64,size:59,dotImage:"reddot-23.png"}],mobile:[{x:28,y:40,size:28,dotImage:"reddot-08.png"},{x:56,y:86,size:24,dotImage:"reddot-11.png"}]};
 pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 function createHotspot(c){let a=document.createElement("a");a.className="hotspot";a.style.left=c.x+"%";a.style.top=c.y+"%";let d=document.createElement("div");d.className="hotspot__dot";d.style.backgroundImage="url('images/"+c.dotImage+"')";d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";let l=document.createElement("div");l.className="hotspot__label";let i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;l.appendChild(i);l.style.left=c.labelX+"px";l.style.top=c.labelY+"px";l.style.transform="scale("+c.labelScale+")";a.appendChild(d);a.appendChild(l);if(c.type==="external"){a.href=c.url;a.target="_blank";a.rel="noopener noreferrer"}else if(c.type==="exit"){a.href="#";a.onclick=(e)=>{e.preventDefault();window.close();return false}}else{a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}return a}
 function renderArtboard(t){let a=document.querySelector(".artboard--"+t);if(!a)return;let c=a.querySelector(".hotspots-container");if(!c)return;c.innerHTML="";(hotspotsConfig[t]||[]).forEach(h=>c.appendChild(createHotspot(h)));(decorativeDots[t]||[]).forEach(d=>{let s=document.createElement("span");s.className="hotspot";s.style.position="absolute";s.style.left=d.x+"%";s.style.top=d.y+"%";s.style.width=d.size+"px";s.style.height=d.size+"px";s.style.marginLeft=-(d.size/2)+"px";s.style.marginTop=-(d.size/2)+"px";s.style.backgroundImage="url('images/"+d.dotImage+"')";s.style.backgroundSize="contain";s.style.backgroundRepeat="no-repeat";s.style.pointerEvents="none";c.appendChild(s)})}
 async function renderPDF(u){let c=document.getElementById("pdfContainer");c.innerHTML='<div class="text-center p-4">Loading...</div>';try{let r=await fetch(u);let b=await r.arrayBuffer();let p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";for(let i=1;i<=p.numPages;i++){let page=await p.getPage(i);let v=page.getViewport({scale:1.5});let can=document.createElement("canvas");can.width=v.width;can.height=v.height;can.style.width="100%";await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;c.appendChild(can)}}catch(e){c.innerHTML='<div class="alert alert-danger">Error loading PDF</div>'}}
-document.addEventListener("DOMContentLoaded",()=>{renderArtboard("desktop");renderArtboard("mobile");let setActive=()=>{let m=window.innerWidth<=767||matchMedia("(orientation: portrait)").matches;document.querySelector(".artboard--desktop").classList.toggle("active",!m);document.querySelector(".artboard--mobile").classList.toggle("active",m)};setActive();window.addEventListener("resize",setActive)});
+document.addEventListener("DOMContentLoaded",()=>{renderArtboard("desktop");renderArtboard("mobile");let setActive=()=>{let m=window.innerWidth<=767||matchMedia("(orientation: portrait)").matches;let d=document.querySelector(".artboard--desktop");let mb=document.querySelector(".artboard--mobile");if(d&&mb){d.classList.toggle("active",!m);mb.classList.toggle("active",m)}};setActive();window.addEventListener("resize",setActive)});
 let modal=document.getElementById("mediaModal");if(modal){modal.addEventListener("show.bs.modal",async(e)=>{let t=e.relatedTarget;let type=t?.getAttribute("data-type");let src=t?.getAttribute("data-src");let vc=document.getElementById("videoContainer");let pc=document.getElementById("pdfContainer");let ic=document.getElementById("imageContainer");vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");if(type==="video"&&src){vc.classList.remove("d-none");let yt=document.getElementById("youtubeVideo");yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1"}else if(type==="pdf"&&src){pc.classList.remove("d-none");await renderPDF(src)}else if(type==="image"&&src){ic.classList.remove("d-none");document.getElementById("modalImage").src=src}});modal.addEventListener("hidden.bs.modal",()=>{let yt=document.getElementById("youtubeVideo");if(yt)yt.src="";document.getElementById("pdfContainer").innerHTML="";document.getElementById("modalImage").src=""})}`;
 }
 
@@ -1043,8 +1054,9 @@ function copyCode() {
   const html = document.getElementById('htmlPre').textContent;
   const css = document.getElementById('cssPre').textContent;
   const js = document.getElementById('jsPre').textContent;
-  navigator.clipboard.writeText(`<!-- HTML -->\n${html}\n\n<!-- CSS -->\n${css}\n\n<!-- JS -->\n${js}`);
-  updateStatus('Code copied!');
+  const fullCode = `<!-- HTML -->\n${html}\n\n<!-- CSS -->\n${css}\n\n<!-- JavaScript -->\n${js}`;
+  navigator.clipboard.writeText(fullCode);
+  updateStatus('Code copied to clipboard!');
 }
 
 function closeModal() {
