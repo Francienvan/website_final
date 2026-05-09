@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
@@ -17,7 +19,6 @@
       overflow: hidden;
     }
 
-    /* Main Layout */
     .editor-container {
       display: flex;
       height: 100vh;
@@ -28,7 +29,7 @@
     .toolbar {
       background: #16213e;
       color: white;
-      width: 320px;
+      width: 340px;
       display: flex;
       flex-direction: column;
       border-right: 2px solid #0f3460;
@@ -53,7 +54,6 @@
       opacity: 0.8;
     }
 
-    /* Device Selector */
     .device-selector {
       padding: 15px 20px;
       background: #0f3460;
@@ -87,11 +87,15 @@
       border-color: #e94560;
     }
 
-    /* Hotspot List */
     .hotspot-list {
       flex: 1;
       overflow-y: auto;
       padding: 15px 20px;
+    }
+
+    .hotspot-list h4 {
+      margin-bottom: 15px;
+      font-size: 0.9rem;
     }
 
     .hotspot-item {
@@ -155,7 +159,6 @@
       background: #e94560;
     }
 
-    /* Artboard Preview */
     .preview-area {
       flex: 1;
       background: #2c3e50;
@@ -173,16 +176,6 @@
       transition: all 0.3s ease;
     }
 
-    .artboard-frame.desktop-frame {
-      max-width: 95%;
-      max-height: 95%;
-    }
-
-    .artboard-frame.mobile-frame {
-      max-width: 400px;
-      max-height: 95%;
-    }
-
     .artwork-container {
       position: relative;
       display: inline-block;
@@ -196,7 +189,6 @@
       pointer-events: none;
     }
 
-    /* Hotspot Editor Elements */
     .hotspot-editor {
       position: absolute;
       cursor: move;
@@ -212,19 +204,20 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
-      transition: all 0.1s ease;
     }
 
     .hotspot-dot::after {
       content: '';
       position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
       border: 2px solid #e94560;
       border-radius: 50%;
       opacity: 0;
@@ -236,31 +229,23 @@
       opacity: 1;
     }
 
-    /* Resize handles */
     .resize-handle {
       position: absolute;
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       background: #e94560;
       border: 2px solid white;
       border-radius: 50%;
       pointer-events: auto;
       z-index: 101;
-    }
-
-    .resize-handle.se {
-      bottom: -6px;
-      right: -6px;
       cursor: se-resize;
     }
 
-    .resize-handle.nw {
-      top: -6px;
-      left: -6px;
-      cursor: nw-resize;
+    .resize-handle.se {
+      bottom: -7px;
+      right: -7px;
     }
 
-    /* Label Editor */
     .label-editor {
       position: absolute;
       pointer-events: auto;
@@ -273,11 +258,55 @@
       pointer-events: none;
     }
 
-    .label-editor .resize-handle {
-      background: #3498db;
+    .property-editor {
+      padding: 15px 20px;
+      background: #0f3460;
+      border-top: 1px solid #1a5276;
     }
 
-    /* Control Panel */
+    .property-group {
+      margin-bottom: 12px;
+    }
+
+    .property-group label {
+      display: block;
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+      opacity: 0.8;
+    }
+
+    .property-group input, .property-group select {
+      width: 100%;
+      padding: 6px 10px;
+      background: #16213e;
+      border: 1px solid #2c5f8a;
+      color: white;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .property-group input:focus, .property-group select:focus {
+      outline: none;
+      border-color: #e94560;
+    }
+
+    .property-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .property-row .property-group {
+      flex: 1;
+    }
+
+    .status {
+      padding: 10px 20px;
+      background: #0f3460;
+      font-size: 0.7rem;
+      text-align: center;
+      border-top: 1px solid #1a5276;
+    }
+
     .control-panel {
       position: fixed;
       bottom: 20px;
@@ -315,7 +344,6 @@
       background: #1a5276;
     }
 
-    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -334,7 +362,7 @@
       border-radius: 16px;
       max-width: 90%;
       max-height: 90%;
-      width: 800px;
+      width: 900px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -359,8 +387,10 @@
       padding: 15px;
       border-radius: 8px;
       overflow-x: auto;
-      font-size: 12px;
+      font-size: 11px;
       color: #a8e6cf;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
 
     .modal-footer {
@@ -380,58 +410,35 @@
       cursor: pointer;
     }
 
-    /* Property Editor */
-    .property-editor {
-      padding: 15px 20px;
-      background: #0f3460;
-      border-top: 1px solid #1a5276;
-    }
-
-    .property-group {
-      margin-bottom: 12px;
-    }
-
-    .property-group label {
-      display: block;
-      font-size: 0.75rem;
-      margin-bottom: 4px;
-      opacity: 0.8;
-    }
-
-    .property-group input {
-      width: 100%;
-      padding: 6px 10px;
-      background: #16213e;
-      border: 1px solid #2c5f8a;
-      color: white;
-      border-radius: 4px;
-      font-size: 0.85rem;
-    }
-
-    .property-group input:focus {
-      outline: none;
-      border-color: #e94560;
-    }
-
-    .property-row {
+    .tab-buttons {
       display: flex;
       gap: 10px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #0f3460;
+      padding-bottom: 10px;
     }
 
-    .property-row .property-group {
-      flex: 1;
+    .tab-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 5px 15px;
+      border-radius: 4px;
     }
 
-    /* Status */
-    .status {
-      padding: 10px 20px;
-      background: #0f3460;
-      font-size: 0.7rem;
-      text-align: center;
-      border-top: 1px solid #1a5276;
+    .tab-btn.active {
+      background: #e94560;
     }
 
-    /* Scrollbar */
+    .code-content {
+      display: none;
+    }
+
+    .code-content.active {
+      display: block;
+    }
+
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -444,11 +451,16 @@
       background: #e94560;
       border-radius: 4px;
     }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(233,69,96,0.8); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 <body>
 <div class="editor-container">
-  <!-- Left Toolbar -->
   <div class="toolbar">
     <div class="toolbar-header">
       <h2><i class="fas fa-paintbrush"></i> Hotspot Editor</h2>
@@ -458,15 +470,14 @@
     <div class="device-selector">
       <label style="font-size: 0.8rem;">📱 Device Preview</label>
       <div class="device-buttons">
-        <button class="device-btn active" data-device="desktop">🖥️ Desktop (1920×1080)</button>
-        <button class="device-btn" data-device="mobile">📱 Mobile (375×667)</button>
-        <button class="device-btn" data-device="tablet">📟 Tablet (768×1024)</button>
-        <button class="device-btn" data-device="laptop">💻 Laptop (1366×768)</button>
+        <button class="device-btn active" data-device="desktop">🖥️ Desktop</button>
+        <button class="device-btn" data-device="mobile">📱 Mobile</button>
+        <button class="device-btn" data-device="tablet">📟 Tablet</button>
       </div>
     </div>
 
     <div class="hotspot-list">
-      <h4 style="margin-bottom: 15px; font-size: 0.9rem;"><i class="fas fa-circle-dot"></i> Hotspots</h4>
+      <h4><i class="fas fa-circle-dot"></i> Hotspots</h4>
       <div id="hotspotList"></div>
       <button id="addHotspotBtn" style="width: 100%; margin-top: 10px; background: #e94560; border: none; color: white; padding: 8px; border-radius: 6px; cursor: pointer;">
         <i class="fas fa-plus"></i> Add Hotspot
@@ -495,11 +506,11 @@
       </div>
       <div class="property-row">
         <div class="property-group">
-          <label>Label X offset (px)</label>
+          <label>Label X (px)</label>
           <input type="number" id="propLabelX" step="1">
         </div>
         <div class="property-group">
-          <label>Label Y offset (px)</label>
+          <label>Label Y (px)</label>
           <input type="number" id="propLabelY" step="1">
         </div>
       </div>
@@ -509,7 +520,7 @@
       </div>
       <div class="property-group">
         <label>Type</label>
-        <select id="propType" style="width: 100%; padding: 6px; background: #16213e; border: 1px solid #2c5f8a; color: white; border-radius: 4px;">
+        <select id="propType">
           <option value="external">External Link</option>
           <option value="video">YouTube Video</option>
           <option value="pdf">PDF Document</option>
@@ -528,24 +539,21 @@
     </div>
   </div>
 
-  <!-- Preview Area -->
   <div class="preview-area">
-    <div class="artboard-frame desktop-frame" id="artboardFrame">
+    <div class="artboard-frame" id="artboardFrame">
       <div class="artwork-container" id="artworkContainer">
-        <img class="artwork-image" id="artworkImage" src="" alt="Artwork">
+        <img class="artwork-image" id="artworkImage" src="images/bg.jpg" alt="Artwork">
         <div id="hotspotsLayer"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Control Panel -->
 <div class="control-panel">
   <button id="generateCodeBtn" class="secondary"><i class="fas fa-code"></i> Generate Code</button>
-  <button id="resetViewBtn" class="secondary"><i class="fas fa-sync-alt"></i> Reset View</button>
+  <button id="resetViewBtn" class="secondary"><i class="fas fa-sync-alt"></i> Reset</button>
 </div>
 
-<!-- Code Modal -->
 <div class="modal-overlay" id="codeModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -553,14 +561,14 @@
       <button class="close-modal" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
-      <ul class="nav nav-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #0f3460; padding-bottom: 10px;">
-        <li><button class="tab-btn active" data-tab="html" style="background: none; border: none; color: white; cursor: pointer; padding: 5px 10px;">HTML</button></li>
-        <li><button class="tab-btn" data-tab="css" style="background: none; border: none; color: white; cursor: pointer; padding: 5px 10px;">CSS</button></li>
-        <li><button class="tab-btn" data-tab="js" style="background: none; border: none; color: white; cursor: pointer; padding: 5px 10px;">JavaScript</button></li>
-      </ul>
-      <div id="htmlCode" class="code-content"><pre id="htmlPre"></pre></div>
-      <div id="cssCode" class="code-content" style="display: none;"><pre id="cssPre"></pre></div>
-      <div id="jsCode" class="code-content" style="display: none;"><pre id="jsPre"></pre></div>
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="html">HTML</button>
+        <button class="tab-btn" data-tab="css">CSS</button>
+        <button class="tab-btn" data-tab="js">JavaScript</button>
+      </div>
+      <div id="htmlCode" class="code-content active"><pre id="htmlPre"></pre></div>
+      <div id="cssCode" class="code-content"><pre id="cssPre"></pre></div>
+      <div id="jsCode" class="code-content"><pre id="jsPre"></pre></div>
     </div>
     <div class="modal-footer">
       <button class="close-modal" onclick="copyCode()">📋 Copy All</button>
@@ -576,6 +584,7 @@
 let hotspots = [];
 let selectedHotspotId = null;
 let currentArtboard = 'desktop';
+let currentDevice = 'desktop';
 let isDragging = false;
 let dragTarget = null;
 let dragStartX = 0, dragStartY = 0;
@@ -584,9 +593,7 @@ let isResizing = false;
 let resizeTarget = null;
 let resizeStartX = 0, resizeStartY = 0;
 let resizeStartSize = 0;
-let currentDevice = 'desktop';
 
-// Label image mapping
 const labelImages = {
   'Boek Een Naslagwerkje': 'images/Boek-naslagwerkje.png',
   'Light Cone': 'images/LightCone.png',
@@ -601,7 +608,6 @@ const labelImages = {
   'Exit': 'images/Exit.png'
 };
 
-// Default hotspots
 const defaultHotspots = [
   { id: 'hotspot-1', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', x: 15, y: 26, dotSize: 75, dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', labelX: 0, labelY: 40, labelScale: 0.6 },
   { id: 'hotspot-2', name: 'Light Cone', type: 'external', url: 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen', x: 37, y: 70, dotSize: 50, dotImage: 'reddot-02.png', labelImage: 'images/LightCone.png', labelX: -225, labelY: -160, labelScale: 0.65 },
@@ -616,7 +622,6 @@ const defaultHotspots = [
   { id: 'hotspot-11', name: 'Exit', type: 'exit', url: '#', x: 83.1, y: 83.5, dotSize: 75, dotImage: 'reddot-10.png', labelImage: 'images/Exit.png', labelX: -225, labelY: -95, labelScale: 0.75 }
 ];
 
-// Default mobile hotspots
 const defaultMobileHotspots = [
   { id: 'mob-hotspot-1', name: 'Films', type: 'pdf', url: '/images/Filmografie-Francien-van-Everdingen.pdf', x: 29, y: 2, dotSize: 44, dotImage: 'reddot-09.png', labelImage: 'images/Films.png', labelX: -24, labelY: 16, labelScale: 0.56 },
   { id: 'mob-hotspot-2', name: 'Stichting Lezeren', type: 'external', url: 'http://www.lezeren.nl', x: 86, y: 7, dotSize: 62, dotImage: 'reddot-05.png', labelImage: 'images/StichtingLezeren.png', labelX: -96, labelY: -8, labelScale: 0.5 },
@@ -632,6 +637,7 @@ function initHotspots() {
   }
   renderHotspotList();
   renderHotspotsOnCanvas();
+  updateStatus('Hotspots loaded');
 }
 
 function renderHotspotList() {
@@ -693,7 +699,6 @@ function updateHotspotFromProps() {
     hotspot.type = document.getElementById('propType').value;
     hotspot.url = document.getElementById('propUrl').value;
     
-    // Update label image based on name
     if (labelImages[hotspot.name]) {
       hotspot.labelImage = labelImages[hotspot.name];
     }
@@ -718,7 +723,6 @@ function focusHotspot(id) {
   const hotspot = hotspots.find(h => h.id === id);
   if (hotspot) {
     updateStatus(`Focused on ${hotspot.name} - X:${hotspot.x}%, Y:${hotspot.y}%`);
-    // Scroll into view in preview
     const dotElement = document.querySelector(`[data-hotspot-id="${id}"]`);
     if (dotElement) {
       dotElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -756,9 +760,6 @@ function renderHotspotsOnCanvas() {
   if (!container) return;
   
   container.innerHTML = '';
-  const artboardRect = document.getElementById('artworkContainer').getBoundingClientRect();
-  const imgRect = document.getElementById('artworkImage').getBoundingClientRect();
-  const containerRect = document.getElementById('artworkContainer').getBoundingClientRect();
   
   hotspots.forEach(hotspot => {
     const wrapper = document.createElement('div');
@@ -771,21 +772,16 @@ function renderHotspotsOnCanvas() {
     wrapper.style.height = `${hotspot.dotSize}px`;
     wrapper.style.cursor = 'move';
     
-    // Dot
     const dot = document.createElement('div');
     dot.className = 'hotspot-dot';
-    dot.style.width = '100%';
-    dot.style.height = '100%';
     dot.style.backgroundImage = `url('images/${hotspot.dotImage}')`;
     wrapper.appendChild(dot);
     
-    // Resize handle
     const resizeHandle = document.createElement('div');
     resizeHandle.className = 'resize-handle se';
     resizeHandle.onmousedown = (e) => startResize(e, hotspot.id);
     wrapper.appendChild(resizeHandle);
     
-    // Label
     const label = document.createElement('div');
     label.className = 'label-editor';
     label.style.position = 'absolute';
@@ -800,10 +796,8 @@ function renderHotspotsOnCanvas() {
     labelImg.alt = hotspot.name;
     labelImg.style.maxWidth = 'none';
     label.appendChild(labelImg);
-    
     wrapper.appendChild(label);
     
-    // Drag handlers
     wrapper.onmousedown = (e) => {
       if (e.target === resizeHandle) return;
       e.preventDefault();
@@ -847,8 +841,8 @@ function onDrag(e) {
   hotspot.y = Math.min(100, Math.max(0, newY));
   
   if (selectedHotspotId === dragTarget) {
-    document.getElementById('propX').value = hotspot.x;
-    document.getElementById('propY').value = hotspot.y;
+    document.getElementById('propX').value = hotspot.x.toFixed(1);
+    document.getElementById('propY').value = hotspot.y.toFixed(1);
   }
   
   renderHotspotsOnCanvas();
@@ -861,7 +855,7 @@ function stopDrag() {
   document.removeEventListener('mouseup', stopDrag);
   if (selectedHotspotId) {
     const hotspot = hotspots.find(h => h.id === selectedHotspotId);
-    if (hotspot) updateStatus(`Updated position: X=${hotspot.x.toFixed(1)}%, Y=${hotspot.y.toFixed(1)}%`);
+    if (hotspot) updateStatus(`Position: X=${hotspot.x.toFixed(1)}%, Y=${hotspot.y.toFixed(1)}%`);
   }
 }
 
@@ -904,49 +898,21 @@ function stopResize() {
   document.removeEventListener('mouseup', stopResize);
   if (selectedHotspotId) {
     const hotspot = hotspots.find(h => h.id === selectedHotspotId);
-    if (hotspot) updateStatus(`Updated dot size: ${hotspot.dotSize}px`);
+    if (hotspot) updateStatus(`Dot size: ${hotspot.dotSize}px`);
   }
 }
 
-// Property change listeners
-document.getElementById('propName')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propX')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propY')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propDotSize')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propLabelX')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propLabelY')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propLabelScale')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propType')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('propUrl')?.addEventListener('change', updateHotspotFromProps);
-document.getElementById('addHotspotBtn')?.addEventListener('click', addHotspot);
-
-// Device switching
 function switchDevice(device) {
   currentDevice = device;
   const frame = document.getElementById('artboardFrame');
   const image = document.getElementById('artworkImage');
   
-  // Update frame class
-  frame.classList.remove('desktop-frame', 'mobile-frame');
-  if (device === 'mobile') {
-    frame.classList.add('mobile-frame');
-    image.src = 'images/mobile-bg.jpg';
-    currentArtboard = 'mobile';
-  } else {
-    frame.classList.add('desktop-frame');
-    image.src = 'images/bg.jpg';
-    currentArtboard = 'desktop';
-  }
-  
-  // Add different dimensions for preview
   if (device === 'mobile') {
     frame.style.width = '375px';
+    image.src = 'images/mobile-bg.jpg';
+    currentArtboard = 'mobile';
   } else if (device === 'tablet') {
     frame.style.width = '768px';
-    image.src = 'images/bg.jpg';
-    currentArtboard = 'desktop';
-  } else if (device === 'laptop') {
-    frame.style.width = '1366px';
     image.src = 'images/bg.jpg';
     currentArtboard = 'desktop';
   } else {
@@ -960,14 +926,6 @@ function switchDevice(device) {
   updateStatus(`Switched to ${device} view`);
 }
 
-document.querySelectorAll('.device-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    switchDevice(btn.getAttribute('data-device'));
-  });
-});
-
 function updateStatus(msg) {
   const statusDiv = document.getElementById('status');
   if (statusDiv) {
@@ -980,67 +938,68 @@ function updateStatus(msg) {
   }
 }
 
-// Generate final code
 function generateFinalCode() {
-  const htmlCode = generateHTML();
-  const cssCode = generateCSS();
-  const jsCode = generateJS();
+  const desktopConfig = hotspots.filter(h => h.id.startsWith('hotspot-')).map(h => ({
+    id: h.id, name: h.name, type: h.type, url: h.url,
+    x: h.x, y: h.y, dotSize: h.dotSize, dotImage: h.dotImage,
+    labelImage: h.labelImage, labelX: h.labelX, labelY: h.labelY, labelScale: h.labelScale
+  }));
   
-  document.getElementById('htmlPre').textContent = htmlCode;
-  document.getElementById('cssPre').textContent = cssCode;
-  document.getElementById('jsPre').textContent = jsCode;
+  const mobileConfig = hotspots.filter(h => h.id.startsWith('mob-hotspot-')).map(h => ({
+    id: h.id, name: h.name, type: h.type, url: h.url,
+    x: h.x, y: h.y, dotSize: h.dotSize, dotImage: h.dotImage,
+    labelImage: h.labelImage, labelX: h.labelX, labelY: h.labelY, labelScale: h.labelScale
+  }));
+  
+  document.getElementById('htmlPre').textContent = generateHTML();
+  document.getElementById('cssPre').textContent = generateCSS();
+  document.getElementById('jsPre').textContent = generateJS(desktopConfig, mobileConfig);
   
   document.getElementById('codeModal').style.display = 'flex';
-  updateStatus('Code generated! Check the modal');
+  updateStatus('Code generated!');
 }
 
 function generateHTML() {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Francien van Everdingen - Interactive Artwork</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="css/artboard-2.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Francien van Everdingen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/artboard-2.css">
 </head>
 <body>
-  <main class="page-shell">
-    <!-- DESKTOP ARTWORK -->
-    <div class="artboard artboard--desktop" data-artboard="desktop">
+  <main>
+    <div class="artboard artboard--desktop">
       <div class="artboard__container">
-        <img class="artboard__image" src="images/bg.jpg" alt="Desktop artwork" />
+        <img src="images/bg.jpg" alt="Desktop artwork">
         <div class="hotspots-container"></div>
       </div>
     </div>
-
-    <!-- MOBILE ARTWORK -->
-    <div class="artboard artboard--mobile" data-artboard="mobile">
+    <div class="artboard artboard--mobile">
       <div class="artboard__container">
-        <img class="artboard__image" src="images/mobile-bg.jpg" alt="Mobile artwork" />
+        <img src="images/mobile-bg.jpg" alt="Mobile artwork">
         <div class="hotspots-container"></div>
       </div>
     </div>
   </main>
-
-  <!-- MODAL FOR MEDIA -->
-  <div class="modal fade modal-dark" id="mediaModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
+  <div class="modal fade" id="mediaModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content bg-dark text-white">
         <div class="modal-body p-0">
           <div id="videoContainer" class="ratio ratio-16x9 d-none">
-            <iframe id="youtubeVideo" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe id="youtubeVideo" allowfullscreen></iframe>
           </div>
           <div id="pdfContainer" class="d-none"></div>
           <div id="imageContainer" class="d-none text-center p-2">
-            <img id="modalImage" src="" alt="Preview" />
+            <img id="modalImage" style="max-width:100%">
           </div>
         </div>
-        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"></button>
       </div>
     </div>
   </div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/artboard-2.js"></script>
@@ -1049,414 +1008,79 @@ function generateHTML() {
 }
 
 function generateCSS() {
-  return `* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  return `*{margin:0;padding:0;box-sizing:border-box}
+body{background:#dbe4f3;min-height:100vh}
+.artboard{display:none;width:100%}
+.artboard--desktop.active,.artboard--mobile.active{display:block}
+.artboard__container{position:relative;margin:0 auto}
+.artboard--desktop .artboard__container{max-width:1400px}
+.artboard--mobile .artboard__container{max-width:480px}
+.artboard__image{display:block;width:100%;height:auto;pointer-events:none}
+.hotspots-container{position:absolute;top:0;left:0;width:100%;height:100%}
+.hotspot{position:absolute;cursor:pointer;z-index:10}
+.hotspot__dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;transition:transform 0.2s}
+.hotspot:hover .hotspot__dot{transform:translate(-50%,-50%) scale(1.1)}
+.hotspot__label{position:absolute;pointer-events:none;transform-origin:top left}
+.hotspot__label img{display:block}
+#pdfContainer{max-height:80vh;overflow-y:auto;background:#111;padding:10px}
+#pdfContainer canvas{display:block;width:100%;height:auto;margin:0 auto 20px}
+@media(min-width:768px)and(orientation:landscape){.artboard--desktop.active{display:block}.artboard--mobile.active{display:none}}
+@media(max-width:767px),(orientation:portrait){.artboard--desktop.active{display:none}.artboard--mobile.active{display:block}}`;
 }
 
-body {
-  background: #dbe4f3;
-  min-height: 100vh;
-}
-
-.page-shell {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.artboard {
-  display: none;
-  width: 100%;
-}
-
-.artboard--desktop.active,
-.artboard--mobile.active {
-  display: block;
-}
-
-.artboard__container {
-  position: relative;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.artboard--desktop .artboard__container {
-  max-width: 1400px;
-}
-
-.artboard--mobile .artboard__container {
-  max-width: 480px;
-}
-
-.artboard__image {
-  display: block;
-  width: 100%;
-  height: auto;
-  user-select: none;
-  pointer-events: none;
-}
-
-.hotspots-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.hotspot {
-  position: absolute;
-  cursor: pointer;
-  z-index: 10;
-  display: block;
-  text-decoration: none;
-}
-
-.hotspot__dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  transition: transform 0.2s ease;
-}
-
-.hotspot:hover .hotspot__dot {
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.hotspot__label {
-  position: absolute;
-  pointer-events: none;
-  transform-origin: top left;
-}
-
-.hotspot__label img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: none;
-}
-
-.modal-dark .modal-content {
-  background: #222;
-  color: #fff;
-}
-
-.btn-close-white {
-  filter: invert(1) grayscale(100%) brightness(200%);
-  z-index: 1051;
-}
-
-#pdfContainer {
-  max-height: 80vh;
-  overflow-y: auto;
-  background: #111;
-  padding: 10px;
-}
-
-#pdfContainer canvas {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin: 0 auto 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-#imageContainer img {
-  max-width: 100%;
-  max-height: 80vh;
-  object-fit: contain;
-}
-
-@media (min-width: 768px) and (orientation: landscape) {
-  .artboard--desktop.active { display: block; }
-  .artboard--mobile.active { display: none; }
-}
-
-@media (max-width: 767px), (orientation: portrait) {
-  .artboard--desktop.active { display: none; }
-  .artboard--mobile.active { display: block; }
-}
-
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-  .artboard--desktop.active { display: none; }
-  .artboard--mobile.active { display: block; }
-  .artboard--mobile .artboard__container { max-width: 700px; }
-}`;
-}
-
-function generateJS() {
-  const desktopConfig = hotspots.filter(h => h.id.startsWith('hotspot-')).map(h => ({
-    id: h.id,
-    name: h.name,
-    type: h.type,
-    url: h.url,
-    x: h.x,
-    y: h.y,
-    dotSize: h.dotSize,
-    dotImage: h.dotImage,
-    labelImage: h.labelImage,
-    labelX: h.labelX,
-    labelY: h.labelY,
-    labelScale: h.labelScale
-  }));
-  
-  const mobileConfig = hotspots.filter(h => h.id.startsWith('mob-hotspot-')).map(h => ({
-    id: h.id,
-    name: h.name,
-    type: h.type,
-    url: h.url,
-    x: h.x,
-    y: h.y,
-    dotSize: h.dotSize,
-    dotImage: h.dotImage,
-    labelImage: h.labelImage,
-    labelX: h.labelX,
-    labelY: h.labelY,
-    labelScale: h.labelScale
-  }));
-  
-  return `// Auto-generated from Visual Editor
-const hotspotsConfig = {
-  desktop: ${JSON.stringify(desktopConfig, null, 2)},
-  mobile: ${JSON.stringify(mobileConfig, null, 2)}
-};
-
-const decorativeDots = {
-  desktop: [
-    { x: 43, y: 9, size: 60, dotImage: 'reddot-11.png' },
-    { x: 59.8, y: 72.7, size: 50, dotImage: 'reddot-15.png' },
-    { x: 57, y: 29.5, size: 70, dotImage: 'reddot-16.png' },
-    { x: 77.1, y: 63, size: 60, dotImage: 'reddot-17.png' },
-    { x: 96.2, y: 41, size: 54, dotImage: 'reddot-18.png' },
-    { x: 56.5, y: 20, size: 59, dotImage: 'reddot-19.png' },
-    { x: 48, y: 85, size: 55, dotImage: 'reddot-20.png' },
-    { x: 72, y: 14, size: 80, dotImage: 'reddot-21.png' },
-    { x: 4.5, y: 86, size: 59, dotImage: 'reddot-22.png' },
-    { x: 37.5, y: 64, size: 59, dotImage: 'reddot-23.png' }
-  ],
-  mobile: [
-    { x: 28, y: 40, size: 28, dotImage: 'reddot-08.png' },
-    { x: 56, y: 86, size: 24, dotImage: 'reddot-11.png' }
-  ]
-};
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-const mediaModal = document.getElementById('mediaModal');
-const videoContainer = document.getElementById('videoContainer');
-const youtubeVideo = document.getElementById('youtubeVideo');
-const pdfContainer = document.getElementById('pdfContainer');
-const imageContainer = document.getElementById('imageContainer');
-const modalImage = document.getElementById('modalImage');
-
-function createHotspot(config) {
-  const link = document.createElement('a');
-  link.className = 'hotspot';
-  link.style.left = config.x + '%';
-  link.style.top = config.y + '%';
-  
-  const dot = document.createElement('div');
-  dot.className = 'hotspot__dot';
-  dot.style.backgroundImage = \`url('images/\${config.dotImage}')\`;
-  dot.style.width = config.dotSize + 'px';
-  dot.style.height = config.dotSize + 'px';
-  dot.style.marginLeft = -(config.dotSize / 2) + 'px';
-  dot.style.marginTop = -(config.dotSize / 2) + 'px';
-  
-  const label = document.createElement('div');
-  label.className = 'hotspot__label';
-  const labelImg = document.createElement('img');
-  labelImg.src = config.labelImage;
-  labelImg.alt = config.name;
-  label.appendChild(labelImg);
-  label.style.left = config.labelX + 'px';
-  label.style.top = config.labelY + 'px';
-  label.style.transform = \`scale(\${config.labelScale})\`;
-  
-  link.appendChild(dot);
-  link.appendChild(label);
-  
-  if (config.type === 'external') {
-    link.href = config.url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-  } else if (config.type === 'exit') {
-    link.href = '#';
-    link.onclick = (e) => { e.preventDefault(); window.close(); return false; };
-  } else {
-    link.href = '#';
-    link.setAttribute('data-bs-toggle', 'modal');
-    link.setAttribute('data-bs-target', '#mediaModal');
-    link.setAttribute('data-type', config.type);
-    link.setAttribute('data-src', config.url);
-  }
-  
-  return link;
-}
-
-function createDecorativeDot(config) {
-  const dot = document.createElement('span');
-  dot.className = 'hotspot hotspot--decor';
-  dot.style.position = 'absolute';
-  dot.style.left = config.x + '%';
-  dot.style.top = config.y + '%';
-  dot.style.width = config.size + 'px';
-  dot.style.height = config.size + 'px';
-  dot.style.marginLeft = -(config.size / 2) + 'px';
-  dot.style.marginTop = -(config.size / 2) + 'px';
-  dot.style.backgroundImage = \`url('images/\${config.dotImage}')\`;
-  dot.style.backgroundSize = 'contain';
-  dot.style.backgroundRepeat = 'no-repeat';
-  dot.style.backgroundPosition = 'center';
-  dot.style.pointerEvents = 'none';
-  return dot;
-}
-
-function renderArtboard(artboardType) {
-  const artboard = document.querySelector(\`.artboard--\${artboardType}\`);
-  if (!artboard) return;
-  const container = artboard.querySelector('.hotspots-container');
-  if (!container) return;
-  container.innerHTML = '';
-  
-  const hotspots = hotspotsConfig[artboardType];
-  if (hotspots) {
-    hotspots.forEach(config => {
-      container.appendChild(createHotspot(config));
-    });
-  }
-  
-  const decorDots = decorativeDots[artboardType];
-  if (decorDots) {
-    decorDots.forEach(config => {
-      container.appendChild(createDecorativeDot(config));
-    });
-  }
-}
-
-async function renderPDF(url) {
-  try {
-    pdfContainer.innerHTML = '<div class="text-center p-4 text-white">Loading PDF...</div>';
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(\`HTTP error! status: \${response.status}\`);
-    const arrayBuffer = await response.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    pdfContainer.innerHTML = '';
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      const page = await pdf.getPage(pageNum);
-      const viewport = page.getViewport({ scale: 1.5 });
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      canvas.style.width = '100%';
-      canvas.style.height = 'auto';
-      await page.render({ canvasContext: context, viewport }).promise;
-      pdfContainer.appendChild(canvas);
-    }
-  } catch (error) {
-    console.error('Error loading PDF:', error);
-    pdfContainer.innerHTML = '<div class="alert alert-danger m-3">Error loading PDF. Please try again later.</div>';
-  }
-}
-
-if (mediaModal) {
-  mediaModal.addEventListener('show.bs.modal', async (event) => {
-    const button = event.relatedTarget;
-    const type = button?.getAttribute('data-type');
-    const src = button?.getAttribute('data-src');
-    videoContainer.classList.add('d-none');
-    pdfContainer.classList.add('d-none');
-    imageContainer.classList.add('d-none');
-    pdfContainer.innerHTML = '';
-    if (type === 'video' && src) {
-      videoContainer.classList.remove('d-none');
-      const separator = src.includes('?') ? '&' : '?';
-      youtubeVideo.src = src + separator + 'autoplay=1&rel=0';
-    } else if (type === 'pdf' && src) {
-      pdfContainer.classList.remove('d-none');
-      await renderPDF(src);
-    } else if (type === 'image' && src) {
-      imageContainer.classList.remove('d-none');
-      modalImage.src = src;
-    }
-  });
-  mediaModal.addEventListener('hidden.bs.modal', () => {
-    youtubeVideo.src = '';
-    pdfContainer.innerHTML = '';
-    modalImage.src = '';
-  });
-}
-
-function setActiveArtboard() {
-  const isMobile = window.innerWidth <= 767 || window.matchMedia('(orientation: portrait)').matches;
-  const desktopArtboard = document.querySelector('.artboard--desktop');
-  const mobileArtboard = document.querySelector('.artboard--mobile');
-  if (desktopArtboard && mobileArtboard) {
-    if (isMobile) {
-      desktopArtboard.classList.remove('active');
-      mobileArtboard.classList.add('active');
-    } else {
-      desktopArtboard.classList.add('active');
-      mobileArtboard.classList.remove('active');
-    }
-  }
-}
-
-function init() {
-  renderArtboard('desktop');
-  renderArtboard('mobile');
-  setActiveArtboard();
-  window.addEventListener('resize', setActiveArtboard);
-  window.addEventListener('orientationchange', setActiveArtboard);
-}
-
-document.addEventListener('DOMContentLoaded', init);`;
+function generateJS(desktopConfig, mobileConfig) {
+  return `const hotspotsConfig={desktop:${JSON.stringify(desktopConfig,null,2)},mobile:${JSON.stringify(mobileConfig,null,2)}};
+const decorativeDots={desktop:[{x:43,y:9,size:60,dotImage:"reddot-11.png"},{x:59.8,y:72.7,size:50,dotImage:"reddot-15.png"},{x:57,y:29.5,size:70,dotImage:"reddot-16.png"},{x:77.1,y:63,size:60,dotImage:"reddot-17.png"},{x:96.2,y:41,size:54,dotImage:"reddot-18.png"},{x:56.5,y:20,size:59,dotImage:"reddot-19.png"},{x:48,y:85,size:55,dotImage:"reddot-20.png"},{x:72,y:14,size:80,dotImage:"reddot-21.png"},{x:4.5,y:86,size:59,dotImage:"reddot-22.png"},{x:37.5,y:64,size:59,dotImage:"reddot-23.png"}],mobile:[{x:28,y:40,size:28,dotImage:"reddot-08.png"},{x:56,y:86,size:24,dotImage:"reddot-11.png"}]};
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+function createHotspot(c){let a=document.createElement("a");a.className="hotspot";a.style.left=c.x+"%";a.style.top=c.y+"%";let d=document.createElement("div");d.className="hotspot__dot";d.style.backgroundImage="url('images/"+c.dotImage+"')";d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";let l=document.createElement("div");l.className="hotspot__label";let i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;l.appendChild(i);l.style.left=c.labelX+"px";l.style.top=c.labelY+"px";l.style.transform="scale("+c.labelScale+")";a.appendChild(d);a.appendChild(l);if(c.type==="external"){a.href=c.url;a.target="_blank";a.rel="noopener noreferrer"}else if(c.type==="exit"){a.href="#";a.onclick=(e)=>{e.preventDefault();window.close();return false}}else{a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}return a}
+function renderArtboard(t){let a=document.querySelector(".artboard--"+t);if(!a)return;let c=a.querySelector(".hotspots-container");if(!c)return;c.innerHTML="";(hotspotsConfig[t]||[]).forEach(h=>c.appendChild(createHotspot(h)));(decorativeDots[t]||[]).forEach(d=>{let s=document.createElement("span");s.className="hotspot";s.style.position="absolute";s.style.left=d.x+"%";s.style.top=d.y+"%";s.style.width=d.size+"px";s.style.height=d.size+"px";s.style.marginLeft=-(d.size/2)+"px";s.style.marginTop=-(d.size/2)+"px";s.style.backgroundImage="url('images/"+d.dotImage+"')";s.style.backgroundSize="contain";s.style.backgroundRepeat="no-repeat";s.style.pointerEvents="none";c.appendChild(s)})}
+async function renderPDF(u){let c=document.getElementById("pdfContainer");c.innerHTML='<div class="text-center p-4">Loading...</div>';try{let r=await fetch(u);let b=await r.arrayBuffer();let p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";for(let i=1;i<=p.numPages;i++){let page=await p.getPage(i);let v=page.getViewport({scale:1.5});let can=document.createElement("canvas");can.width=v.width;can.height=v.height;can.style.width="100%";await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;c.appendChild(can)}}catch(e){c.innerHTML='<div class="alert alert-danger">Error loading PDF</div>'}}
+document.addEventListener("DOMContentLoaded",()=>{renderArtboard("desktop");renderArtboard("mobile");let setActive=()=>{let m=window.innerWidth<=767||matchMedia("(orientation: portrait)").matches;document.querySelector(".artboard--desktop").classList.toggle("active",!m);document.querySelector(".artboard--mobile").classList.toggle("active",m)};setActive();window.addEventListener("resize",setActive)});
+let modal=document.getElementById("mediaModal");if(modal){modal.addEventListener("show.bs.modal",async(e)=>{let t=e.relatedTarget;let type=t?.getAttribute("data-type");let src=t?.getAttribute("data-src");let vc=document.getElementById("videoContainer");let pc=document.getElementById("pdfContainer");let ic=document.getElementById("imageContainer");vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");if(type==="video"&&src){vc.classList.remove("d-none");let yt=document.getElementById("youtubeVideo");yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1"}else if(type==="pdf"&&src){pc.classList.remove("d-none");await renderPDF(src)}else if(type==="image"&&src){ic.classList.remove("d-none");document.getElementById("modalImage").src=src}});modal.addEventListener("hidden.bs.modal",()=>{let yt=document.getElementById("youtubeVideo");if(yt)yt.src="";document.getElementById("pdfContainer").innerHTML="";document.getElementById("modalImage").src=""})}`;
 }
 
 function copyCode() {
   const html = document.getElementById('htmlPre').textContent;
   const css = document.getElementById('cssPre').textContent;
   const js = document.getElementById('jsPre').textContent;
-  const fullCode = `<!-- HTML -->\n${html}\n\n<!-- CSS -->\n${css}\n\n<!-- JS -->\n${js}`;
-  navigator.clipboard.writeText(fullCode);
-  updateStatus('Code copied to clipboard!');
+  navigator.clipboard.writeText(`<!-- HTML -->\n${html}\n\n<!-- CSS -->\n${css}\n\n<!-- JS -->\n${js}`);
+  updateStatus('Code copied!');
 }
 
 function closeModal() {
   document.getElementById('codeModal').style.display = 'none';
 }
 
-// Tab switching in modal
+// Event listeners
+document.getElementById('propName')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propX')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propY')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propDotSize')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propLabelX')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propLabelY')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propLabelScale')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propType')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('propUrl')?.addEventListener('change', updateHotspotFromProps);
+document.getElementById('addHotspotBtn')?.addEventListener('click', addHotspot);
+document.getElementById('generateCodeBtn')?.addEventListener('click', generateFinalCode);
+document.getElementById('resetViewBtn')?.addEventListener('click', () => { initHotspots(); updateStatus('Reset to defaults'); });
+
+document.querySelectorAll('.device-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    switchDevice(btn.getAttribute('data-device'));
+  });
+});
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.code-content').forEach(c => c.style.display = 'none');
-    document.getElementById(btn.getAttribute('data-tab') + 'Code').style.display = 'block';
+    document.querySelectorAll('.code-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(btn.getAttribute('data-tab') + 'Code').classList.add('active');
   });
 });
-
-document.getElementById('generateCodeBtn')?.addEventListener('click', generateFinalCode);
-document.getElementById('resetViewBtn')?.addEventListener('click', () => {
-  initHotspots();
-  updateStatus('Reset to default hotspots');
-});
-
-// Add pulse animation
-const style = document.createElement('style');
-style.textContent = `@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(233,69,96,0.8); } 100% { transform: scale(1); } }`;
-document.head.appendChild(style);
 
 // Initialize
 document.getElementById('artworkImage').src = 'images/bg.jpg';
