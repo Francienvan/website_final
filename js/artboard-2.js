@@ -10,13 +10,14 @@ const hotspotsConfig = {
       name: 'Boek Een Naslagwerkje',
       type: 'video',
       url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI',
-      x: 15,              // percentage from left
-      y: 26,              // percentage from top
-      dotSize: 75,        // size in pixels (will scale with container)
+      x: 15,
+      y: 26,
+      dotSize: 75,
+      dotImage: 'reddot-01.png',
       labelImage: 'images/Boek-naslagwerkje.png',
-      labelX: 0,          // pixels offset from dot center
-      labelY: 40,         // pixels offset from dot center
-      labelScale: 0.6     // scale factor for label
+      labelX: 0,
+      labelY: 40,
+      labelScale: 0.6
     },
     {
       id: 'hotspot-02',
@@ -26,6 +27,7 @@ const hotspotsConfig = {
       x: 37,
       y: 70,
       dotSize: 50,
+      dotImage: 'reddot-02.png',
       labelImage: 'images/LightCone.png',
       labelX: -225,
       labelY: -160,
@@ -39,6 +41,7 @@ const hotspotsConfig = {
       x: 33.7,
       y: 40.2,
       dotSize: 59,
+      dotImage: 'reddot-03.png',
       labelImage: 'images/Allerlei.png',
       labelX: -220,
       labelY: 25,
@@ -52,6 +55,7 @@ const hotspotsConfig = {
       x: 46,
       y: 53,
       dotSize: 59,
+      dotImage: 'reddot-04.png',
       labelImage: 'images/Stof.png',
       labelX: 1,
       labelY: 45,
@@ -65,6 +69,7 @@ const hotspotsConfig = {
       x: 85,
       y: 25,
       dotSize: 95,
+      dotImage: 'reddot-04.png',
       labelImage: 'images/Contact.png',
       labelX: -275,
       labelY: 5,
@@ -78,6 +83,7 @@ const hotspotsConfig = {
       x: 17,
       y: 56.8,
       dotSize: 125,
+      dotImage: 'reddot-05.png',
       labelImage: 'images/StichtingLezeren.png',
       labelX: -115,
       labelY: 85,
@@ -91,6 +97,7 @@ const hotspotsConfig = {
       x: 26,
       y: 80,
       dotSize: 60,
+      dotImage: 'reddot-06.png',
       labelImage: 'images/Nederlandseles.png',
       labelX: -470,
       labelY: -165,
@@ -104,6 +111,7 @@ const hotspotsConfig = {
       x: 57.5,
       y: 50,
       dotSize: 80,
+      dotImage: 'reddot-08.png',
       labelImage: 'images/Boek-letters.png',
       labelX: -180,
       labelY: -185,
@@ -117,6 +125,7 @@ const hotspotsConfig = {
       x: 69,
       y: 40,
       dotSize: 70,
+      dotImage: 'reddot-09.png',
       labelImage: 'images/Films.png',
       labelX: -100,
       labelY: 75,
@@ -130,6 +139,7 @@ const hotspotsConfig = {
       x: 38.1,
       y: 36,
       dotSize: 120,
+      dotImage: 'reddot-10.png',
       labelImage: 'images/CV.png',
       labelX: 62,
       labelY: -265,
@@ -143,6 +153,7 @@ const hotspotsConfig = {
       x: 83.1,
       y: 83.5,
       dotSize: 75,
+      dotImage: 'reddot-10.png',
       labelImage: 'images/Exit.png',
       labelX: -225,
       labelY: -95,
@@ -159,6 +170,7 @@ const hotspotsConfig = {
       x: 29,
       y: 2,
       dotSize: 44,
+      dotImage: 'reddot-09.png',
       labelImage: 'images/Films.png',
       labelX: -24,
       labelY: 16,
@@ -172,6 +184,7 @@ const hotspotsConfig = {
       x: 86,
       y: 7,
       dotSize: 62,
+      dotImage: 'reddot-05.png',
       labelImage: 'images/StichtingLezeren.png',
       labelX: -96,
       labelY: -8,
@@ -185,6 +198,7 @@ const hotspotsConfig = {
       x: 49,
       y: 15,
       dotSize: 64,
+      dotImage: 'reddot-04.png',
       labelImage: 'images/Stof.png',
       labelX: -18,
       labelY: -6,
@@ -198,6 +212,7 @@ const hotspotsConfig = {
       x: 54,
       y: 33,
       dotSize: 70,
+      dotImage: 'reddot-01.png',
       labelImage: 'images/Boek-naslagwerkje.png',
       labelX: -10,
       labelY: 10,
@@ -211,6 +226,7 @@ const hotspotsConfig = {
       x: 22,
       y: 53,
       dotSize: 38,
+      dotImage: 'reddot-02.png',
       labelImage: 'images/LightCone-m.png',
       labelX: -6,
       labelY: -12,
@@ -224,6 +240,7 @@ const hotspotsConfig = {
       x: 69,
       y: 64,
       dotSize: 30,
+      dotImage: 'reddot-03.png',
       labelImage: 'images/Allerlei.png',
       labelX: 40,
       labelY: -10,
@@ -237,6 +254,7 @@ const hotspotsConfig = {
       x: 67,
       y: 74,
       dotSize: 28,
+      dotImage: 'reddot-04.png',
       labelImage: 'images/Contact.png',
       labelX: -18,
       labelY: -10,
@@ -250,6 +268,7 @@ const hotspotsConfig = {
       x: 23,
       y: 88,
       dotSize: 30,
+      dotImage: 'reddot-06.png',
       labelImage: 'images/Nederlandseles.png',
       labelX: -4,
       labelY: -10,
@@ -263,6 +282,7 @@ const hotspotsConfig = {
       x: 31,
       y: 96,
       dotSize: 26,
+      dotImage: 'reddot-10.png',
       labelImage: 'images/CV.png',
       labelX: -2,
       labelY: -12,
@@ -276,6 +296,7 @@ const hotspotsConfig = {
       x: 77,
       y: 109,
       dotSize: 34,
+      dotImage: 'reddot-08.png',
       labelImage: 'images/Boek-letters.png',
       labelX: -16,
       labelY: -10,
@@ -289,6 +310,7 @@ const hotspotsConfig = {
       x: 86,
       y: 132,
       dotSize: 34,
+      dotImage: 'reddot-10.png',
       labelImage: 'images/Exit.png',
       labelX: -22,
       labelY: -10,
@@ -303,20 +325,20 @@ const hotspotsConfig = {
 
 const decorativeDots = {
   desktop: [
-    { x: 43, y: 9, size: 60, dotClass: 'dot-11' },
-    { x: 59.8, y: 72.7, size: 50, dotClass: 'dot-15' },
-    { x: 57, y: 29.5, size: 70, dotClass: 'dot-16' },
-    { x: 77.1, y: 63, size: 60, dotClass: 'dot-17' },
-    { x: 96.2, y: 41, size: 54, dotClass: 'dot-18' },
-    { x: 56.5, y: 20, size: 59, dotClass: 'dot-19' },
-    { x: 48, y: 85, size: 55, dotClass: 'dot-20' },
-    { x: 72, y: 14, size: 80, dotClass: 'dot-21' },
-    { x: 4.5, y: 86, size: 59, dotClass: 'dot-22' },
-    { x: 37.5, y: 64, size: 59, dotClass: 'dot-23' }
+    { x: 43, y: 9, size: 60, dotImage: 'reddot-11.png' },
+    { x: 59.8, y: 72.7, size: 50, dotImage: 'reddot-15.png' },
+    { x: 57, y: 29.5, size: 70, dotImage: 'reddot-16.png' },
+    { x: 77.1, y: 63, size: 60, dotImage: 'reddot-17.png' },
+    { x: 96.2, y: 41, size: 54, dotImage: 'reddot-18.png' },
+    { x: 56.5, y: 20, size: 59, dotImage: 'reddot-19.png' },
+    { x: 48, y: 85, size: 55, dotImage: 'reddot-20.png' },
+    { x: 72, y: 14, size: 80, dotImage: 'reddot-21.png' },
+    { x: 4.5, y: 86, size: 59, dotImage: 'reddot-22.png' },
+    { x: 37.5, y: 64, size: 59, dotImage: 'reddot-23.png' }
   ],
   mobile: [
-    { x: 28, y: 40, size: 28, dotClass: 'dot-08' },
-    { x: 56, y: 86, size: 24, dotClass: 'dot-11' }
+    { x: 28, y: 40, size: 28, dotImage: 'reddot-08.png' },
+    { x: 56, y: 86, size: 24, dotImage: 'reddot-11.png' }
   ]
 };
 
@@ -337,7 +359,6 @@ const modalImage = document.getElementById('modalImage');
 
 // Helper function to create a hotspot element
 function createHotspot(config, isDesktop) {
-  const isMobile = !isDesktop;
   const link = document.createElement('a');
   link.className = 'hotspot';
   link.id = config.id;
@@ -349,10 +370,7 @@ function createHotspot(config, isDesktop) {
   // Create dot element
   const dot = document.createElement('div');
   dot.className = 'hotspot__dot';
-  
-  // Generate dot image based on id or use default pattern
-  const dotNumber = config.id.match(/\d+/)[0];
-  dot.style.backgroundImage = `url('images/reddot-${String(dotNumber).padStart(2, '0')}.png')`;
+  dot.style.backgroundImage = `url('images/${config.dotImage}')`;
   
   // Create label element
   const label = document.createElement('div');
@@ -404,13 +422,24 @@ function createDecorativeDot(config) {
   dot.style.height = config.size + 'px';
   dot.style.marginLeft = -(config.size / 2) + 'px';
   dot.style.marginTop = -(config.size / 2) + 'px';
-  dot.style.backgroundImage = `url('images/${config.dotClass}.png')`;
+  dot.style.backgroundImage = `url('images/${config.dotImage}')`;
   dot.style.backgroundSize = 'contain';
   dot.style.backgroundRepeat = 'no-repeat';
   dot.style.backgroundPosition = 'center';
   dot.style.pointerEvents = 'none';
   dot.style.zIndex = '1';
   return dot;
+}
+
+// Set dot size for interactive hotspots
+function setDotSize(hotspot, size) {
+  const dot = hotspot.querySelector('.hotspot__dot');
+  if (dot) {
+    dot.style.width = size + 'px';
+    dot.style.height = size + 'px';
+    dot.style.marginLeft = -(size / 2) + 'px';
+    dot.style.marginTop = -(size / 2) + 'px';
+  }
 }
 
 // Render hotspots for an artboard
@@ -428,16 +457,8 @@ function renderArtboard(artboardType) {
   const hotspots = hotspotsConfig[artboardType];
   if (hotspots) {
     hotspots.forEach(config => {
-      const isDesktop = artboardType === 'desktop';
-      const hotspot = createHotspot(config, isDesktop);
-      
-      // Set dot size
-      const dot = hotspot.querySelector('.hotspot__dot');
-      dot.style.width = config.dotSize + 'px';
-      dot.style.height = config.dotSize + 'px';
-      dot.style.marginLeft = -(config.dotSize / 2) + 'px';
-      dot.style.marginTop = -(config.dotSize / 2) + 'px';
-      
+      const hotspot = createHotspot(config, artboardType === 'desktop');
+      setDotSize(hotspot, config.dotSize);
       container.appendChild(hotspot);
     });
   }
@@ -455,7 +476,7 @@ function renderArtboard(artboardType) {
 // PDF rendering function
 async function renderPDF(url) {
   try {
-    pdfContainer.innerHTML = '<div class="text-center p-4">Loading PDF...</div>';
+    pdfContainer.innerHTML = '<div class="text-center p-4 text-white">Loading PDF...</div>';
     
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -491,7 +512,6 @@ if (mediaModal) {
     const button = event.relatedTarget;
     const type = button?.getAttribute('data-type');
     const src = button?.getAttribute('data-src');
-    const name = button?.getAttribute('data-name');
     
     // Hide all containers
     videoContainer.classList.add('d-none');
@@ -541,12 +561,14 @@ function setActiveArtboard() {
   const desktopArtboard = document.querySelector('.artboard--desktop');
   const mobileArtboard = document.querySelector('.artboard--mobile');
   
-  if (isMobile) {
-    desktopArtboard?.classList.remove('active');
-    mobileArtboard?.classList.add('active');
-  } else {
-    desktopArtboard?.classList.add('active');
-    mobileArtboard?.classList.remove('active');
+  if (desktopArtboard && mobileArtboard) {
+    if (isMobile) {
+      desktopArtboard.classList.remove('active');
+      mobileArtboard.classList.add('active');
+    } else {
+      desktopArtboard.classList.add('active');
+      mobileArtboard.classList.remove('active');
+    }
   }
 }
 
