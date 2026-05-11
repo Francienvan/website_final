@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Breakpoint Hotspot Editor - Francien van Everdingen</title>
+  <title>Hotspot Label Editor - Francien van Everdingen</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -12,11 +12,12 @@
     
     .editor-container { display: flex; height: 100vh; width: 100vw; position: relative; }
     
+    /* Draggable Sidebar */
     .sidebar { 
       background: #1a1a2e; 
       color: white; 
-      width: 320px; 
-      min-width: 220px;
+      width: 340px; 
+      min-width: 280px;
       max-width: 500px;
       display: flex; 
       flex-direction: column; 
@@ -25,7 +26,7 @@
       z-index: 100;
       position: relative;
     }
-    .sidebar-resize-handle {
+    .resize-handle {
       position: absolute;
       right: -4px;
       top: 0;
@@ -35,46 +36,47 @@
       background: transparent;
       z-index: 101;
     }
-    .sidebar-resize-handle:hover { background: #e94560; opacity: 0.5; }
+    .resize-handle:hover { background: #e94560; opacity: 0.5; }
     
     .sidebar-header { padding: 20px; background: #0f3460; }
-    .sidebar-header h2 { margin: 0 0 5px; font-size: 1.2rem; }
-    .sidebar-header p { margin: 0; font-size: 0.7rem; opacity: 0.7; }
+    .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+    .sidebar-header p { font-size: 0.7rem; opacity: 0.7; margin-top: 5px; }
     
     .breakpoint-section { padding: 15px 20px; background: #16213e; border-bottom: 1px solid #0f3460; }
     .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; color: #e94560; }
-    .breakpoint-selector { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; max-height: 200px; overflow-y: auto; }
-    .breakpoint-btn { background: #0f3460; border: 1px solid #2c5f8a; color: white; padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.6rem; transition: all 0.2s; white-space: nowrap; }
+    .breakpoint-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 15px; max-height: 200px; overflow-y: auto; }
+    .breakpoint-btn { background: #0f3460; border: 1px solid #2c5f8a; color: white; padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 0.6rem; transition: all 0.2s; text-align: center; }
     .breakpoint-btn:hover { background: #1a5276; }
     .breakpoint-btn.active { background: #e94560; border-color: #e94560; }
     .breakpoint-btn.customized { border-left: 3px solid #f39c12; }
     
-    .copy-section { margin-top: 10px; display: flex; gap: 8px; align-items: center; }
+    .copy-section { margin-top: 10px; display: flex; gap: 8px; }
     .copy-section select { flex: 1; background: #0f3460; border: 1px solid #2c5f8a; color: white; padding: 6px; border-radius: 4px; font-size: 0.7rem; }
     .copy-section button { background: #3498db; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
-    .current-bp-indicator { font-size: 0.65rem; margin-top: 8px; padding: 4px 8px; background: #0f3460; border-radius: 4px; text-align: center; }
     
     .hotspot-list { flex: 1; overflow-y: auto; padding: 15px 20px; }
     .hotspot-search { width: 100%; padding: 6px 10px; margin-bottom: 10px; background: #0f3460; border: 1px solid #2c5f8a; color: white; border-radius: 4px; font-size: 0.7rem; }
     .hotspot-item { background: #0f3460; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-    .hotspot-item:hover { background: #1a5276; transform: translateX(3px); }
+    .hotspot-item:hover { background: #1a5276; }
     .hotspot-item.selected { border-color: #e94560; background: #1a5276; }
-    .hotspot-name { font-weight: bold; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+    .hotspot-name { font-weight: bold; font-size: 0.8rem; display: flex; justify-content: space-between; }
     .hotspot-name .badge { background: #e94560; padding: 2px 6px; border-radius: 4px; font-size: 0.55rem; }
     .hotspot-coords { font-size: 0.6rem; opacity: 0.7; font-family: monospace; margin-top: 3px; }
+    .hotspot-label-info { font-size: 0.55rem; opacity: 0.6; margin-top: 2px; }
     
     .preview-area { flex: 1; background: #2c3e50; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative; }
-    .artboard-frame { background: #1a1a2e; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; transition: all 0.2s ease; transform-origin: center center; }
+    .artboard-frame { background: #1a1a2e; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; transition: all 0.2s ease; }
     .artwork-container { position: relative; display: inline-block; }
     .artwork-image { display: block; width: 100%; height: auto; user-select: none; pointer-events: none; }
     .hotspots-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; }
     
+    /* Hotspot Editor Elements */
     .hotspot-edit { position: absolute; z-index: 50; }
     .hotspot-edit.selected { z-index: 100; }
     .hotspot-dot-edit { 
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
       background-size: contain; background-repeat: no-repeat; background-position: center; 
-      cursor: move; 
+      cursor: default; 
     }
     .hotspot-dot-edit::after { 
       content: ''; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px; 
@@ -82,6 +84,7 @@
     }
     .hotspot-edit.selected .hotspot-dot-edit::after { opacity: 1; }
     
+    /* Dot resize handle - pink */
     .dot-resize { 
       position: absolute; width: 16px; height: 16px; background: #e94560; 
       border: 2px solid white; border-radius: 50%; bottom: -8px; right: -8px; 
@@ -89,6 +92,7 @@
     }
     .dot-resize:hover { transform: scale(1.2); }
     
+    /* Label Editor */
     .label-edit { position: absolute; cursor: move; }
     .label-edit img { display: block; max-width: none; pointer-events: none; }
     .label-resize { 
@@ -97,10 +101,9 @@
       cursor: sw-resize; z-index: 102; 
     }
     
-    .control-panel { position: fixed; bottom: 20px; right: 20px; background: #1a1a2e; border-radius: 12px; padding: 12px 20px; display: flex; gap: 10px; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    .control-panel { position: fixed; bottom: 20px; right: 20px; background: #1a1a2e; border-radius: 12px; padding: 12px 20px; display: flex; gap: 10px; z-index: 200; }
     .control-panel button { background: #e94560; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
     .control-panel button.secondary { background: #0f3460; }
-    .control-panel button:hover { opacity: 0.9; transform: scale(1.02); }
     
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; }
     .modal-content { background: #1a1a2e; border-radius: 16px; max-width: 95%; max-height: 90%; width: 900px; overflow: hidden; display: flex; flex-direction: column; }
@@ -109,7 +112,7 @@
     .modal-body pre { background: #0f3460; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 11px; color: #a8e6cf; white-space: pre-wrap; }
     .modal-footer { padding: 20px; border-top: 1px solid #0f3460; display: flex; gap: 10px; justify-content: flex-end; }
     .close-modal { background: #e94560; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-    .tab-btn { background: none; border: none; color: white; cursor: pointer; padding: 5px 15px; margin-right: 5px; }
+    .tab-btn { background: none; border: none; color: white; cursor: pointer; padding: 5px 15px; }
     .tab-btn.active { background: #e94560; border-radius: 4px; }
     .code-content { display: none; }
     .code-content.active { display: block; }
@@ -123,29 +126,28 @@
 <body>
 <div class="editor-container">
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-resize-handle" id="sidebarResizeHandle"></div>
+    <div class="resize-handle" id="sidebarResize"></div>
     <div class="sidebar-header">
-      <h2><i class="fas fa-paintbrush"></i> Breakpoint Editor</h2>
-      <p>Position for each screen size independently</p>
+      <h2><i class="fas fa-edit"></i> Label Editor</h2>
+      <p>Resize dots · Move & scale labels</p>
     </div>
     
     <div class="breakpoint-section">
-      <div class="section-title">📱 SCREEN SIZE BREAKPOINTS</div>
-      <div class="breakpoint-selector" id="breakpointSelector"></div>
+      <div class="section-title">📱 BREAKPOINTS</div>
+      <div class="breakpoint-grid" id="breakpointGrid"></div>
       <div class="copy-section">
-        <select id="copyFromBreakpoint"></select>
-        <button id="copyBreakpointBtn"><i class="fas fa-copy"></i> Copy to current</button>
+        <select id="copySource"></select>
+        <button id="copyBtn"><i class="fas fa-copy"></i> Copy to current</button>
       </div>
-      <div class="current-bp-indicator" id="currentBpIndicator">Current: </div>
     </div>
     
     <div class="hotspot-list">
-      <div class="section-title">🎯 HOTSPOTS (Desktop:21 / Mobile:17)</div>
-      <input type="text" class="hotspot-search" id="hotspotSearch" placeholder="Search hotspots...">
+      <div class="section-title">🎯 HOTSPOTS</div>
+      <input type="text" class="hotspot-search" id="searchInput" placeholder="Search...">
       <div id="hotspotList"></div>
     </div>
     
-    <div class="status-bar" id="status">✅ Ready · Select breakpoint, then drag hotspots</div>
+    <div class="status-bar" id="status">✅ Ready · Select breakpoint, then drag labels or resize dots</div>
   </div>
   
   <div class="preview-area" id="previewArea">
@@ -159,15 +161,15 @@
 </div>
 
 <div class="control-panel">
-  <button id="generateCodeBtn" class="secondary"><i class="fas fa-code"></i> Generate Code</button>
-  <button id="resetViewBtn"><i class="fas fa-sync-alt"></i> Reset All Breakpoints</button>
+  <button id="generateBtn" class="secondary"><i class="fas fa-code"></i> Generate Code</button>
+  <button id="resetBtn"><i class="fas fa-undo-alt"></i> Reset Current Breakpoint</button>
 </div>
 
 <div class="modal-overlay" id="codeModal">
   <div class="modal-content">
-    <div class="modal-header"><h3><i class="fas fa-code"></i> Generated Code</h3><button class="close-modal" onclick="closeModal()">×</button></div>
+    <div class="modal-header"><h3><i class="fas fa-code"></i> Generated Website Code</h3><button class="close-modal" onclick="closeModal()">×</button></div>
     <div class="modal-body">
-      <div><button class="tab-btn active" data-tab="html">HTML</button><button class="tab-btn" data-tab="css">CSS</button><button class="tab-btn" data-tab="js">JavaScript</button></div>
+      <div><button class="tab-btn active" data-tab="html">HTML</button><button class="tab-btn" data-tab="css">CSS</button><button class="tab-btn" data-tab="js">JS</button></div>
       <div id="htmlCode" class="code-content active"><pre id="htmlPre"></pre></div>
       <div id="cssCode" class="code-content"><pre id="cssPre"></pre></div>
       <div id="jsCode" class="code-content"><pre id="jsPre"></pre></div>
@@ -178,24 +180,21 @@
 
 <script>
 // ============================================
-// BREAKPOINTS - Landscape phones use desktop artwork
+// BREAKPOINTS (16 fixed)
 // ============================================
-const breakpointsList = [
-  // PORTRAIT PHONES - Mobile artwork (17 hotspots)
-  { id: 'bp1', name: '320×480 (Portrait)', width: 320, height: 480, image: 'images/mobile-bg.jpg', type: 'mobile' },
-  { id: 'bp3', name: '375×667 (Portrait)', width: 375, height: 667, image: 'images/mobile-bg.jpg', type: 'mobile' },
-  { id: 'bp5', name: '390×844 (Portrait)', width: 390, height: 844, image: 'images/mobile-bg.jpg', type: 'mobile' },
-  { id: 'bp7', name: '428×926 (Portrait)', width: 428, height: 926, image: 'images/mobile-bg.jpg', type: 'mobile' },
-  // LANDSCAPE PHONES - Desktop artwork (21 hotspots)
-  { id: 'bp2', name: '480×320 (Landscape)', width: 480, height: 320, image: 'images/bg.jpg', type: 'desktop' },
-  { id: 'bp4', name: '667×375 (Landscape)', width: 667, height: 375, image: 'images/bg.jpg', type: 'desktop' },
-  { id: 'bp6', name: '844×390 (Landscape)', width: 844, height: 390, image: 'images/bg.jpg', type: 'desktop' },
-  { id: 'bp8', name: '926×428 (Landscape)', width: 926, height: 428, image: 'images/bg.jpg', type: 'desktop' },
-  // TABLETS & DESKTOPS - Desktop artwork (21 hotspots)
-  { id: 'bp9', name: '768×1024 (Portrait)', width: 768, height: 1024, image: 'images/bg.jpg', type: 'desktop' },
-  { id: 'bp10', name: '1024×768 (Landscape)', width: 1024, height: 768, image: 'images/bg.jpg', type: 'desktop' },
-  { id: 'bp11', name: '800×1280 (Portrait)', width: 800, height: 1280, image: 'images/bg.jpg', type: 'desktop' },
-  { id: 'bp12', name: '1280×800 (Landscape)', width: 1280, height: 800, image: 'images/bg.jpg', type: 'desktop' },
+const breakpoints = [
+  { id: 'bp1', name: '320×480', width: 320, height: 480, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  { id: 'bp2', name: '480×320', width: 480, height: 320, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp3', name: '375×667', width: 375, height: 667, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  { id: 'bp4', name: '667×375', width: 667, height: 375, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp5', name: '390×844', width: 390, height: 844, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  { id: 'bp6', name: '844×390', width: 844, height: 390, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp7', name: '428×926', width: 428, height: 926, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  { id: 'bp8', name: '926×428', width: 926, height: 428, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp9', name: '768×1024', width: 768, height: 1024, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp10', name: '1024×768', width: 1024, height: 768, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp11', name: '800×1280', width: 800, height: 1280, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp12', name: '1280×800', width: 1280, height: 800, image: 'images/bg.jpg', type: 'desktop' },
   { id: 'bp13', name: '1366×768', width: 1366, height: 768, image: 'images/bg.jpg', type: 'desktop' },
   { id: 'bp14', name: '1920×1080', width: 1920, height: 1080, image: 'images/bg.jpg', type: 'desktop' },
   { id: 'bp15', name: '2560×1080', width: 2560, height: 1080, image: 'images/bg.jpg', type: 'desktop' },
@@ -203,350 +202,177 @@ const breakpointsList = [
 ];
 
 // ============================================
-// ORIGINAL 11 HOTSPOTS WITH LABELS
+// REFERENCE DATA - Your perfect dot positions (these NEVER change)
 // ============================================
-const originalHotspots = [
-  { id: 'h1', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', hasLabel: true },
-  { id: 'h2', name: 'Light Cone', type: 'external', url: 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen', dotImage: 'reddot-02.png', labelImage: 'images/LightCone.png', hasLabel: true },
-  { id: 'h3', name: 'Allerlei', type: 'external', url: 'https://artoffice.info/kunstenaar/francien-van-everdingen/', dotImage: 'reddot-03.png', labelImage: 'images/Allerlei.png', hasLabel: true },
-  { id: 'h4', name: 'Stof', type: 'external', url: 'https://www.etsy.com/shop/hitchhikehijabi', dotImage: 'reddot-04.png', labelImage: 'images/Stof.png', hasLabel: true },
-  { id: 'h5', name: 'Contact', type: 'image', url: 'images/contact-emailadres.png', dotImage: 'reddot-04.png', labelImage: 'images/Contact.png', hasLabel: true },
-  { id: 'h6', name: 'Stichting Lezeren', type: 'external', url: 'http://www.lezeren.nl', dotImage: 'reddot-05.png', labelImage: 'images/StichtingLezeren.png', hasLabel: true },
-  { id: 'h7', name: 'Nederlandse Les', type: 'external', url: 'https://preply.in/FRANCIEN6NL3194022810', dotImage: 'reddot-06.png', labelImage: 'images/Nederlandseles.png', hasLabel: true },
-  { id: 'h8', name: 'Boek Letters', type: 'video', url: 'https://www.youtube-nocookie.com/embed/ELwjwDY3hUg', dotImage: 'reddot-08.png', labelImage: 'images/Boek-letters.png', hasLabel: true },
-  { id: 'h9', name: 'Films', type: 'pdf', url: '/images/Filmografie-Francien-van-Everdingen.pdf', dotImage: 'reddot-09.png', labelImage: 'images/Films.png', hasLabel: true },
-  { id: 'h10', name: 'CV', type: 'pdf', url: '/images/CV-Francien-van-Everdingen-website.pdf', dotImage: 'reddot-10.png', labelImage: 'images/CV.png', hasLabel: true },
-  { id: 'h11', name: 'Exit', type: 'exit', url: '#', dotImage: 'reddot-10.png', labelImage: 'images/Exit.png', hasLabel: true }
-];
-
-// Desktop area hotspots (10)
-const desktopAreas = [
-  { id: 'a1', name: 'Area 1', type: 'area', url: '#', dotImage: 'reddot-11.png', hasLabel: false },
-  { id: 'a2', name: 'Area 2', type: 'area', url: '#', dotImage: 'reddot-15.png', hasLabel: false },
-  { id: 'a3', name: 'Area 3', type: 'area', url: '#', dotImage: 'reddot-16.png', hasLabel: false },
-  { id: 'a4', name: 'Area 4', type: 'area', url: '#', dotImage: 'reddot-17.png', hasLabel: false },
-  { id: 'a5', name: 'Area 5', type: 'area', url: '#', dotImage: 'reddot-18.png', hasLabel: false },
-  { id: 'a6', name: 'Area 6', type: 'area', url: '#', dotImage: 'reddot-19.png', hasLabel: false },
-  { id: 'a7', name: 'Area 7', type: 'area', url: '#', dotImage: 'reddot-20.png', hasLabel: false },
-  { id: 'a8', name: 'Area 8', type: 'area', url: '#', dotImage: 'reddot-21.png', hasLabel: false },
-  { id: 'a9', name: 'Area 9', type: 'area', url: '#', dotImage: 'reddot-22.png', hasLabel: false },
-  { id: 'a10', name: 'Area 10', type: 'area', url: '#', dotImage: 'reddot-23.png', hasLabel: false }
-];
-
-// Mobile area hotspots (6)
-const mobileAreas = [
-  { id: 'm1', name: 'Mobile Area 1', type: 'area', url: '#', dotImage: 'reddot-11.png', hasLabel: false },
-  { id: 'm2', name: 'Mobile Area 2', type: 'area', url: '#', dotImage: 'reddot-15.png', hasLabel: false },
-  { id: 'm3', name: 'Mobile Area 3', type: 'area', url: '#', dotImage: 'reddot-16.png', hasLabel: false },
-  { id: 'm4', name: 'Mobile Area 4', type: 'area', url: '#', dotImage: 'reddot-17.png', hasLabel: false },
-  { id: 'm5', name: 'Mobile Area 5', type: 'area', url: '#', dotImage: 'reddot-18.png', hasLabel: false },
-  { id: 'm6', name: 'Mobile Area 6', type: 'area', url: '#', dotImage: 'reddot-19.png', hasLabel: false }
-];
+const dotPositions = {
+  // Original hotspots - dot positions (x, y, dotSize)
+  h1: { dotSize: 75 },
+  h2: { dotSize: 50 },
+  h3: { dotSize: 59 },
+  h4: { dotSize: 59 },
+  h5: { dotSize: 95 },
+  h6: { dotSize: 125 },
+  h7: { dotSize: 60 },
+  h8: { dotSize: 80 },
+  h9: { dotSize: 70 },
+  h10: { dotSize: 82.5 },
+  h11: { dotSize: 42 },
+  // Area hotspots
+  a1: { dotSize: 29.5 }, a2: { dotSize: 33 }, a3: { dotSize: 50 }, a4: { dotSize: 50 },
+  a5: { dotSize: 50 }, a6: { dotSize: 36.5 }, a7: { dotSize: 50 }, a8: { dotSize: 50 },
+  a9: { dotSize: 31 }, a10: { dotSize: 50 },
+  // Mobile areas
+  m1: { dotSize: 28.5 }, m2: { dotSize: 23.5 }, m3: { dotSize: 31 }, m4: { dotSize: 40 },
+  m5: { dotSize: 20 }, m6: { dotSize: 29.5 }
+};
 
 // ============================================
-// YOUR EXACT VALUES FROM GENERATED CODE
+// LABEL CONFIGURATION STORAGE (what you can edit)
 // ============================================
-const savedDesktopValues = {
-  320: {}, 375: {}, 390: {}, 428: {}, 480: {}, 667: {}, 768: {}, 800: {}, 844: {}, 926: {},
-  1024: {}, 1280: {}, 1366: {}, 1920: {}, 2560: {}, 3840: {}
-};
-
-// Desktop 1920x1080 values (your original)
-savedDesktopValues[1920] = {
-  h1: { x: 15, y: 26, dotSize: 75, labelX: 0, labelY: 40, labelScale: 0.6 },
-  h2: { x: 38.71339889649748, y: 62.73379309809576, dotSize: 50, labelX: -175, labelY: -99, labelScale: 0.65 },
-  h3: { x: 59.23780260017685, y: 71.42198278161979, dotSize: 59, labelX: -155, labelY: 11, labelScale: 0.7 },
-  h4: { x: 69.33486116182293, y: 40.96534481872111, dotSize: 59, labelX: 1, labelY: 45, labelScale: 0.5 },
-  h5: { x: 95.76993592084135, y: 41.80310346065355, dotSize: 95, labelX: -207, labelY: 24, labelScale: 0.9 },
-  h6: { x: 17, y: 56.8, dotSize: 125, labelX: -115, labelY: 85, labelScale: 0.4 },
-  h7: { x: 26, y: 80, dotSize: 60, labelX: -346, labelY: -110, labelScale: 1 },
-  h8: { x: 57.5, y: 50, dotSize: 80, labelX: -135, labelY: -147, labelScale: 0.6 },
-  h9: { x: 72.42679779299498, y: 14.000603429123895, dotSize: 70, labelX: -100, labelY: 75, labelScale: 1 },
-  h10: { x: 38.589542541856424, y: 37.021810345580285, dotSize: 82.5, labelX: 57, labelY: -213, labelScale: 0.85 },
-  h11: { x: 83.42636169457094, y: 83.27293103431549, dotSize: 42, labelX: -180, labelY: -58, labelScale: 0.75 },
-  a1: { x: 36.53758009894831, y: 71.30862073481701, dotSize: 29.5 },
-  a2: { x: 34.27832413747906, y: 41.79862070571272, dotSize: 33 },
-  a3: { x: 42.64651566462432, y: 9.563793088394327, dotSize: 50 },
-  a4: { x: 57.86830277775952, y: 21.607413779554896, dotSize: 50 },
-  a5: { x: 4.146181912781508, y: 86.3310345095212, dotSize: 50 },
-  a6: { x: 46.53758009894831, y: 52.393189649568995, dotSize: 36.5 },
-  a7: { x: 76.77200516234721, y: 62.73379309809576, dotSize: 50 },
-  a8: { x: 56.66513883817706, y: 29.477155135197087, dotSize: 50 },
-  a9: { x: 47.980931823990176, y: 84.43681034072956, dotSize: 31 },
-  a10: { x: 85.45392043379971, y: 24.868534497394403, dotSize: 50 }
-};
-
-// Desktop 2560x1080 values
-savedDesktopValues[2560] = {
-  h1: { x: 15.6527233891419, y: 26.756896657181436, dotSize: 57, labelX: -6, labelY: 26, labelScale: 0.6 },
-  h2: { x: 37.70711700490372, y: 63.187928008352145, dotSize: 50, labelX: -176, labelY: -106, labelScale: 0.65 },
-  h3: { x: 60.13529726024696, y: 72.48164225570366, dotSize: 48, labelX: -156, labelY: 21, labelScale: 0.7 },
-  h4: { x: 69.06289308301382, y: 41.192412147969605, dotSize: 59, labelX: -3, labelY: 47, labelScale: 0.48 },
-  h5: { x: 95.76993592084135, y: 41.80310346065355, dotSize: 95, labelX: -207, labelY: 24, labelScale: 0.9 },
-  h6: { x: 16.5648510739054, y: 56.49724133712742, dotSize: 87.5, labelX: -79, labelY: 57, labelScale: 0.4 },
-  h7: { x: 26, y: 80, dotSize: 60, labelX: -347, labelY: -111, labelScale: 1 },
-  h8: { x: 58.1527233891419, y: 50.60551732574515, dotSize: 54.5, labelX: -125, labelY: -135, labelScale: 0.6 },
-  h9: { x: 72.42679779299498, y: 14.151982760560182, dotSize: 70, labelX: -86, labelY: 65, labelScale: 1.13 },
-  h10: { x: 38.589542541856424, y: 37.021810345580285, dotSize: 82.5, labelX: 39, labelY: -199, labelScale: 0.85 },
-  h11: { x: 83.42636169457094, y: 83.27293103431549, dotSize: 36.5, labelX: -172, labelY: -69, labelScale: 0.75 },
-  a1: { x: 36.97272902504291, y: 70.70310340907186, dotSize: 30.5 },
-  a2: { x: 47.74074403853075, y: 85.35802041553644, dotSize: 26 },
-  a3: { x: 42.75530289614797, y: 9.109655094085465, dotSize: 50 },
-  a4: { x: 57.32436662014127, y: 21.00189645380975, dotSize: 32.5 },
-  a5: { x: 4.363756375828808, y: 86.48241384095749, dotSize: 44 },
-  a6: { x: 45.99364394133006, y: 52.998708485870466, dotSize: 43.5 },
-  a7: { x: 77.20715408844181, y: 62.73379309809576, dotSize: 50 },
-  a8: { x: 56.882713301224356, y: 29.3257758037608, dotSize: 38 },
-  a9: { x: 33.94737895743933, y: 41.407237000666, dotSize: 29.5 },
-  a10: { x: 85.45392043379971, y: 24.868534497394403, dotSize: 50 }
-};
-
-// Desktop 3840x2160 values
-savedDesktopValues[3840] = {
-  h1: { x: 15.489542590613734, y: 27.362413794107045, dotSize: 62.5, labelX: 0, labelY: 40, labelScale: 0.6 },
-  h2: { x: 37.81590326128119, y: 63.869137926518306, dotSize: 50, labelX: -185, labelY: -104, labelScale: 0.7 },
-  h3: { x: 60.29848078918442, y: 72.55732761004232, dotSize: 44.5, labelX: -152, labelY: 22, labelScale: 0.7 },
-  h4: { x: 69.1716826223834, y: 40.51120688735209, dotSize: 59, labelX: 5, labelY: 44, labelScale: 0.44 },
-  h5: { x: 95.76993592084135, y: 41.80310346065355, dotSize: 73, labelX: -206, labelY: 13, labelScale: 0.9 },
-  h6: { x: 16.510457409386266, y: 56.345862068630986, dotSize: 91, labelX: -86, labelY: 60, labelScale: 0.4 },
-  h7: { x: 25.83681913646209, y: 80, dotSize: 57.5, labelX: -346, labelY: -111, labelScale: 1 },
-  h8: { x: 57.5, y: 50, dotSize: 80, labelX: -135, labelY: -147, labelScale: 0.6 },
-  h9: { x: 72.42679779299498, y: 14.000603429123895, dotSize: 70, labelX: -93, labelY: 65, labelScale: 1.17 },
-  h10: { x: 38.589542541856424, y: 37.021810345580285, dotSize: 82.5, labelX: 57, labelY: -213, labelScale: 0.85 },
-  h11: { x: 83.42636169457094, y: 83.27293103431549, dotSize: 42, labelX: -180, labelY: -58, labelScale: 0.75 },
-  a1: { x: 37.02712268956204, y: 70.62741383776348, dotSize: 27 },
-  a2: { x: 47.57756415013902, y: 85.05525866861139, dotSize: 29 },
-  a3: { x: 42.64651566462432, y: 9.563793088394327, dotSize: 50 },
-  a4: { x: 57.21557932360787, y: 21.38034481387039, dotSize: 36 },
-  a5: { x: 4.146181912781508, y: 86.3310345095212, dotSize: 46 },
-  a6: { x: 46.21121616154116, y: 52.847327580938014, dotSize: 31 },
-  a7: { x: 76.77200516234721, y: 62.73379309809576, dotSize: 50 },
-  a8: { x: 56.66513883817706, y: 29.477155135197087, dotSize: 50 },
-  a9: { x: 33.78419549351161, y: 40.95310341214639, dotSize: 41 },
-  a10: { x: 85.45392043379971, y: 24.868534497394403, dotSize: 50 }
-};
-
-// Desktop 1366x768 values (copy from 1920 for now)
-savedDesktopValues[1366] = savedDesktopValues[1920];
-savedDesktopValues[1280] = savedDesktopValues[1920];
-savedDesktopValues[1024] = savedDesktopValues[1920];
-savedDesktopValues[800] = savedDesktopValues[1920];
-savedDesktopValues[768] = savedDesktopValues[1920];
-
-// Landscape phones use desktop values
-savedDesktopValues[480] = savedDesktopValues[1920];
-savedDesktopValues[667] = savedDesktopValues[1920];
-savedDesktopValues[844] = savedDesktopValues[1920];
-savedDesktopValues[926] = savedDesktopValues[1920];
-
-// Mobile portrait values (17 hotspots only)
-const mobileValues = {
-  h1: { x: 54, y: 33, dotSize: 70, labelX: -10, labelY: 10, labelScale: 0.62 },
-  h2: { x: 22, y: 53, dotSize: 38, labelX: -6, labelY: -12, labelScale: 0.5 },
-  h3: { x: 69, y: 64, dotSize: 30, labelX: 40, labelY: -10, labelScale: 0.44 },
-  h4: { x: 49, y: 15, dotSize: 64, labelX: -18, labelY: -6, labelScale: 0.6 },
-  h5: { x: 67, y: 74, dotSize: 28, labelX: -18, labelY: -10, labelScale: 0.54 },
-  h6: { x: 86, y: 7, dotSize: 62, labelX: -96, labelY: -8, labelScale: 0.5 },
-  h7: { x: 23, y: 88, dotSize: 30, labelX: -4, labelY: -10, labelScale: 0.58 },
-  h8: { x: 77, y: 109, dotSize: 34, labelX: -16, labelY: -10, labelScale: 0.48 },
-  h9: { x: 29, y: 2, dotSize: 44, labelX: -24, labelY: 16, labelScale: 0.56 },
-  h10: { x: 31, y: 96, dotSize: 26, labelX: -2, labelY: -12, labelScale: 0.5 },
-  h11: { x: 86, y: 132, dotSize: 34, labelX: -22, labelY: -10, labelScale: 0.5 },
-  m1: { x: 10, y: 45, dotSize: 40 },
-  m2: { x: 20, y: 55, dotSize: 40 },
-  m3: { x: 30, y: 65, dotSize: 40 },
-  m4: { x: 40, y: 75, dotSize: 40 },
-  m5: { x: 50, y: 85, dotSize: 40 },
-  m6: { x: 60, y: 95, dotSize: 40 }
-};
-
-// State
-let hotspotsData = [];
-let selectedId = null;
+let labelConfigs = {};
 let currentBreakpointId = 'bp14';
-let isDraggingDot = false, isDraggingLabel = false, isResizingDot = false, isResizingLabel = false;
-let dragTargetId = null;
-let dragStart = { x: 0, y: 0, startX: 0, startY: 0, startVal: 0 };
-let customizedBreakpointsSet = new Set();
+let selectedHotspotId = null;
+let customizedBreakpoints = new Set();
+let isDraggingLabel = false, isResizingDot = false, isResizingLabel = false;
+let dragTargetId = null, dragStart = {};
 
+// ============================================
+// LOAD/SAVE CONFIGURATION
+// ============================================
 function loadConfig() {
-  const saved = localStorage.getItem('breakpointHotspotConfigV5');
+  const saved = localStorage.getItem('labelEditorConfig');
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      if (parsed.customized) customizedBreakpointsSet = new Set(parsed.customized);
-      if (parsed.data) hotspotsData = parsed.data;
+      if (parsed.labelConfigs) labelConfigs = parsed.labelConfigs;
+      if (parsed.customized) customizedBreakpoints = new Set(parsed.customized);
       updateStatus('Config loaded');
-      return;
     } catch(e) {}
   }
   
-  hotspotsData = [];
-  for (let i = 0; i < breakpointsList.length; i++) {
-    const bp = breakpointsList[i];
-    let bpHotspots = [];
-    if (bp.type === 'desktop') {
-      // Desktop breakpoints: 11 original + 10 areas = 21 hotspots
-      for (let j = 0; j < originalHotspots.length; j++) {
-        const h = originalHotspots[j];
-        const savedVals = savedDesktopValues[bp.width]?.[h.id] || savedDesktopValues[1920][h.id] || { x: 50, y: 50, dotSize: 50, labelX: 0, labelY: 0, labelScale: 1 };
-        bpHotspots.push({
-          id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage,
-          labelImage: h.labelImage, hasLabel: h.hasLabel,
-          x: savedVals.x, y: savedVals.y, dotSize: savedVals.dotSize,
-          labelX: savedVals.labelX || 0, labelY: savedVals.labelY || 0, labelScale: savedVals.labelScale || 1
-        });
+  // Initialize missing breakpoints
+  for (let i = 0; i < breakpoints.length; i++) {
+    const bp = breakpoints[i];
+    if (!labelConfigs[bp.id]) {
+      labelConfigs[bp.id] = {};
+      const isMobile = bp.type === 'mobile';
+      // Get all hotspot IDs
+      const hotspotIds = [
+        'h1','h2','h3','h4','h5','h6','h7','h8','h9','h10','h11',
+        'a1','a2','a3','a4','a5','a6','a7','a8','a9','a10'
+      ];
+      if (isMobile) {
+        hotspotIds.push('m1','m2','m3','m4','m5','m6');
       }
-      for (let j = 0; j < desktopAreas.length; j++) {
-        const a = desktopAreas[j];
-        const savedVals = savedDesktopValues[bp.width]?.[a.id] || savedDesktopValues[1920][a.id] || { x: 50, y: 50, dotSize: 50 };
-        bpHotspots.push({
-          id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage,
-          hasLabel: false, labelImage: null,
-          x: savedVals.x, y: savedVals.y, dotSize: savedVals.dotSize,
-          labelX: 0, labelY: 0, labelScale: 1
-        });
-      }
-    } else {
-      // Mobile breakpoints: 11 original + 6 mobile areas = 17 hotspots
-      for (let j = 0; j < originalHotspots.length; j++) {
-        const h = originalHotspots[j];
-        const mv = mobileValues[h.id];
-        bpHotspots.push({
-          id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage,
-          labelImage: h.labelImage, hasLabel: h.hasLabel,
-          x: mv.x, y: mv.y, dotSize: mv.dotSize,
-          labelX: mv.labelX || 0, labelY: mv.labelY || 0, labelScale: mv.labelScale || 1
-        });
-      }
-      for (let j = 0; j < mobileAreas.length; j++) {
-        const a = mobileAreas[j];
-        const mv = mobileValues[a.id];
-        bpHotspots.push({
-          id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage,
-          hasLabel: false, labelImage: null,
-          x: mv.x, y: mv.y, dotSize: mv.dotSize,
-          labelX: 0, labelY: 0, labelScale: 1
-        });
+      for (let j = 0; j < hotspotIds.length; j++) {
+        const hid = hotspotIds[j];
+        labelConfigs[bp.id][hid] = {
+          labelX: 0, labelY: 0, labelScale: 1, dotSize: dotPositions[hid]?.dotSize || 50
+        };
       }
     }
-    hotspotsData.push({ breakpointId: bp.id, hotspots: bpHotspots });
   }
   saveConfig();
 }
 
-function saveConfig() { 
-  localStorage.setItem('breakpointHotspotConfigV5', JSON.stringify({ data: hotspotsData, customized: Array.from(customizedBreakpointsSet) })); 
-  updateCustomizedIndicator();
+function saveConfig() {
+  localStorage.setItem('labelEditorConfig', JSON.stringify({
+    labelConfigs: labelConfigs,
+    customized: Array.from(customizedBreakpoints)
+  }));
+  updateCustomizedIndicators();
 }
 
-function markAsCustomized() {
-  customizedBreakpointsSet.add(currentBreakpointId);
-  updateCustomizedIndicator();
+function markCustomized() {
+  customizedBreakpoints.add(currentBreakpointId);
   saveConfig();
 }
 
-function updateCustomizedIndicator() {
+function updateCustomizedIndicators() {
   const btns = document.querySelectorAll('.breakpoint-btn');
   for (let i = 0; i < btns.length; i++) {
-    const btn = btns[i];
-    const bpId = btn.getAttribute('data-bp-id');
-    if (customizedBreakpointsSet.has(bpId)) {
-      btn.classList.add('customized');
+    const id = btns[i].getAttribute('data-id');
+    if (customizedBreakpoints.has(id)) {
+      btns[i].classList.add('customized');
     } else {
-      btn.classList.remove('customized');
+      btns[i].classList.remove('customized');
     }
   }
 }
 
-function getCurrentHotspots() {
-  for (let i = 0; i < hotspotsData.length; i++) {
-    if (hotspotsData[i].breakpointId === currentBreakpointId) {
-      return hotspotsData[i].hotspots;
-    }
-  }
-  return [];
-}
-
-function updateHotspotInCurrentBreakpoint(updatedHotspot) {
-  for (let i = 0; i < hotspotsData.length; i++) {
-    if (hotspotsData[i].breakpointId === currentBreakpointId) {
-      const bpData = hotspotsData[i];
-      for (let j = 0; j < bpData.hotspots.length; j++) {
-        if (bpData.hotspots[j].id === updatedHotspot.id) {
-          bpData.hotspots[j] = { ...bpData.hotspots[j], ...updatedHotspot };
-          markAsCustomized();
-          saveConfig();
-          return;
-        }
-      }
-      break;
-    }
+function updateStatus(msg) {
+  const el = document.getElementById('status');
+  if (el) {
+    el.innerHTML = '✅ ' + msg;
+    setTimeout(() => {
+      if (el.innerHTML === '✅ ' + msg) el.innerHTML = '✅ Ready · Select breakpoint, then drag labels or resize dots';
+    }, 2000);
   }
 }
 
-function updateStatus(msg) { 
-  const el = document.getElementById('status'); 
-  if(el) { 
-    el.innerHTML = '✅ ' + msg; 
-    setTimeout(function() { 
-      if(el.innerHTML === '✅ ' + msg) el.innerHTML = '✅ Ready · Select breakpoint, then drag hotspots'; 
-    }, 2000); 
-  } 
+// ============================================
+// GET/SET CURRENT VALUES
+// ============================================
+function getCurrentLabels() {
+  return labelConfigs[currentBreakpointId] || {};
 }
 
+function getHotspotLabel(hotspotId) {
+  const labels = getCurrentLabels();
+  return labels[hotspotId] || { labelX: 0, labelY: 0, labelScale: 1, dotSize: dotPositions[hotspotId]?.dotSize || 50 };
+}
+
+function updateHotspotLabel(hotspotId, updates) {
+  if (!labelConfigs[currentBreakpointId]) labelConfigs[currentBreakpointId] = {};
+  labelConfigs[currentBreakpointId][hotspotId] = { 
+    ...getHotspotLabel(hotspotId), 
+    ...updates 
+  };
+  markCustomized();
+  saveConfig();
+  renderCanvas();
+}
+
+// ============================================
+// RENDER BREAKPOINT BUTTONS
+// ============================================
 function renderBreakpointSelector() {
-  const container = document.getElementById('breakpointSelector');
-  const copySelect = document.getElementById('copyFromBreakpoint');
+  const container = document.getElementById('breakpointGrid');
+  const copySelect = document.getElementById('copySource');
   if (!container) return;
   container.innerHTML = '';
   copySelect.innerHTML = '';
-  for (let i = 0; i < breakpointsList.length; i++) {
-    const bp = breakpointsList[i];
+  for (let i = 0; i < breakpoints.length; i++) {
+    const bp = breakpoints[i];
     const btn = document.createElement('button');
     btn.className = 'breakpoint-btn' + (currentBreakpointId === bp.id ? ' active' : '');
-    btn.setAttribute('data-bp-id', bp.id);
+    btn.setAttribute('data-id', bp.id);
     btn.textContent = bp.name;
     btn.onclick = (function(id) { return function() { switchBreakpoint(id); }; })(bp.id);
     container.appendChild(btn);
     
-    const option = document.createElement('option');
-    option.value = bp.id;
-    option.textContent = bp.name;
-    copySelect.appendChild(option);
+    const opt = document.createElement('option');
+    opt.value = bp.id;
+    opt.textContent = bp.name;
+    copySelect.appendChild(opt);
   }
-  updateCustomizedIndicator();
-  let currentBp = null;
-  for (let i = 0; i < breakpointsList.length; i++) {
-    if (breakpointsList[i].id === currentBreakpointId) {
-      currentBp = breakpointsList[i];
-      break;
-    }
-  }
-  document.getElementById('currentBpIndicator').innerHTML = 'Current: ' + (currentBp ? currentBp.name : '') + ' (' + (currentBp && currentBp.type === 'desktop' ? '21 hotspots' : '17 hotspots') + ')';
+  updateCustomizedIndicators();
 }
 
 function switchBreakpoint(breakpointId) {
   currentBreakpointId = breakpointId;
-  let currentBp = null;
-  for (let i = 0; i < breakpointsList.length; i++) {
-    if (breakpointsList[i].id === breakpointId) {
-      currentBp = breakpointsList[i];
-      break;
-    }
-  }
-  if (currentBp) {
+  const bp = breakpoints.find(b => b.id === breakpointId);
+  if (bp) {
     const frame = document.getElementById('artboardFrame');
     const image = document.getElementById('artworkImage');
-    const previewArea = document.getElementById('previewArea');
-    frame.style.width = currentBp.width + 'px';
+    const preview = document.getElementById('previewArea');
+    frame.style.width = bp.width + 'px';
     frame.style.maxWidth = '95%';
-    image.src = currentBp.image;
+    image.src = bp.image;
     
-    const maxPreviewWidth = previewArea.clientWidth - 40;
-    if (currentBp.width > maxPreviewWidth) {
-      const scale = maxPreviewWidth / currentBp.width;
-      frame.style.transform = 'scale(' + scale + ')';
+    const maxW = preview.clientWidth - 40;
+    if (bp.width > maxW) {
+      frame.style.transform = 'scale(' + (maxW / bp.width) + ')';
     } else {
       frame.style.transform = 'scale(1)';
     }
@@ -554,398 +380,533 @@ function switchBreakpoint(breakpointId) {
   renderBreakpointSelector();
   renderHotspotList();
   renderCanvas();
-  updateStatus('Switched to ' + currentBp.name + ' (' + (currentBp.type === 'desktop' ? '21 hotspots' : '17 hotspots') + ')');
+  updateStatus('Switched to ' + bp.name);
 }
 
+// ============================================
+// HOTSPOT LIST
+// ============================================
 function renderHotspotList() {
   const container = document.getElementById('hotspotList');
-  const searchInput = document.getElementById('hotspotSearch');
-  const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+  const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
   if (!container) return;
   container.innerHTML = '';
-  const hotspots = getCurrentHotspots();
-  const filtered = [];
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].name.toLowerCase().includes(searchTerm)) {
-      filtered.push(hotspots[i]);
-    }
-  }
-  for (let i = 0; i < filtered.length; i++) {
-    const h = filtered[i];
+  const labels = getCurrentLabels();
+  const hotspotIds = Object.keys(labels);
+  for (let i = 0; i < hotspotIds.length; i++) {
+    const id = hotspotIds[i];
+    const label = labels[id];
+    if (!label) continue;
+    let name = id;
+    if (id.startsWith('h')) name = ['Boek Naslagwerkje','Light Cone','Allerlei','Stof','Contact','Stichting Lezeren','Nederlandse Les','Boek Letters','Films','CV','Exit'][parseInt(id.split('-')[1])-1] || id;
+    else if (id.startsWith('a')) name = 'Area ' + id.split('-')[1];
+    else if (id.startsWith('m')) name = 'Mobile Area ' + id.split('-')[1];
+    else name = id;
+    
+    if (!name.toLowerCase().includes(searchTerm)) continue;
+    
     const item = document.createElement('div');
-    item.className = 'hotspot-item' + (selectedId === h.id ? ' selected' : '');
-    item.onclick = (function(id) { return function() { selectHotspot(id); }; })(h.id);
-    item.innerHTML = '<div class="hotspot-name"><span>' + h.name + '</span><span class="badge">' + (h.type === 'area' ? 'Area' : h.type) + '</span></div><div class="hotspot-coords">X:' + (h.x || 50) + '% Y:' + (h.y || 50) + '% | Dot:' + (h.dotSize || 50) + 'px</div>';
+    item.className = 'hotspot-item' + (selectedHotspotId === id ? ' selected' : '');
+    item.onclick = (function(iid) { return function() { selectHotspot(iid); }; })(id);
+    item.innerHTML = '<div class="hotspot-name"><span>' + name + '</span><span class="badge">' + (id.startsWith('a')||id.startsWith('m')?'Area':'Label') + '</span></div>' +
+      '<div class="hotspot-coords">Dot: ' + (label.dotSize || 50) + 'px</div>' +
+      '<div class="hotspot-label-info">Label: ' + (label.labelX||0) + ',' + (label.labelY||0) + ' | scale: ' + (label.labelScale||1).toFixed(2) + '</div>';
     container.appendChild(item);
   }
 }
 
 function selectHotspot(id) {
-  selectedId = id;
+  selectedHotspotId = id;
   renderHotspotList();
   renderCanvas();
-  const hotspots = getCurrentHotspots();
-  let hotspot = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === id) {
-      hotspot = hotspots[i];
-      break;
-    }
-  }
-  if (hotspot) updateStatus('Selected: ' + hotspot.name);
+  updateStatus('Selected: ' + id);
 }
 
+// ============================================
+// RENDER CANVAS WITH EDITABLE ELEMENTS
+// ============================================
 function renderCanvas() {
   const container = document.getElementById('hotspotsLayer');
   if (!container) return;
   container.innerHTML = '';
-  const hotspots = getCurrentHotspots();
-  for (let i = 0; i < hotspots.length; i++) {
-    const hotspot = hotspots[i];
+  const labels = getCurrentLabels();
+  const hotspotIds = Object.keys(labels);
+  
+  for (let i = 0; i < hotspotIds.length; i++) {
+    const id = hotspotIds[i];
+    const labelData = labels[id];
+    if (!labelData) continue;
+    
+    // Get dot position from the hardcoded config (PERFECT positions - never change)
+    let dotX = 50, dotY = 50;
+    let dotSize = labelData.dotSize || 50;
+    let dotImage = 'reddot-01.png';
+    let hasLabelImage = true;
+    let labelImage = 'images/Boek-naslagwerkje.png';
+    let hotspotType = 'external';
+    let hotspotUrl = '#';
+    let hotspotName = id;
+    
+    // Use the values from the final HTML
+    if (id === 'h1') { dotX = 15; dotY = 26; dotImage = 'reddot-01.png'; labelImage = 'images/Boek-naslagwerkje.png'; hotspotName = 'Boek Een Naslagwerkje'; hotspotType = 'video'; hotspotUrl = 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI'; }
+    else if (id === 'h2') { dotX = 38.71339889649748; dotY = 62.73379309809576; dotImage = 'reddot-02.png'; labelImage = 'images/LightCone.png'; hotspotName = 'Light Cone'; hotspotType = 'external'; hotspotUrl = 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen'; }
+    else if (id === 'h3') { dotX = 59.23780260017685; dotY = 71.42198278161979; dotImage = 'reddot-03.png'; labelImage = 'images/Allerlei.png'; hotspotName = 'Allerlei'; hotspotType = 'external'; hotspotUrl = 'https://artoffice.info/kunstenaar/francien-van-everdingen/'; }
+    else if (id === 'h4') { dotX = 69.33486116182293; dotY = 40.96534481872111; dotImage = 'reddot-04.png'; labelImage = 'images/Stof.png'; hotspotName = 'Stof'; hotspotType = 'external'; hotspotUrl = 'https://www.etsy.com/shop/hitchhikehijabi'; }
+    else if (id === 'h5') { dotX = 95.76993592084135; dotY = 41.80310346065355; dotImage = 'reddot-04.png'; labelImage = 'images/Contact.png'; hotspotName = 'Contact'; hotspotType = 'image'; hotspotUrl = 'images/contact-emailadres.png'; }
+    else if (id === 'h6') { dotX = 17; dotY = 56.8; dotImage = 'reddot-05.png'; labelImage = 'images/StichtingLezeren.png'; hotspotName = 'Stichting Lezeren'; hotspotType = 'external'; hotspotUrl = 'http://www.lezeren.nl'; }
+    else if (id === 'h7') { dotX = 26; dotY = 80; dotImage = 'reddot-06.png'; labelImage = 'images/Nederlandseles.png'; hotspotName = 'Nederlandse Les'; hotspotType = 'external'; hotspotUrl = 'https://preply.in/FRANCIEN6NL3194022810'; }
+    else if (id === 'h8') { dotX = 57.5; dotY = 50; dotImage = 'reddot-08.png'; labelImage = 'images/Boek-letters.png'; hotspotName = 'Boek Letters'; hotspotType = 'video'; hotspotUrl = 'https://www.youtube-nocookie.com/embed/ELwjwDY3hUg'; }
+    else if (id === 'h9') { dotX = 72.42679779299498; dotY = 14.000603429123895; dotImage = 'reddot-09.png'; labelImage = 'images/Films.png'; hotspotName = 'Films'; hotspotType = 'pdf'; hotspotUrl = '/images/Filmografie-Francien-van-Everdingen.pdf'; }
+    else if (id === 'h10') { dotX = 38.589542541856424; dotY = 37.021810345580285; dotImage = 'reddot-10.png'; labelImage = 'images/CV.png'; hotspotName = 'CV'; hotspotType = 'pdf'; hotspotUrl = '/images/CV-Francien-van-Everdingen-website.pdf'; }
+    else if (id === 'h11') { dotX = 83.42636169457094; dotY = 83.27293103431549; dotImage = 'reddot-10.png'; labelImage = 'images/Exit.png'; hotspotName = 'Exit'; hotspotType = 'exit'; hotspotUrl = '#'; }
+    else if (id.startsWith('a')) { 
+      const num = parseInt(id.split('-')[1]);
+      const dots = ['reddot-11.png','reddot-15.png','reddot-16.png','reddot-17.png','reddot-18.png','reddot-19.png','reddot-20.png','reddot-21.png','reddot-22.png','reddot-23.png'];
+      dotX = [36.53758009894831,34.27832413747906,42.64651566462432,57.86830277775952,4.146181912781508,46.53758009894831,76.77200516234721,56.66513883817706,47.980931823990176,85.45392043379971][num-1];
+      dotY = [71.30862073481701,41.79862070571272,9.563793088394327,21.607413779554896,86.3310345095212,52.393189649568995,62.73379309809576,29.477155135197087,84.43681034072956,24.868534497394403][num-1];
+      dotImage = dots[num-1];
+      hasLabelImage = false;
+      hotspotType = 'area';
+    }
+    else if (id.startsWith('m')) {
+      const num = parseInt(id.split('-')[1]);
+      const dots = ['reddot-11.png','reddot-15.png','reddot-16.png','reddot-17.png','reddot-18.png','reddot-19.png'];
+      dotX = [96.875,93.75,76.25,40,2.1875,32.5][num-1];
+      dotY = [14.602904008277783,29.292741675572067,41.72450935490984,76.4764303767408,49.30512442114905,42.19590182009398][num-1];
+      dotImage = dots[num-1];
+      hasLabelImage = false;
+      hotspotType = 'area';
+    }
+    
     const wrapper = document.createElement('div');
-    wrapper.className = 'hotspot-edit' + (selectedId === hotspot.id ? ' selected' : '');
-    wrapper.setAttribute('data-id', hotspot.id);
+    wrapper.className = 'hotspot-edit' + (selectedHotspotId === id ? ' selected' : '');
+    wrapper.setAttribute('data-id', id);
     wrapper.style.position = 'absolute';
-    wrapper.style.left = 'calc(' + (hotspot.x || 50) + '% - ' + ((hotspot.dotSize || 50) / 2) + 'px)';
-    wrapper.style.top = 'calc(' + (hotspot.y || 50) + '% - ' + ((hotspot.dotSize || 50) / 2) + 'px)';
-    wrapper.style.width = (hotspot.dotSize || 50) + 'px';
-    wrapper.style.height = (hotspot.dotSize || 50) + 'px';
+    wrapper.style.left = `calc(${dotX}% - ${dotSize / 2}px)`;
+    wrapper.style.top = `calc(${dotY}% - ${dotSize / 2}px)`;
+    wrapper.style.width = `${dotSize}px`;
+    wrapper.style.height = `${dotSize}px`;
     
     const dot = document.createElement('div');
     dot.className = 'hotspot-dot-edit';
     dot.style.width = '100%';
     dot.style.height = '100%';
-    dot.style.backgroundImage = 'url(\'images/' + hotspot.dotImage + '\')';
+    dot.style.backgroundImage = `url('images/${dotImage}')`;
     wrapper.appendChild(dot);
     
+    // Resize handle for dot (pink)
     const dotResize = document.createElement('div');
     dotResize.className = 'dot-resize';
     dotResize.title = 'Drag to resize red dot';
-    dotResize.onmousedown = (function(id) { return function(e) { e.stopPropagation(); startDotResize(e, id); }; })(hotspot.id);
+    dotResize.onmousedown = (function(iid) { return function(e) { e.stopPropagation(); startDotResize(e, iid); }; })(id);
     wrapper.appendChild(dotResize);
     
-    if (hotspot.hasLabel && hotspot.labelImage) {
+    if (hasLabelImage && labelImage) {
       const labelDiv = document.createElement('div');
       labelDiv.className = 'label-edit';
       labelDiv.style.position = 'absolute';
-      labelDiv.style.left = (hotspot.labelX || 0) + 'px';
-      labelDiv.style.top = (hotspot.labelY || 0) + 'px';
-      labelDiv.style.transform = 'scale(' + (hotspot.labelScale || 1) + ')';
+      labelDiv.style.left = (labelData.labelX || 0) + 'px';
+      labelDiv.style.top = (labelData.labelY || 0) + 'px';
+      labelDiv.style.transform = 'scale(' + (labelData.labelScale || 1) + ')';
       labelDiv.style.transformOrigin = 'top left';
       const img = document.createElement('img');
-      img.src = hotspot.labelImage;
-      img.alt = hotspot.name;
+      img.src = labelImage;
+      img.alt = hotspotName;
       img.style.maxWidth = 'none';
       labelDiv.appendChild(img);
       wrapper.appendChild(labelDiv);
       
+      // Resize handle for label (blue)
       const labelResize = document.createElement('div');
       labelResize.className = 'label-resize';
       labelResize.title = 'Drag to resize label';
-      labelResize.onmousedown = (function(id) { return function(e) { e.stopPropagation(); startLabelResize(e, id); }; })(hotspot.id);
+      labelResize.onmousedown = (function(iid) { return function(e) { e.stopPropagation(); startLabelResize(e, iid); }; })(id);
       wrapper.appendChild(labelResize);
       
-      labelDiv.onmousedown = (function(id) { return function(e) { e.stopPropagation(); startDragLabel(e, id); }; })(hotspot.id);
+      labelDiv.onmousedown = (function(iid) { return function(e) { e.stopPropagation(); startDragLabel(e, iid); }; })(id);
     }
-    
-    wrapper.onmousedown = (function(id) { return function(e) { 
-      if(e.target === dotResize) return;
-      startDragDot(e, id); 
-    }; })(hotspot.id);
     
     container.appendChild(wrapper);
   }
 }
 
-function startDragDot(e, id) { 
-  isDraggingDot = true; 
-  dragTargetId = id; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === id) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if (!h) return;
-  dragStart = { x: e.clientX, y: e.clientY, startX: h.x || 50, startY: h.y || 50 }; 
-  document.addEventListener('mousemove', onDragDot); 
-  document.addEventListener('mouseup', stopDragDot); 
+// ============================================
+// DRAG AND RESIZE HANDLERS
+// ============================================
+function startDragLabel(e, id) {
+  isDraggingLabel = true;
+  dragTargetId = id;
+  const label = getHotspotLabel(id);
+  dragStart = { x: e.clientX, y: e.clientY, startX: label.labelX || 0, startY: label.labelY || 0 };
+  document.addEventListener('mousemove', onDragLabel);
+  document.addEventListener('mouseup', stopDragLabel);
 }
 
-function onDragDot(e) { 
-  if(!isDraggingDot) return; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === dragTargetId) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if(!h) return; 
-  const rect = document.getElementById('artworkContainer').getBoundingClientRect(); 
-  let newX = dragStart.startX + ((e.clientX - dragStart.x) / rect.width) * 100; 
-  let newY = dragStart.startY + ((e.clientY - dragStart.y) / rect.height) * 100; 
-  h.x = Math.min(100, Math.max(0, newX)); 
-  h.y = Math.min(100, Math.max(0, newY)); 
-  updateHotspotInCurrentBreakpoint(h); 
-  renderCanvas(); 
+function onDragLabel(e) {
+  if (!isDraggingLabel) return;
+  const label = getHotspotLabel(dragTargetId);
+  const newX = dragStart.startX + (e.clientX - dragStart.x);
+  const newY = dragStart.startY + (e.clientY - dragStart.y);
+  updateHotspotLabel(dragTargetId, { labelX: Math.min(500, Math.max(-500, newX)), labelY: Math.min(500, Math.max(-500, newY)) });
 }
 
-function stopDragDot() { 
-  isDraggingDot = false; 
-  dragTargetId = null;
-  document.removeEventListener('mousemove', onDragDot); 
-  document.removeEventListener('mouseup', stopDragDot); 
-  updateStatus('Position updated'); 
+function stopDragLabel() {
+  isDraggingLabel = false;
+  document.removeEventListener('mousemove', onDragLabel);
+  document.removeEventListener('mouseup', stopDragLabel);
+  updateStatus('Label moved');
 }
 
-function startDragLabel(e, id) { 
-  isDraggingLabel = true; 
-  dragTargetId = id; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === id) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if (!h) return;
-  dragStart = { x: e.clientX, y: e.clientY, startX: h.labelX || 0, startY: h.labelY || 0 }; 
-  document.addEventListener('mousemove', onDragLabel); 
-  document.addEventListener('mouseup', stopDragLabel); 
+function startDotResize(e, id) {
+  e.preventDefault();
+  e.stopPropagation();
+  isResizingDot = true;
+  dragTargetId = id;
+  const label = getHotspotLabel(id);
+  dragStart = { x: e.clientX, y: e.clientY, startVal: label.dotSize || 50 };
+  document.addEventListener('mousemove', onDotResize);
+  document.addEventListener('mouseup', stopDotResize);
 }
 
-function onDragLabel(e) { 
-  if(!isDraggingLabel) return; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === dragTargetId) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if(!h) return; 
-  h.labelX = dragStart.startX + (e.clientX - dragStart.x); 
-  h.labelY = dragStart.startY + (e.clientY - dragStart.y);
-  h.labelX = Math.min(500, Math.max(-500, h.labelX));
-  h.labelY = Math.min(500, Math.max(-500, h.labelY));
-  updateHotspotInCurrentBreakpoint(h); 
-  renderCanvas(); 
+function onDotResize(e) {
+  if (!isResizingDot) return;
+  const label = getHotspotLabel(dragTargetId);
+  const delta = (e.clientX - dragStart.x + e.clientY - dragStart.y) / 2;
+  const newSize = Math.min(200, Math.max(20, dragStart.startVal + delta));
+  updateHotspotLabel(dragTargetId, { dotSize: newSize });
 }
 
-function stopDragLabel() { 
-  isDraggingLabel = false; 
-  dragTargetId = null;
-  document.removeEventListener('mousemove', onDragLabel); 
-  document.removeEventListener('mouseup', stopDragLabel); 
-  updateStatus('Label position updated'); 
+function stopDotResize() {
+  isResizingDot = false;
+  document.removeEventListener('mousemove', onDotResize);
+  document.removeEventListener('mouseup', stopDotResize);
+  updateStatus('Dot resized');
 }
 
-function startDotResize(e, id) { 
-  e.preventDefault(); e.stopPropagation(); 
-  isResizingDot = true; 
-  dragTargetId = id; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === id) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if (!h) return;
-  dragStart = { x: e.clientX, y: e.clientY, startVal: h.dotSize || 50 }; 
-  document.addEventListener('mousemove', onDotResize); 
-  document.addEventListener('mouseup', stopDotResize); 
+function startLabelResize(e, id) {
+  e.preventDefault();
+  e.stopPropagation();
+  isResizingLabel = true;
+  dragTargetId = id;
+  const label = getHotspotLabel(id);
+  dragStart = { x: e.clientX, y: e.clientY, startVal: label.labelScale || 1 };
+  document.addEventListener('mousemove', onLabelResize);
+  document.addEventListener('mouseup', stopLabelResize);
 }
 
-function onDotResize(e) { 
-  if(!isResizingDot) return; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === dragTargetId) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if(!h) return; 
-  let delta = (e.clientX - dragStart.x + e.clientY - dragStart.y)/2; 
-  let newSize = dragStart.startVal + delta; 
-  h.dotSize = Math.min(200, Math.max(20, newSize)); 
-  updateHotspotInCurrentBreakpoint(h); 
-  renderCanvas(); 
+function onLabelResize(e) {
+  if (!isResizingLabel) return;
+  const label = getHotspotLabel(dragTargetId);
+  const delta = (e.clientX - dragStart.x + e.clientY - dragStart.y) / 100;
+  const newScale = Math.min(2.5, Math.max(0.3, dragStart.startVal + delta));
+  updateHotspotLabel(dragTargetId, { labelScale: newScale });
 }
 
-function stopDotResize() { 
-  isResizingDot = false; 
-  dragTargetId = null;
-  document.removeEventListener('mousemove', onDotResize); 
-  document.removeEventListener('mouseup', stopDotResize); 
-  updateStatus('Dot resized'); 
+function stopLabelResize() {
+  isResizingLabel = false;
+  document.removeEventListener('mousemove', onLabelResize);
+  document.removeEventListener('mouseup', stopLabelResize);
+  updateStatus('Label scaled');
 }
 
-function startLabelResize(e, id) { 
-  isResizingLabel = true; 
-  dragTargetId = id; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === id) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if (!h) return;
-  dragStart = { x: e.clientX, y: e.clientY, startVal: h.labelScale || 1 }; 
-  document.addEventListener('mousemove', onLabelResize); 
-  document.addEventListener('mouseup', stopLabelResize); 
-}
-
-function onLabelResize(e) { 
-  if(!isResizingLabel) return; 
-  const hotspots = getCurrentHotspots();
-  let h = null;
-  for (let i = 0; i < hotspots.length; i++) {
-    if (hotspots[i].id === dragTargetId) {
-      h = hotspots[i];
-      break;
-    }
-  }
-  if(!h) return; 
-  let delta = (e.clientX - dragStart.x + e.clientY - dragStart.y)/100; 
-  let newScale = dragStart.startVal + delta; 
-  h.labelScale = Math.min(2.5, Math.max(0.3, newScale)); 
-  updateHotspotInCurrentBreakpoint(h); 
-  renderCanvas(); 
-}
-
-function stopLabelResize() { 
-  isResizingLabel = false; 
-  dragTargetId = null;
-  document.removeEventListener('mousemove', onLabelResize); 
-  document.removeEventListener('mouseup', stopLabelResize); 
-  updateStatus('Label scaled'); 
-}
-
+// ============================================
+// COPY BREAKPOINT
+// ============================================
 function copyFromBreakpoint() {
-  const sourceId = document.getElementById('copyFromBreakpoint').value;
+  const sourceId = document.getElementById('copySource').value;
   if (sourceId === currentBreakpointId) {
-    updateStatus('Cannot copy from the same breakpoint');
+    updateStatus('Cannot copy from same breakpoint');
     return;
   }
-  let sourceData = null;
-  let targetData = null;
-  for (let i = 0; i < hotspotsData.length; i++) {
-    if (hotspotsData[i].breakpointId === sourceId) sourceData = hotspotsData[i];
-    if (hotspotsData[i].breakpointId === currentBreakpointId) targetData = hotspotsData[i];
-  }
-  if (sourceData && targetData) {
-    targetData.hotspots = JSON.parse(JSON.stringify(sourceData.hotspots));
-    markAsCustomized();
+  if (labelConfigs[sourceId]) {
+    labelConfigs[currentBreakpointId] = JSON.parse(JSON.stringify(labelConfigs[sourceId]));
+    markCustomized();
     saveConfig();
     renderHotspotList();
     renderCanvas();
-    let sourceName = '';
-    for (let i = 0; i < breakpointsList.length; i++) {
-      if (breakpointsList[i].id === sourceId) {
-        sourceName = breakpointsList[i].name;
-        break;
-      }
-    }
-    updateStatus('Copied from ' + sourceName);
+    updateStatus('Copied from ' + breakpoints.find(b=>b.id===sourceId).name);
   }
 }
 
-function resetAllBreakpoints() {
-  if (confirm('Reset ALL breakpoints to default positions? This cannot be undone.')) {
-    customizedBreakpointsSet.clear();
-    loadConfig();
-    renderBreakpointSelector();
+// ============================================
+// RESET CURRENT BREAKPOINT
+// ============================================
+function resetCurrentBreakpoint() {
+  if (confirm('Reset current breakpoint to default label positions?')) {
+    const isMobile = breakpoints.find(b => b.id === currentBreakpointId)?.type === 'mobile';
+    const hotspotIds = ['h1','h2','h3','h4','h5','h6','h7','h8','h9','h10','h11','a1','a2','a3','a4','a5','a6','a7','a8','a9','a10'];
+    if (isMobile) hotspotIds.push('m1','m2','m3','m4','m5','m6');
+    labelConfigs[currentBreakpointId] = {};
+    for (let i = 0; i < hotspotIds.length; i++) {
+      labelConfigs[currentBreakpointId][hotspotIds[i]] = {
+        labelX: 0, labelY: 0, labelScale: 1, dotSize: dotPositions[hotspotIds[i]]?.dotSize || 50
+      };
+    }
+    customizedBreakpoints.delete(currentBreakpointId);
+    saveConfig();
     renderHotspotList();
     renderCanvas();
-    updateStatus('All breakpoints reset to defaults');
+    updateStatus('Reset to defaults');
   }
 }
 
-function generateHTML() { 
-  return '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">\n  <title>Francien van Everdingen</title>\n  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n  <link rel="stylesheet" href="css/artboard-2.css">\n</head>\n<body>\n  <main>\n    <div class="artboard artboard--desktop">\n      <div class="artboard__container">\n        <img src="images/bg.jpg" alt="Desktop artwork">\n        <div class="hotspots-container"></div>\n      </div>\n    </div>\n    <div class="artboard artboard--mobile">\n      <div class="artboard__container">\n        <img src="images/mobile-bg.jpg" alt="Mobile artwork">\n        <div class="hotspots-container"></div>\n      </div>\n    </div>\n  </main>\n  <div class="modal fade" id="mediaModal" tabindex="-1">\n    <div class="modal-dialog modal-xl">\n      <div class="modal-content bg-dark text-white">\n        <div class="modal-body p-0">\n          <div id="videoContainer" class="ratio ratio-16x9 d-none">\n            <iframe id="youtubeVideo" allowfullscreen></iframe>\n          </div>\n          <div id="pdfContainer" class="d-none"></div>\n          <div id="imageContainer" class="d-none text-center p-2">\n            <img id="modalImage" style="max-width:100%">\n          </div>\n        </div>\n        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"></button>\n      </div>\n    </div>\n  </div>\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"><\/script>\n  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n  <script src="js/artboard-2.js"><\/script>\n</body>\n</html>'; 
+// ============================================
+// GENERATE FINAL CODE
+// ============================================
+function generateFullHTML() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Francien van Everdingen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#989fa7;min-height:100vh;overflow-x:hidden}
+    .artboard{display:none;min-height:100vh}
+    .artboard--desktop.active,.artboard--mobile.active{display:block}
+    .artboard__container{position:relative;margin:0 auto;width:100%;max-width:95%}
+    .artboard__image{display:block;width:100%;height:auto;user-select:none;pointer-events:none}
+    .hotspots-container{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden}
+    .hotspot{position:absolute;cursor:pointer;z-index:10}
+    .hotspot__dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;transition:transform 0.2s;z-index:10}
+    .hotspot:hover .hotspot__dot{transform:translate(-50%,-50%) scale(1.1)}
+    .hotspot__label{position:absolute;pointer-events:none;transform-origin:top left;z-index:20}
+    .hotspot__label img{display:block;max-width:none}
+    #pdfContainer{max-height:80vh;overflow-y:auto;background:#111;padding:10px}
+    #pdfContainer canvas{display:block;width:100%;height:auto;margin:0 auto 20px}
+    body{overflow-x:hidden}
+    .artboard__container{overflow-x:hidden}
+    @media (max-width:640px){.artboard--desktop.active{display:none}.artboard--mobile.active{display:block}}
+    @media (min-width:641px){.artboard--desktop.active{display:block}.artboard--mobile.active{display:none}}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="artboard artboard--desktop">
+      <div class="artboard__container">
+        <img class="artboard__image" src="images/bg.jpg" alt="Desktop artwork">
+        <div class="hotspots-container"></div>
+      </div>
+    </div>
+    <div class="artboard artboard--mobile">
+      <div class="artboard__container">
+        <img class="artboard__image" src="images/mobile-bg.jpg" alt="Mobile artwork">
+        <div class="hotspots-container"></div>
+      </div>
+    </div>
+  </main>
+  <div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-body p-0">
+          <div id="videoContainer" class="ratio ratio-16x9 d-none">
+            <iframe id="youtubeVideo" allowfullscreen></iframe>
+          </div>
+          <div id="pdfContainer" class="d-none"></div>
+          <div id="imageContainer" class="d-none text-center p-2">
+            <img id="modalImage" style="max-width:100%">
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // BREAKPOINT CONFIGURATIONS
+    var breakpointConfigs = ${generateBreakpointConfigs()};
+    
+    function getConfigForWidth(width) {
+      var breakpoints = [320,375,390,428,480,667,768,800,844,926,1024,1280,1366,1920,2560,3840].sort(function(a,b){return a-b;});
+      var closest = breakpoints[0];
+      for(var i=0;i<breakpoints.length;i++){
+        if(width <= breakpoints[i]){ closest = breakpoints[i]; break; }
+        closest = breakpoints[i];
+      }
+      return breakpointConfigs[closest] || breakpointConfigs[1920];
+    }
+    
+    function createHotspot(c){
+      var a=document.createElement("a");a.className="hotspot";
+      a.style.left=c.x+"%";a.style.top=c.y+"%";
+      var d=document.createElement("div");d.className="hotspot__dot";
+      d.style.backgroundImage="url('images/"+c.dotImage+"')";
+      d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";
+      d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";
+      a.appendChild(d);
+      if(c.type!=="area"&&c.labelImage){
+        var l=document.createElement("div");l.className="hotspot__label";
+        var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;
+        l.appendChild(i);l.style.left=(c.labelX||0)+"px";l.style.top=(c.labelY||0)+"px";
+        l.style.transform="scale("+(c.labelScale||1)+")";
+        a.appendChild(l);
+      }
+      if(c.type==="external"){a.href=c.url;a.target="_blank";a.rel="noopener noreferrer";}
+      else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close();return false;};}
+      else if(c.type!=="area"){a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url);}
+      return a;
+    }
+    
+    function renderArtboard(t){
+      var a=document.querySelector(".artboard--"+t);if(!a)return;
+      var c=a.querySelector(".hotspots-container");if(!c)return;
+      var width=window.innerWidth;
+      var configs=getConfigForWidth(width);
+      c.innerHTML="";
+      for(var i=0;i<configs.length;i++){c.appendChild(createHotspot(configs[i]));}
+    }
+    
+    async function renderPDF(u){
+      var c=document.getElementById("pdfContainer");
+      c.innerHTML='<div class="text-center p-4 text-white">Loading PDF...</div>';
+      try{
+        var r=await fetch(u);var b=await r.arrayBuffer();
+        var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";
+        for(var i=1;i<=p.numPages;i++){
+          var page=await p.getPage(i);var v=page.getViewport({scale:1.5});
+          var can=document.createElement("canvas");
+          can.width=v.width;can.height=v.height;can.style.width="100%";
+          await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;
+          c.appendChild(can);
+        }
+      }catch(e){c.innerHTML='<div class="alert alert-danger m-3">Error loading PDF</div>';}
+    }
+    
+    function setActiveArtboard(){
+      var width=window.innerWidth;
+      var isMobile=width<=640;
+      var d=document.querySelector(".artboard--desktop");
+      var mb=document.querySelector(".artboard--mobile");
+      if(d&&mb){d.classList.toggle("active",!isMobile);mb.classList.toggle("active",isMobile);}
+    }
+    
+    document.addEventListener("DOMContentLoaded",function(){
+      renderArtboard("desktop");renderArtboard("mobile");
+      setActiveArtboard();
+      window.addEventListener("resize",function(){
+        setActiveArtboard();
+        renderArtboard("desktop");renderArtboard("mobile");
+      });
+    });
+    
+    var modalElement=document.getElementById("mediaModal");
+    if(modalElement){
+      modalElement.addEventListener("show.bs.modal",async function(event){
+        var trigger=event.relatedTarget;
+        var type=trigger?.getAttribute("data-type");
+        var src=trigger?.getAttribute("data-src");
+        var vc=document.getElementById("videoContainer");
+        var pc=document.getElementById("pdfContainer");
+        var ic=document.getElementById("imageContainer");
+        vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");
+        if(type==="video"&&src){
+          vc.classList.remove("d-none");
+          var yt=document.getElementById("youtubeVideo");
+          var sep=src.includes("?")?"&":"?";
+          yt.src=src+sep+"autoplay=1&rel=0";
+        }else if(type==="pdf"&&src){
+          pc.classList.remove("d-none");await renderPDF(src);
+        }else if(type==="image"&&src){
+          ic.classList.remove("d-none");document.getElementById("modalImage").src=src;
+        }
+      });
+      modalElement.addEventListener("hidden.bs.modal",function(){
+        var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";
+        document.getElementById("pdfContainer").innerHTML="";
+        document.getElementById("modalImage").src="";
+      });
+    }
+  </script>
+</body>
+</html>`;
 }
 
-function generateCSS() { 
-  return '*{margin:0;padding:0;box-sizing:border-box}\n' +
-    'body{background:#dbe4f3;min-height:100vh;overflow-x:hidden}\n' +
-    '.artboard{display:none;min-height:100vh}\n' +
-    '.artboard--desktop.active,.artboard--mobile.active{display:block}\n' +
-    '.artboard__container{position:relative;margin:0 auto;width:100%;max-width:95%}\n' +
-    '.artboard__image{display:block;width:100%;height:auto;user-select:none;pointer-events:none}\n' +
-    '.hotspots-container{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible}\n' +
-    '.hotspot{position:absolute;cursor:pointer;z-index:10}\n' +
-    '.hotspot__dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;transition:transform 0.2s}\n' +
-    '.hotspot:hover .hotspot__dot{transform:translate(-50%,-50%) scale(1.1)}\n' +
-    '.hotspot__label{position:absolute;pointer-events:none;transform-origin:top left}\n' +
-    '.hotspot__label img{display:block;max-width:none}\n' +
-    '#pdfContainer{max-height:80vh;overflow-y:auto;background:#111;padding:10px}\n' +
-    '#pdfContainer canvas{display:block;width:100%;height:auto;margin:0 auto 20px}\n' +
-    'body{overflow-x:hidden}\n' +
-    '.artboard__container{overflow-x:hidden}\n' +
-    '@media (max-width: 640px){.artboard--desktop.active{display:none}.artboard--mobile.active{display:block}}\n' +
-    '@media (min-width: 641px){.artboard--desktop.active{display:block}.artboard--mobile.active{display:none}}'; 
-}
-
-function generateJS() {
-  const breakpointConfigs = {};
-  for (let i = 0; i < breakpointsList.length; i++) {
-    const bp = breakpointsList[i];
-    let bpData = null;
-    for (let j = 0; j < hotspotsData.length; j++) {
-      if (hotspotsData[j].breakpointId === bp.id) {
-        bpData = hotspotsData[j];
-        break;
+function generateBreakpointConfigs() {
+  const allConfigs = {};
+  for (let i = 0; i < breakpoints.length; i++) {
+    const bp = breakpoints[i];
+    const labels = labelConfigs[bp.id] || {};
+    const configs = [];
+    const hotspotIds = Object.keys(labels);
+    for (let j = 0; j < hotspotIds.length; j++) {
+      const id = hotspotIds[j];
+      const label = labels[id];
+      if (!label) continue;
+      
+      let dotX = 50, dotY = 50, dotSize = label.dotSize || 50;
+      let dotImage = 'reddot-01.png', labelImage = null, hotspotName = id, hotspotType = 'area', hotspotUrl = '#';
+      let hasLabel = false;
+      
+      // Get base data
+      if (id === 'h1') { dotX = 15; dotY = 26; dotImage = 'reddot-01.png'; labelImage = 'images/Boek-naslagwerkje.png'; hotspotName = 'Boek Een Naslagwerkje'; hotspotType = 'video'; hotspotUrl = 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI'; hasLabel = true; }
+      else if (id === 'h2') { dotX = 38.71339889649748; dotY = 62.73379309809576; dotImage = 'reddot-02.png'; labelImage = 'images/LightCone.png'; hotspotName = 'Light Cone'; hotspotType = 'external'; hotspotUrl = 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen'; hasLabel = true; }
+      else if (id === 'h3') { dotX = 59.23780260017685; dotY = 71.42198278161979; dotImage = 'reddot-03.png'; labelImage = 'images/Allerlei.png'; hotspotName = 'Allerlei'; hotspotType = 'external'; hotspotUrl = 'https://artoffice.info/kunstenaar/francien-van-everdingen/'; hasLabel = true; }
+      else if (id === 'h4') { dotX = 69.33486116182293; dotY = 40.96534481872111; dotImage = 'reddot-04.png'; labelImage = 'images/Stof.png'; hotspotName = 'Stof'; hotspotType = 'external'; hotspotUrl = 'https://www.etsy.com/shop/hitchhikehijabi'; hasLabel = true; }
+      else if (id === 'h5') { dotX = 95.76993592084135; dotY = 41.80310346065355; dotImage = 'reddot-04.png'; labelImage = 'images/Contact.png'; hotspotName = 'Contact'; hotspotType = 'image'; hotspotUrl = 'images/contact-emailadres.png'; hasLabel = true; }
+      else if (id === 'h6') { dotX = 17; dotY = 56.8; dotImage = 'reddot-05.png'; labelImage = 'images/StichtingLezeren.png'; hotspotName = 'Stichting Lezeren'; hotspotType = 'external'; hotspotUrl = 'http://www.lezeren.nl'; hasLabel = true; }
+      else if (id === 'h7') { dotX = 26; dotY = 80; dotImage = 'reddot-06.png'; labelImage = 'images/Nederlandseles.png'; hotspotName = 'Nederlandse Les'; hotspotType = 'external'; hotspotUrl = 'https://preply.in/FRANCIEN6NL3194022810'; hasLabel = true; }
+      else if (id === 'h8') { dotX = 57.5; dotY = 50; dotImage = 'reddot-08.png'; labelImage = 'images/Boek-letters.png'; hotspotName = 'Boek Letters'; hotspotType = 'video'; hotspotUrl = 'https://www.youtube-nocookie.com/embed/ELwjwDY3hUg'; hasLabel = true; }
+      else if (id === 'h9') { dotX = 72.42679779299498; dotY = 14.000603429123895; dotImage = 'reddot-09.png'; labelImage = 'images/Films.png'; hotspotName = 'Films'; hotspotType = 'pdf'; hotspotUrl = '/images/Filmografie-Francien-van-Everdingen.pdf'; hasLabel = true; }
+      else if (id === 'h10') { dotX = 38.589542541856424; dotY = 37.021810345580285; dotImage = 'reddot-10.png'; labelImage = 'images/CV.png'; hotspotName = 'CV'; hotspotType = 'pdf'; hotspotUrl = '/images/CV-Francien-van-Everdingen-website.pdf'; hasLabel = true; }
+      else if (id === 'h11') { dotX = 83.42636169457094; dotY = 83.27293103431549; dotImage = 'reddot-10.png'; labelImage = 'images/Exit.png'; hotspotName = 'Exit'; hotspotType = 'exit'; hotspotUrl = '#'; hasLabel = true; }
+      else if (id.startsWith('a')) {
+        const num = parseInt(id.split('-')[1]);
+        const dots = ['reddot-11.png','reddot-15.png','reddot-16.png','reddot-17.png','reddot-18.png','reddot-19.png','reddot-20.png','reddot-21.png','reddot-22.png','reddot-23.png'];
+        dotX = [36.53758009894831,34.27832413747906,42.64651566462432,57.86830277775952,4.146181912781508,46.53758009894831,76.77200516234721,56.66513883817706,47.980931823990176,85.45392043379971][num-1];
+        dotY = [71.30862073481701,41.79862070571272,9.563793088394327,21.607413779554896,86.3310345095212,52.393189649568995,62.73379309809576,29.477155135197087,84.43681034072956,24.868534497394403][num-1];
+        dotImage = dots[num-1];
+        hotspotType = 'area';
+        hotspotName = 'Area ' + num;
       }
-    }
-    if (bpData) {
-      const configs = [];
-      for (let k = 0; k < bpData.hotspots.length; k++) {
-        const h = bpData.hotspots[k];
-        configs.push({
-          id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, labelImage: h.labelImage,
-          x: h.x || 50, y: h.y || 50, dotSize: h.dotSize || 50,
-          labelX: h.labelX || 0, labelY: h.labelY || 0, labelScale: h.labelScale || 1
-        });
+      else if (id.startsWith('m')) {
+        const num = parseInt(id.split('-')[1]);
+        const dots = ['reddot-11.png','reddot-15.png','reddot-16.png','reddot-17.png','reddot-18.png','reddot-19.png'];
+        dotX = [96.875,93.75,76.25,40,2.1875,32.5][num-1];
+        dotY = [14.602904008277783,29.292741675572067,41.72450935490984,76.4764303767408,49.30512442114905,42.19590182009398][num-1];
+        dotImage = dots[num-1];
+        hotspotType = 'area';
+        hotspotName = 'Mobile Area ' + num;
       }
-      breakpointConfigs[bp.width] = configs;
+      
+      configs.push({
+        id: id, name: hotspotName, type: hotspotType, url: hotspotUrl,
+        dotImage: dotImage, labelImage: labelImage,
+        x: dotX, y: dotY, dotSize: dotSize,
+        labelX: label.labelX || 0, labelY: label.labelY || 0, labelScale: label.labelScale || 1
+      });
     }
+    allConfigs[bp.width] = configs;
   }
-  return 'var breakpointConfigs = ' + JSON.stringify(breakpointConfigs) + ';\n\nfunction getConfigForWidth(width) {\n  var breakpoints = [320,375,390,428,480,667,768,800,844,926,1024,1280,1366,1920,2560,3840].sort(function(a,b){return a-b;});\n  var closest = breakpoints[0];\n  for(var i=0;i<breakpoints.length;i++){\n    if(width <= breakpoints[i]){ closest = breakpoints[i]; break; }\n    closest = breakpoints[i];\n  }\n  return breakpointConfigs[closest] || breakpointConfigs[1920];\n}\n\npdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";\n\nfunction createHotspot(c){\n  var a=document.createElement("a");a.className="hotspot";\n  a.style.left=c.x+"%";a.style.top=c.y+"%";\n  var d=document.createElement("div");d.className="hotspot__dot";\n  d.style.backgroundImage="url(\'images/"+c.dotImage+"\')";\n  d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";\n  d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";\n  a.appendChild(d);\n  if(c.type!=="area"&&c.labelImage){\n    var l=document.createElement("div");l.className="hotspot__label";\n    var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;\n    l.appendChild(i);l.style.left=(c.labelX||0)+"px";l.style.top=(c.labelY||0)+"px";\n    l.style.transform="scale("+(c.labelScale||1)+")";\n    a.appendChild(l);\n  }\n  if(c.type==="external"){a.href=c.url;a.target="_blank"}\n  else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close()}}\n  else if(c.type!=="area"){a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}\n  return a;\n}\n\nfunction renderArtboard(t){\n  var a=document.querySelector(".artboard--"+t);if(!a)return;\n  var c=a.querySelector(".hotspots-container");if(!c)return;\n  var width = window.innerWidth;\n  var configs = getConfigForWidth(width);\n  c.innerHTML="";\n  configs.forEach(function(h){c.appendChild(createHotspot(h))});\n}\n\nasync function renderPDF(u){\n  var c=document.getElementById("pdfContainer");\n  c.innerHTML="<div class=\"text-center p-4\">Loading...</div>";\n  try{\n    var r=await fetch(u);var b=await r.arrayBuffer();\n    var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";\n    for(var i=1;i<=p.numPages;i++){\n      var page=await p.getPage(i);var v=page.getViewport({scale:1.5});\n      var can=document.createElement("canvas");\n      can.width=v.width;can.height=v.height;can.style.width="100%";\n      await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;\n      c.appendChild(can);\n    }\n  }catch(e){c.innerHTML="<div class=\"alert alert-danger\">Error</div>"}\n}\n\ndocument.addEventListener("DOMContentLoaded",function(){\n  renderArtboard("desktop");renderArtboard("mobile");\n  var setActive=function(){\n    var width = window.innerWidth;\n    var isMobile = width <= 640;\n    var d=document.querySelector(".artboard--desktop");\n    var mb=document.querySelector(".artboard--mobile");\n    if(d&&mb){d.classList.toggle("active",!isMobile);mb.classList.toggle("active",isMobile)}\n  };\n  setActive();window.addEventListener("resize",setActive);\n  window.addEventListener("resize",function(){renderArtboard("desktop");renderArtboard("mobile")});\n});\n\nvar modal=document.getElementById("mediaModal");\nif(modal){\n  modal.addEventListener("show.bs.modal",async function(e){\n    var t=e.relatedTarget;var type=t?.getAttribute("data-type");var src=t?.getAttribute("data-src");\n    var vc=document.getElementById("videoContainer");var pc=document.getElementById("pdfContainer");var ic=document.getElementById("imageContainer");\n    vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");\n    if(type==="video"&&src){\n      vc.classList.remove("d-none");var yt=document.getElementById("youtubeVideo");\n      yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1";\n    }else if(type==="pdf"&&src){\n      pc.classList.remove("d-none");await renderPDF(src);\n    }else if(type==="image"&&src){\n      ic.classList.remove("d-none");document.getElementById("modalImage").src=src;\n    }\n  });\n  modal.addEventListener("hidden.bs.modal",function(){\n    var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";\n    document.getElementById("pdfContainer").innerHTML="";\n    document.getElementById("modalImage").src="";\n  });\n}';
+  return JSON.stringify(allConfigs);
 }
 
-function generateFinalCode() {
-  document.getElementById('htmlPre').textContent = generateHTML();
-  document.getElementById('cssPre').textContent = generateCSS();
-  document.getElementById('jsPre').textContent = generateJS();
+function generateAndShow() {
+  document.getElementById('htmlPre').textContent = generateFullHTML();
+  document.getElementById('cssPre').textContent = `/* CSS is included in the HTML file above */`;
+  document.getElementById('jsPre').textContent = `/* JavaScript is included in the HTML file above */`;
   document.getElementById('codeModal').style.display = 'flex';
   updateStatus('Code generated!');
 }
-function copyCode() { 
-  const html = document.getElementById('htmlPre').textContent;
-  const css = document.getElementById('cssPre').textContent;
-  const js = document.getElementById('jsPre').textContent;
-  navigator.clipboard.writeText(html + '\n\n' + css + '\n\n' + js); 
-  updateStatus('Copied!'); 
-}
-function closeModal() { 
-  document.getElementById('codeModal').style.display = 'none'; 
+
+function copyCode() {
+  const code = document.getElementById('htmlPre').textContent;
+  navigator.clipboard.writeText(code);
+  updateStatus('Copied!');
 }
 
-function initDraggableSidebar() {
+function closeModal() {
+  document.getElementById('codeModal').style.display = 'none';
+}
+
+// ============================================
+// RESIZE SIDEBAR
+// ============================================
+function initSidebarResize() {
   const sidebar = document.getElementById('sidebar');
-  const handle = document.getElementById('sidebarResizeHandle');
+  const handle = document.getElementById('sidebarResize');
   let startX, startWidth;
   handle.addEventListener('mousedown', function(e) {
     startX = e.clientX;
@@ -956,7 +917,7 @@ function initDraggableSidebar() {
   });
   function doDrag(e) {
     let newWidth = startWidth + (e.clientX - startX);
-    if (newWidth >= 220 && newWidth <= 500) {
+    if (newWidth >= 280 && newWidth <= 500) {
       sidebar.style.width = newWidth + 'px';
     }
   }
@@ -966,57 +927,36 @@ function initDraggableSidebar() {
   }
 }
 
-const searchInput = document.getElementById('hotspotSearch');
-if (searchInput) {
-  searchInput.addEventListener('input', function() { renderHotspotList(); });
-}
-
 window.addEventListener('resize', function() {
-  let currentBp = null;
-  for (let i = 0; i < breakpointsList.length; i++) {
-    if (breakpointsList[i].id === currentBreakpointId) {
-      currentBp = breakpointsList[i];
-      break;
-    }
-  }
-  if (currentBp) {
-    const previewArea = document.getElementById('previewArea');
+  const bp = breakpoints.find(b => b.id === currentBreakpointId);
+  if (bp) {
+    const preview = document.getElementById('previewArea');
     const frame = document.getElementById('artboardFrame');
-    const maxPreviewWidth = previewArea.clientWidth - 40;
-    if (currentBp.width > maxPreviewWidth) {
-      const scale = maxPreviewWidth / currentBp.width;
-      frame.style.transform = 'scale(' + scale + ')';
+    const maxW = preview.clientWidth - 40;
+    if (bp.width > maxW) {
+      frame.style.transform = 'scale(' + (maxW / bp.width) + ')';
     } else {
       frame.style.transform = 'scale(1)';
     }
   }
 });
 
-document.getElementById('generateCodeBtn')?.addEventListener('click', generateFinalCode);
-document.getElementById('resetViewBtn')?.addEventListener('click', resetAllBreakpoints);
-document.getElementById('copyBreakpointBtn')?.addEventListener('click', copyFromBreakpoint);
-
-const tabBtns = document.querySelectorAll('.tab-btn');
-for (let i = 0; i < tabBtns.length; i++) {
-  tabBtns[i].addEventListener('click', function() {
-    for (let j = 0; j < tabBtns.length; j++) {
-      tabBtns[j].classList.remove('active');
-    }
-    this.classList.add('active');
-    const codeContents = document.querySelectorAll('.code-content');
-    for (let j = 0; j < codeContents.length; j++) {
-      codeContents[j].classList.remove('active');
-    }
-    const tab = this.getAttribute('data-tab');
-    document.getElementById(tab + 'Code').classList.add('active');
-  });
-}
+document.getElementById('searchInput')?.addEventListener('input', () => renderHotspotList());
+document.getElementById('copyBtn')?.addEventListener('click', copyFromBreakpoint);
+document.getElementById('generateBtn')?.addEventListener('click', generateAndShow);
+document.getElementById('resetBtn')?.addEventListener('click', resetCurrentBreakpoint);
+document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', function() {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  this.classList.add('active');
+  document.querySelectorAll('.code-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(this.getAttribute('data-tab') + 'Code').classList.add('active');
+}));
 
 loadConfig();
 renderBreakpointSelector();
 renderHotspotList();
 switchBreakpoint('bp14');
-initDraggableSidebar();
+initSidebarResize();
 </script>
 </body>
 </html>
