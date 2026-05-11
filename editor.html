@@ -12,7 +12,6 @@
     
     .editor-container { display: flex; height: 100vh; width: 100vw; position: relative; }
     
-    /* Draggable Sidebar */
     .sidebar { 
       background: #1a1a2e; 
       color: white; 
@@ -141,7 +140,7 @@
     </div>
     
     <div class="hotspot-list">
-      <div class="section-title">🎯 HOTSPOTS (21 Desktop / 17 Mobile)</div>
+      <div class="section-title">🎯 HOTSPOTS (Desktop:21 / Mobile:17)</div>
       <input type="text" class="hotspot-search" id="hotspotSearch" placeholder="Search hotspots...">
       <div id="hotspotList"></div>
     </div>
@@ -179,67 +178,180 @@
 
 <script>
 // ============================================
-// BREAKPOINTS WITH ORIENTATION LABELS
+// BREAKPOINTS - Landscape phones use desktop artwork
 // ============================================
 const breakpoints = [
-  { id: 'bp1', name: '320×480 (Portrait)', width: 320, height: 480, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp2', name: '480×320 (Landscape)', width: 480, height: 320, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp3', name: '375×667 (Portrait)', width: 375, height: 667, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp4', name: '667×375 (Landscape)', width: 667, height: 375, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp5', name: '390×844 (Portrait)', width: 390, height: 844, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp6', name: '844×390 (Landscape)', width: 844, height: 390, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp7', name: '428×926 (Portrait)', width: 428, height: 926, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp8', name: '926×428 (Landscape)', width: 926, height: 428, image: 'images/mobile-bg.jpg', isMobile: true, type: 'mobile' },
-  { id: 'bp9', name: '768×1024 (Portrait)', width: 768, height: 1024, image: 'images/bg.jpg', isMobile: false, type: 'desktop' },
-  { id: 'bp10', name: '1024×768 (Landscape)', width: 1024, height: 768, image: 'images/bg.jpg', isMobile: false, type: 'desktop' },
-  { id: 'bp11', name: '800×1280 (Portrait)', width: 800, height: 1280, image: 'images/bg.jpg', isMobile: false, type: 'desktop' },
-  { id: 'bp12', name: '1280×800 (Landscape)', width: 1280, height: 800, image: 'images/bg.jpg', isMobile: false, type: 'desktop' },
-  { id: 'bp13', name: '1366×768', width: 1366, height: 768, image: 'images/bg.jpg', isMobile: false, type: 'desktop' },
-  { id: 'bp14', name: '1920×1080', width: 1920, height: 1080, image: 'images/bg.jpg', isMobile: false, type: 'desktop' },
-  { id: 'bp15', name: '2560×1080', width: 2560, height: 1080, image: 'images/bg.jpg', isMobile: false, type: 'desktop' },
-  { id: 'bp16', name: '3840×2160', width: 3840, height: 2160, image: 'images/bg.jpg', isMobile: false, type: 'desktop' }
+  // PORTRAIT PHONES - Mobile artwork (17 hotspots)
+  { id: 'bp1', name: '320×480 (Portrait)', width: 320, height: 480, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  { id: 'bp3', name: '375×667 (Portrait)', width: 375, height: 667, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  { id: 'bp5', name: '390×844 (Portrait)', width: 390, height: 844, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  { id: 'bp7', name: '428×926 (Portrait)', width: 428, height: 926, image: 'images/mobile-bg.jpg', type: 'mobile' },
+  // LANDSCAPE PHONES - Desktop artwork (21 hotspots)
+  { id: 'bp2', name: '480×320 (Landscape)', width: 480, height: 320, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp4', name: '667×375 (Landscape)', width: 667, height: 375, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp6', name: '844×390 (Landscape)', width: 844, height: 390, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp8', name: '926×428 (Landscape)', width: 926, height: 428, image: 'images/bg.jpg', type: 'desktop' },
+  // TABLETS & DESKTOPS - Desktop artwork (21 hotspots)
+  { id: 'bp9', name: '768×1024 (Portrait)', width: 768, height: 1024, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp10', name: '1024×768 (Landscape)', width: 1024, height: 768, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp11', name: '800×1280 (Portrait)', width: 800, height: 1280, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp12', name: '1280×800 (Landscape)', width: 1280, height: 800, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp13', name: '1366×768', width: 1366, height: 768, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp14', name: '1920×1080', width: 1920, height: 1080, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp15', name: '2560×1080', width: 2560, height: 1080, image: 'images/bg.jpg', type: 'desktop' },
+  { id: 'bp16', name: '3840×2160', width: 3840, height: 2160, image: 'images/bg.jpg', type: 'desktop' }
 ];
 
 // ============================================
-// HOTSPOTS - SEPARATED BY TYPE
+// ORIGINAL 11 HOTSPOTS WITH LABELS - Using your exact values from generated code
 // ============================================
 const originalHotspots = [
-  { id: 'h1', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', hasLabel: true, defaultDesktop: { x: 15, y: 26, dotSize: 75, labelX: 0, labelY: 40, labelScale: 0.6 }, defaultMobile: { x: 54, y: 33, dotSize: 70, labelX: -10, labelY: 10, labelScale: 0.62 } },
-  { id: 'h2', name: 'Light Cone', type: 'external', url: 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen', dotImage: 'reddot-02.png', labelImage: 'images/LightCone.png', hasLabel: true, defaultDesktop: { x: 37, y: 70, dotSize: 50, labelX: -225, labelY: -160, labelScale: 0.65 }, defaultMobile: { x: 22, y: 53, dotSize: 38, labelX: -6, labelY: -12, labelScale: 0.5 } },
-  { id: 'h3', name: 'Allerlei', type: 'external', url: 'https://artoffice.info/kunstenaar/francien-van-everdingen/', dotImage: 'reddot-03.png', labelImage: 'images/Allerlei.png', hasLabel: true, defaultDesktop: { x: 33.7, y: 40.2, dotSize: 59, labelX: -220, labelY: 25, labelScale: 0.7 }, defaultMobile: { x: 69, y: 64, dotSize: 30, labelX: 40, labelY: -10, labelScale: 0.44 } },
-  { id: 'h4', name: 'Stof', type: 'external', url: 'https://www.etsy.com/shop/hitchhikehijabi', dotImage: 'reddot-04.png', labelImage: 'images/Stof.png', hasLabel: true, defaultDesktop: { x: 46, y: 53, dotSize: 59, labelX: 1, labelY: 45, labelScale: 0.5 }, defaultMobile: { x: 49, y: 15, dotSize: 64, labelX: -18, labelY: -6, labelScale: 0.6 } },
-  { id: 'h5', name: 'Contact', type: 'image', url: 'images/contact-emailadres.png', dotImage: 'reddot-04.png', labelImage: 'images/Contact.png', hasLabel: true, defaultDesktop: { x: 85, y: 25, dotSize: 95, labelX: -275, labelY: 5, labelScale: 0.9 }, defaultMobile: { x: 67, y: 74, dotSize: 28, labelX: -18, labelY: -10, labelScale: 0.54 } },
-  { id: 'h6', name: 'Stichting Lezeren', type: 'external', url: 'http://www.lezeren.nl', dotImage: 'reddot-05.png', labelImage: 'images/StichtingLezeren.png', hasLabel: true, defaultDesktop: { x: 17, y: 56.8, dotSize: 125, labelX: -115, labelY: 85, labelScale: 0.4 }, defaultMobile: { x: 86, y: 7, dotSize: 62, labelX: -96, labelY: -8, labelScale: 0.5 } },
-  { id: 'h7', name: 'Nederlandse Les', type: 'external', url: 'https://preply.in/FRANCIEN6NL3194022810', dotImage: 'reddot-06.png', labelImage: 'images/Nederlandseles.png', hasLabel: true, defaultDesktop: { x: 26, y: 80, dotSize: 60, labelX: -470, labelY: -165, labelScale: 1 }, defaultMobile: { x: 23, y: 88, dotSize: 30, labelX: -4, labelY: -10, labelScale: 0.58 } },
-  { id: 'h8', name: 'Boek Letters', type: 'video', url: 'https://www.youtube-nocookie.com/embed/ELwjwDY3hUg', dotImage: 'reddot-08.png', labelImage: 'images/Boek-letters.png', hasLabel: true, defaultDesktop: { x: 57.5, y: 50, dotSize: 80, labelX: -180, labelY: -185, labelScale: 0.6 }, defaultMobile: { x: 77, y: 109, dotSize: 34, labelX: -16, labelY: -10, labelScale: 0.48 } },
-  { id: 'h9', name: 'Films', type: 'pdf', url: '/images/Filmografie-Francien-van-Everdingen.pdf', dotImage: 'reddot-09.png', labelImage: 'images/Films.png', hasLabel: true, defaultDesktop: { x: 69, y: 40, dotSize: 70, labelX: -100, labelY: 75, labelScale: 1 }, defaultMobile: { x: 29, y: 2, dotSize: 44, labelX: -24, labelY: 16, labelScale: 0.56 } },
-  { id: 'h10', name: 'CV', type: 'pdf', url: '/images/CV-Francien-van-Everdingen-website.pdf', dotImage: 'reddot-10.png', labelImage: 'images/CV.png', hasLabel: true, defaultDesktop: { x: 38.1, y: 36, dotSize: 120, labelX: 62, labelY: -265, labelScale: 0.85 }, defaultMobile: { x: 31, y: 96, dotSize: 26, labelX: -2, labelY: -12, labelScale: 0.5 } },
-  { id: 'h11', name: 'Exit', type: 'exit', url: '#', dotImage: 'reddot-10.png', labelImage: 'images/Exit.png', hasLabel: true, defaultDesktop: { x: 83.1, y: 83.5, dotSize: 75, labelX: -225, labelY: -95, labelScale: 0.75 }, defaultMobile: { x: 86, y: 132, dotSize: 34, labelX: -22, labelY: -10, labelScale: 0.5 } }
+  { id: 'h1', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', hasLabel: true },
+  { id: 'h2', name: 'Light Cone', type: 'external', url: 'https://lightcone.org/en/filmmaker-793-francien-van-everdingen', dotImage: 'reddot-02.png', labelImage: 'images/LightCone.png', hasLabel: true },
+  { id: 'h3', name: 'Allerlei', type: 'external', url: 'https://artoffice.info/kunstenaar/francien-van-everdingen/', dotImage: 'reddot-03.png', labelImage: 'images/Allerlei.png', hasLabel: true },
+  { id: 'h4', name: 'Stof', type: 'external', url: 'https://www.etsy.com/shop/hitchhikehijabi', dotImage: 'reddot-04.png', labelImage: 'images/Stof.png', hasLabel: true },
+  { id: 'h5', name: 'Contact', type: 'image', url: 'images/contact-emailadres.png', dotImage: 'reddot-04.png', labelImage: 'images/Contact.png', hasLabel: true },
+  { id: 'h6', name: 'Stichting Lezeren', type: 'external', url: 'http://www.lezeren.nl', dotImage: 'reddot-05.png', labelImage: 'images/StichtingLezeren.png', hasLabel: true },
+  { id: 'h7', name: 'Nederlandse Les', type: 'external', url: 'https://preply.in/FRANCIEN6NL3194022810', dotImage: 'reddot-06.png', labelImage: 'images/Nederlandseles.png', hasLabel: true },
+  { id: 'h8', name: 'Boek Letters', type: 'video', url: 'https://www.youtube-nocookie.com/embed/ELwjwDY3hUg', dotImage: 'reddot-08.png', labelImage: 'images/Boek-letters.png', hasLabel: true },
+  { id: 'h9', name: 'Films', type: 'pdf', url: '/images/Filmografie-Francien-van-Everdingen.pdf', dotImage: 'reddot-09.png', labelImage: 'images/Films.png', hasLabel: true },
+  { id: 'h10', name: 'CV', type: 'pdf', url: '/images/CV-Francien-van-Everdingen-website.pdf', dotImage: 'reddot-10.png', labelImage: 'images/CV.png', hasLabel: true },
+  { id: 'h11', name: 'Exit', type: 'exit', url: '#', dotImage: 'reddot-10.png', labelImage: 'images/Exit.png', hasLabel: true }
 ];
 
-// Desktop-only area hotspots (10)
+// Desktop area hotspots (10)
 const desktopAreas = [
-  { id: 'a1', name: 'Area 1', type: 'area', url: '#', dotImage: 'reddot-11.png', hasLabel: false, defaultDesktop: { x: 10, y: 10, dotSize: 50 } },
-  { id: 'a2', name: 'Area 2', type: 'area', url: '#', dotImage: 'reddot-15.png', hasLabel: false, defaultDesktop: { x: 20, y: 20, dotSize: 50 } },
-  { id: 'a3', name: 'Area 3', type: 'area', url: '#', dotImage: 'reddot-16.png', hasLabel: false, defaultDesktop: { x: 30, y: 30, dotSize: 50 } },
-  { id: 'a4', name: 'Area 4', type: 'area', url: '#', dotImage: 'reddot-17.png', hasLabel: false, defaultDesktop: { x: 40, y: 40, dotSize: 50 } },
-  { id: 'a5', name: 'Area 5', type: 'area', url: '#', dotImage: 'reddot-18.png', hasLabel: false, defaultDesktop: { x: 50, y: 50, dotSize: 50 } },
-  { id: 'a6', name: 'Area 6', type: 'area', url: '#', dotImage: 'reddot-19.png', hasLabel: false, defaultDesktop: { x: 60, y: 60, dotSize: 50 } },
-  { id: 'a7', name: 'Area 7', type: 'area', url: '#', dotImage: 'reddot-20.png', hasLabel: false, defaultDesktop: { x: 70, y: 70, dotSize: 50 } },
-  { id: 'a8', name: 'Area 8', type: 'area', url: '#', dotImage: 'reddot-21.png', hasLabel: false, defaultDesktop: { x: 80, y: 80, dotSize: 50 } },
-  { id: 'a9', name: 'Area 9', type: 'area', url: '#', dotImage: 'reddot-22.png', hasLabel: false, defaultDesktop: { x: 90, y: 90, dotSize: 50 } },
-  { id: 'a10', name: 'Area 10', type: 'area', url: '#', dotImage: 'reddot-23.png', hasLabel: false, defaultDesktop: { x: 95, y: 5, dotSize: 50 } }
+  { id: 'a1', name: 'Area 1', type: 'area', url: '#', dotImage: 'reddot-11.png', hasLabel: false },
+  { id: 'a2', name: 'Area 2', type: 'area', url: '#', dotImage: 'reddot-15.png', hasLabel: false },
+  { id: 'a3', name: 'Area 3', type: 'area', url: '#', dotImage: 'reddot-16.png', hasLabel: false },
+  { id: 'a4', name: 'Area 4', type: 'area', url: '#', dotImage: 'reddot-17.png', hasLabel: false },
+  { id: 'a5', name: 'Area 5', type: 'area', url: '#', dotImage: 'reddot-18.png', hasLabel: false },
+  { id: 'a6', name: 'Area 6', type: 'area', url: '#', dotImage: 'reddot-19.png', hasLabel: false },
+  { id: 'a7', name: 'Area 7', type: 'area', url: '#', dotImage: 'reddot-20.png', hasLabel: false },
+  { id: 'a8', name: 'Area 8', type: 'area', url: '#', dotImage: 'reddot-21.png', hasLabel: false },
+  { id: 'a9', name: 'Area 9', type: 'area', url: '#', dotImage: 'reddot-22.png', hasLabel: false },
+  { id: 'a10', name: 'Area 10', type: 'area', url: '#', dotImage: 'reddot-23.png', hasLabel: false }
 ];
 
-// Mobile-only area hotspots (6)
+// Mobile area hotspots (6)
 const mobileAreas = [
-  { id: 'm1', name: 'Mobile Area 1', type: 'area', url: '#', dotImage: 'reddot-11.png', hasLabel: false, defaultMobile: { x: 10, y: 45, dotSize: 40 } },
-  { id: 'm2', name: 'Mobile Area 2', type: 'area', url: '#', dotImage: 'reddot-15.png', hasLabel: false, defaultMobile: { x: 20, y: 55, dotSize: 40 } },
-  { id: 'm3', name: 'Mobile Area 3', type: 'area', url: '#', dotImage: 'reddot-16.png', hasLabel: false, defaultMobile: { x: 30, y: 65, dotSize: 40 } },
-  { id: 'm4', name: 'Mobile Area 4', type: 'area', url: '#', dotImage: 'reddot-17.png', hasLabel: false, defaultMobile: { x: 40, y: 75, dotSize: 40 } },
-  { id: 'm5', name: 'Mobile Area 5', type: 'area', url: '#', dotImage: 'reddot-18.png', hasLabel: false, defaultMobile: { x: 50, y: 85, dotSize: 40 } },
-  { id: 'm6', name: 'Mobile Area 6', type: 'area', url: '#', dotImage: 'reddot-19.png', hasLabel: false, defaultMobile: { x: 60, y: 95, dotSize: 40 } }
+  { id: 'm1', name: 'Mobile Area 1', type: 'area', url: '#', dotImage: 'reddot-11.png', hasLabel: false },
+  { id: 'm2', name: 'Mobile Area 2', type: 'area', url: '#', dotImage: 'reddot-15.png', hasLabel: false },
+  { id: 'm3', name: 'Mobile Area 3', type: 'area', url: '#', dotImage: 'reddot-16.png', hasLabel: false },
+  { id: 'm4', name: 'Mobile Area 4', type: 'area', url: '#', dotImage: 'reddot-17.png', hasLabel: false },
+  { id: 'm5', name: 'Mobile Area 5', type: 'area', url: '#', dotImage: 'reddot-18.png', hasLabel: false },
+  { id: 'm6', name: 'Mobile Area 6', type: 'area', url: '#', dotImage: 'reddot-19.png', hasLabel: false }
 ];
+
+// ============================================
+// YOUR EXACT VALUES FROM GENERATED CODE
+// ============================================
+const savedDesktopValues = {
+  320: {}, 375: {}, 390: {}, 428: {}, 480: {}, 667: {}, 768: {}, 800: {}, 844: {}, 926: {},
+  1024: {}, 1280: {}, 1366: {}, 1920: {}, 2560: {}, 3840: {}
+};
+
+// Desktop 1920x1080 values (your original)
+savedDesktopValues[1920] = {
+  h1: { x: 15, y: 26, dotSize: 75, labelX: 0, labelY: 40, labelScale: 0.6 },
+  h2: { x: 38.71339889649748, y: 62.73379309809576, dotSize: 50, labelX: -175, labelY: -99, labelScale: 0.65 },
+  h3: { x: 59.23780260017685, y: 71.42198278161979, dotSize: 59, labelX: -155, labelY: 11, labelScale: 0.7 },
+  h4: { x: 69.33486116182293, y: 40.96534481872111, dotSize: 59, labelX: 1, labelY: 45, labelScale: 0.5 },
+  h5: { x: 95.76993592084135, y: 41.80310346065355, dotSize: 95, labelX: -207, labelY: 24, labelScale: 0.9 },
+  h6: { x: 17, y: 56.8, dotSize: 125, labelX: -115, labelY: 85, labelScale: 0.4 },
+  h7: { x: 26, y: 80, dotSize: 60, labelX: -346, labelY: -110, labelScale: 1 },
+  h8: { x: 57.5, y: 50, dotSize: 80, labelX: -135, labelY: -147, labelScale: 0.6 },
+  h9: { x: 72.42679779299498, y: 14.000603429123895, dotSize: 70, labelX: -100, labelY: 75, labelScale: 1 },
+  h10: { x: 38.589542541856424, y: 37.021810345580285, dotSize: 82.5, labelX: 57, labelY: -213, labelScale: 0.85 },
+  h11: { x: 83.42636169457094, y: 83.27293103431549, dotSize: 42, labelX: -180, labelY: -58, labelScale: 0.75 },
+  a1: { x: 36.53758009894831, y: 71.30862073481701, dotSize: 29.5 },
+  a2: { x: 34.27832413747906, y: 41.79862070571272, dotSize: 33 },
+  a3: { x: 42.64651566462432, y: 9.563793088394327, dotSize: 50 },
+  a4: { x: 57.86830277775952, y: 21.607413779554896, dotSize: 50 },
+  a5: { x: 4.146181912781508, y: 86.3310345095212, dotSize: 50 },
+  a6: { x: 46.53758009894831, y: 52.393189649568995, dotSize: 36.5 },
+  a7: { x: 76.77200516234721, y: 62.73379309809576, dotSize: 50 },
+  a8: { x: 56.66513883817706, y: 29.477155135197087, dotSize: 50 },
+  a9: { x: 47.980931823990176, y: 84.43681034072956, dotSize: 31 },
+  a10: { x: 85.45392043379971, y: 24.868534497394403, dotSize: 50 }
+};
+
+// Desktop 2560x1080 values
+savedDesktopValues[2560] = {
+  h1: { x: 15.6527233891419, y: 26.756896657181436, dotSize: 57, labelX: -6, labelY: 26, labelScale: 0.6 },
+  h2: { x: 37.70711700490372, y: 63.187928008352145, dotSize: 50, labelX: -176, labelY: -106, labelScale: 0.65 },
+  h3: { x: 60.13529726024696, y: 72.48164225570366, dotSize: 48, labelX: -156, labelY: 21, labelScale: 0.7 },
+  h4: { x: 69.06289308301382, y: 41.192412147969605, dotSize: 59, labelX: -3, labelY: 47, labelScale: 0.48 },
+  h5: { x: 95.76993592084135, y: 41.80310346065355, dotSize: 95, labelX: -207, labelY: 24, labelScale: 0.9 },
+  h6: { x: 16.5648510739054, y: 56.49724133712742, dotSize: 87.5, labelX: -79, labelY: 57, labelScale: 0.4 },
+  h7: { x: 26, y: 80, dotSize: 60, labelX: -347, labelY: -111, labelScale: 1 },
+  h8: { x: 58.1527233891419, y: 50.60551732574515, dotSize: 54.5, labelX: -125, labelY: -135, labelScale: 0.6 },
+  h9: { x: 72.42679779299498, y: 14.151982760560182, dotSize: 70, labelX: -86, labelY: 65, labelScale: 1.13 },
+  h10: { x: 38.589542541856424, y: 37.021810345580285, dotSize: 82.5, labelX: 39, labelY: -199, labelScale: 0.85 },
+  h11: { x: 83.42636169457094, y: 83.27293103431549, dotSize: 36.5, labelX: -172, labelY: -69, labelScale: 0.75 },
+  a1: { x: 36.97272902504291, y: 70.70310340907186, dotSize: 30.5 },
+  a2: { x: 47.74074403853075, y: 85.35802041553644, dotSize: 26 },
+  a3: { x: 42.75530289614797, y: 9.109655094085465, dotSize: 50 },
+  a4: { x: 57.32436662014127, y: 21.00189645380975, dotSize: 32.5 },
+  a5: { x: 4.363756375828808, y: 86.48241384095749, dotSize: 44 },
+  a6: { x: 45.99364394133006, y: 52.998708485870466, dotSize: 43.5 },
+  a7: { x: 77.20715408844181, y: 62.73379309809576, dotSize: 50 },
+  a8: { x: 56.882713301224356, y: 29.3257758037608, dotSize: 38 },
+  a9: { x: 33.94737895743933, y: 41.407237000666, dotSize: 29.5 },
+  a10: { x: 85.45392043379971, y: 24.868534497394403, dotSize: 50 }
+};
+
+// Desktop 3840x2160 values
+savedDesktopValues[3840] = {
+  h1: { x: 15.489542590613734, y: 27.362413794107045, dotSize: 62.5, labelX: 0, labelY: 40, labelScale: 0.6 },
+  h2: { x: 37.81590326128119, y: 63.869137926518306, dotSize: 50, labelX: -185, labelY: -104, labelScale: 0.7 },
+  h3: { x: 60.29848078918442, y: 72.55732761004232, dotSize: 44.5, labelX: -152, labelY: 22, labelScale: 0.7 },
+  h4: { x: 69.1716826223834, y: 40.51120688735209, dotSize: 59, labelX: 5, labelY: 44, labelScale: 0.44 },
+  h5: { x: 95.76993592084135, y: 41.80310346065355, dotSize: 73, labelX: -206, labelY: 13, labelScale: 0.9 },
+  h6: { x: 16.510457409386266, y: 56.345862068630986, dotSize: 91, labelX: -86, labelY: 60, labelScale: 0.4 },
+  h7: { x: 25.83681913646209, y: 80, dotSize: 57.5, labelX: -346, labelY: -111, labelScale: 1 },
+  h8: { x: 57.5, y: 50, dotSize: 80, labelX: -135, labelY: -147, labelScale: 0.6 },
+  h9: { x: 72.42679779299498, y: 14.000603429123895, dotSize: 70, labelX: -93, labelY: 65, labelScale: 1.17 },
+  h10: { x: 38.589542541856424, y: 37.021810345580285, dotSize: 82.5, labelX: 57, labelY: -213, labelScale: 0.85 },
+  h11: { x: 83.42636169457094, y: 83.27293103431549, dotSize: 42, labelX: -180, labelY: -58, labelScale: 0.75 },
+  a1: { x: 37.02712268956204, y: 70.62741383776348, dotSize: 27 },
+  a2: { x: 47.57756415013902, y: 85.05525866861139, dotSize: 29 },
+  a3: { x: 42.64651566462432, y: 9.563793088394327, dotSize: 50 },
+  a4: { x: 57.21557932360787, y: 21.38034481387039, dotSize: 36 },
+  a5: { x: 4.146181912781508, y: 86.3310345095212, dotSize: 46 },
+  a6: { x: 46.21121616154116, y: 52.847327580938014, dotSize: 31 },
+  a7: { x: 76.77200516234721, y: 62.73379309809576, dotSize: 50 },
+  a8: { x: 56.66513883817706, y: 29.477155135197087, dotSize: 50 },
+  a9: { x: 33.78419549351161, y: 40.95310341214639, dotSize: 41 },
+  a10: { x: 85.45392043379971, y: 24.868534497394403, dotSize: 50 }
+};
+
+// Mobile 480x320 values (landscape phone using desktop values)
+savedDesktopValues[480] = savedDesktopValues[1920];
+savedDesktopValues[667] = savedDesktopValues[1920];
+savedDesktopValues[844] = savedDesktopValues[1920];
+savedDesktopValues[926] = savedDesktopValues[1920];
+
+// Mobile portrait values (17 hotspots only)
+const mobileValues = {
+  h1: { x: 54, y: 33, dotSize: 70, labelX: -10, labelY: 10, labelScale: 0.62 },
+  h2: { x: 22, y: 53, dotSize: 38, labelX: -6, labelY: -12, labelScale: 0.5 },
+  h3: { x: 69, y: 64, dotSize: 30, labelX: 40, labelY: -10, labelScale: 0.44 },
+  h4: { x: 49, y: 15, dotSize: 64, labelX: -18, labelY: -6, labelScale: 0.6 },
+  h5: { x: 67, y: 74, dotSize: 28, labelX: -18, labelY: -10, labelScale: 0.54 },
+  h6: { x: 86, y: 7, dotSize: 62, labelX: -96, labelY: -8, labelScale: 0.5 },
+  h7: { x: 23, y: 88, dotSize: 30, labelX: -4, labelY: -10, labelScale: 0.58 },
+  h8: { x: 77, y: 109, dotSize: 34, labelX: -16, labelY: -10, labelScale: 0.48 },
+  h9: { x: 29, y: 2, dotSize: 44, labelX: -24, labelY: 16, labelScale: 0.56 },
+  h10: { x: 31, y: 96, dotSize: 26, labelX: -2, labelY: -12, labelScale: 0.5 },
+  h11: { x: 86, y: 132, dotSize: 34, labelX: -22, labelY: -10, labelScale: 0.5 },
+  m1: { x: 10, y: 45, dotSize: 40 },
+  m2: { x: 20, y: 55, dotSize: 40 },
+  m3: { x: 30, y: 65, dotSize: 40 },
+  m4: { x: 40, y: 75, dotSize: 40 },
+  m5: { x: 50, y: 85, dotSize: 40 },
+  m6: { x: 60, y: 95, dotSize: 40 }
+};
 
 // State
 let hotspotsData = [];
@@ -250,12 +362,12 @@ let dragTargetId = null, dragStart = {};
 let customizedBreakpoints = new Set();
 
 function loadConfig() {
-  const saved = localStorage.getItem('breakpointHotspotConfigV3');
+  const saved = localStorage.getItem('breakpointHotspotConfigV4');
   if (saved) {
     try {
-      hotspotsData = JSON.parse(saved);
-      if (hotspotsData.customized) customizedBreakpoints = new Set(hotspotsData.customized);
-      if (hotspotsData.data) hotspotsData = hotspotsData.data;
+      const parsed = JSON.parse(saved);
+      if (parsed.customized) customizedBreakpoints = new Set(parsed.customized);
+      if (parsed.data) hotspotsData = parsed.data;
       updateStatus('Config loaded');
       return;
     } catch(e) {}
@@ -265,26 +377,39 @@ function loadConfig() {
   breakpoints.forEach(bp => {
     let bpHotspots = [];
     if (bp.type === 'desktop') {
-      // Desktop breakpoints: 11 original + 10 desktop areas = 21 hotspots
-      bpHotspots = [...originalHotspots.map(h => ({
-        id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, 
-        labelImage: h.labelImage, hasLabel: h.hasLabel,
-        ...(h.defaultDesktop || { x: 50, y: 50, dotSize: 50, labelX: 0, labelY: 0, labelScale: 1 })
-      })), ...desktopAreas.map(a => ({
-        id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage, 
-        hasLabel: false, labelImage: null,
-        ...(a.defaultDesktop || { x: 50, y: 50, dotSize: 50 })
-      }))];
+      // Desktop breakpoints: 11 original + 10 areas = 21 hotspots
+      bpHotspots = [...originalHotspots.map(h => {
+        const savedVals = savedDesktopValues[bp.width]?.[h.id] || savedDesktopValues[1920][h.id] || { x: 50, y: 50, dotSize: 50, labelX: 0, labelY: 0, labelScale: 1 };
+        return {
+          id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage,
+          labelImage: h.labelImage, hasLabel: h.hasLabel,
+          x: savedVals.x, y: savedVals.y, dotSize: savedVals.dotSize,
+          labelX: savedVals.labelX || 0, labelY: savedVals.labelY || 0, labelScale: savedVals.labelScale || 1
+        };
+      }), ...desktopAreas.map(a => {
+        const savedVals = savedDesktopValues[bp.width]?.[a.id] || savedDesktopValues[1920][a.id] || { x: 50, y: 50, dotSize: 50 };
+        return {
+          id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage,
+          hasLabel: false, labelImage: null,
+          x: savedVals.x, y: savedVals.y, dotSize: savedVals.dotSize,
+          labelX: 0, labelY: 0, labelScale: 1
+        };
+      })];
     } else {
       // Mobile breakpoints: 11 original + 6 mobile areas = 17 hotspots
       bpHotspots = [...originalHotspots.map(h => ({
-        id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, 
+        id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage,
         labelImage: h.labelImage, hasLabel: h.hasLabel,
-        ...(h.defaultMobile || { x: 50, y: 50, dotSize: 50, labelX: 0, labelY: 0, labelScale: 1 })
+        x: mobileValues[h.id]?.x || 50, y: mobileValues[h.id]?.y || 50,
+        dotSize: mobileValues[h.id]?.dotSize || 50,
+        labelX: mobileValues[h.id]?.labelX || 0, labelY: mobileValues[h.id]?.labelY || 0,
+        labelScale: mobileValues[h.id]?.labelScale || 1
       })), ...mobileAreas.map(a => ({
-        id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage, 
+        id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage,
         hasLabel: false, labelImage: null,
-        ...(a.defaultMobile || { x: 50, y: 50, dotSize: 40 })
+        x: mobileValues[a.id]?.x || 50, y: mobileValues[a.id]?.y || 50,
+        dotSize: mobileValues[a.id]?.dotSize || 40,
+        labelX: 0, labelY: 0, labelScale: 1
       }))];
     }
     hotspotsData.push({ breakpointId: bp.id, hotspots: bpHotspots });
@@ -293,7 +418,7 @@ function loadConfig() {
 }
 
 function saveConfig() { 
-  localStorage.setItem('breakpointHotspotConfigV3', JSON.stringify({ data: hotspotsData, customized: Array.from(customizedBreakpoints) })); 
+  localStorage.setItem('breakpointHotspotConfigV4', JSON.stringify({ data: hotspotsData, customized: Array.from(customizedBreakpoints) })); 
   updateCustomizedIndicator();
 }
 
@@ -352,18 +477,17 @@ function renderBreakpointSelector() {
     btn.className = 'breakpoint-btn' + (currentBreakpointId === bp.id ? ' active' : '');
     btn.setAttribute('data-bp-id', bp.id);
     btn.textContent = bp.name;
-    btn.title = `${bp.width}×${bp.height}`;
     btn.onclick = () => switchBreakpoint(bp.id);
     container.appendChild(btn);
     
     const option = document.createElement('option');
     option.value = bp.id;
     option.textContent = bp.name;
-    if (currentBreakpointId === bp.id) option.selected = true;
     copySelect.appendChild(option);
   });
   updateCustomizedIndicator();
-  document.getElementById('currentBpIndicator').innerHTML = `Current: ${breakpoints.find(b=>b.id===currentBreakpointId)?.name || ''}`;
+  const currentBp = breakpoints.find(b => b.id === currentBreakpointId);
+  document.getElementById('currentBpIndicator').innerHTML = `Current: ${currentBp?.name || ''} (${currentBp?.type === 'desktop' ? '21 hotspots' : '17 hotspots'})`;
 }
 
 function switchBreakpoint(breakpointId) {
@@ -377,7 +501,6 @@ function switchBreakpoint(breakpointId) {
     frame.style.maxWidth = '95%';
     image.src = bp.image;
     
-    // Scale preview if too large
     const maxPreviewWidth = previewArea.clientWidth - 40;
     if (bp.width > maxPreviewWidth) {
       const scale = maxPreviewWidth / bp.width;
@@ -389,7 +512,8 @@ function switchBreakpoint(breakpointId) {
   renderBreakpointSelector();
   renderHotspotList();
   renderCanvas();
-  updateStatus(`Switched to ${bp.name} (${bp.width}×${bp.height})`);
+  const bp = breakpoints.find(b => b.id === breakpointId);
+  updateStatus(`Switched to ${bp.name} (${bp.type === 'desktop' ? '21 hotspots' : '17 hotspots'})`);
 }
 
 function renderHotspotList() {
@@ -518,7 +642,6 @@ function onDragLabel(e) {
   if(!h) return; 
   h.labelX = dragStart.startX + (e.clientX - dragStart.x); 
   h.labelY = dragStart.startY + (e.clientY - dragStart.y);
-  // Constrain to reasonable values
   h.labelX = Math.min(500, Math.max(-500, h.labelX));
   h.labelY = Math.min(500, Math.max(-500, h.labelY));
   updateHotspotInCurrentBreakpoint(h); 
@@ -603,7 +726,7 @@ function copyFromBreakpoint() {
 function resetAllBreakpoints() {
   if (confirm('Reset ALL breakpoints to default positions? This cannot be undone.')) {
     customizedBreakpoints.clear();
-    loadConfig(); // Reload defaults
+    loadConfig();
     renderBreakpointSelector();
     renderHotspotList();
     renderCanvas();
@@ -632,8 +755,8 @@ function generateCSS() {
     '#pdfContainer canvas{display:block;width:100%;height:auto;margin:0 auto 20px}\n' +
     'body{overflow-x:hidden}\n' +
     '.artboard__container{overflow-x:hidden}\n' +
-    '@media (max-width: 767px){.artboard--desktop.active{display:none}.artboard--mobile.active{display:block}}\n' +
-    '@media (min-width: 768px){.artboard--desktop.active{display:block}.artboard--mobile.active{display:none}}'; 
+    '@media (max-width: 640px){.artboard--desktop.active{display:none}.artboard--mobile.active{display:block}}\n' +
+    '@media (min-width: 641px){.artboard--desktop.active{display:block}.artboard--mobile.active{display:none}}'; 
 }
 
 function generateJS() {
@@ -648,7 +771,7 @@ function generateJS() {
       }));
     }
   });
-  return 'var breakpointConfigs = ' + JSON.stringify(breakpointConfigs) + ';\n\nfunction getConfigForWidth(width) {\n  var breakpoints = [320,375,390,428,480,667,768,800,844,926,1024,1280,1366,1920,2560,3840].sort((a,b)=>a-b);\n  var closest = breakpoints[0];\n  for(var i=0;i<breakpoints.length;i++){\n    if(width <= breakpoints[i]){ closest = breakpoints[i]; break; }\n    closest = breakpoints[i];\n  }\n  return breakpointConfigs[closest] || breakpointConfigs[1920];\n}\n\npdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";\n\nfunction createHotspot(c){\n  var a=document.createElement("a");a.className="hotspot";\n  a.style.left=c.x+"%";a.style.top=c.y+"%";\n  var d=document.createElement("div");d.className="hotspot__dot";\n  d.style.backgroundImage="url(\'images/"+c.dotImage+"\')";\n  d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";\n  d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";\n  a.appendChild(d);\n  if(c.type!=="area"&&c.labelImage){\n    var l=document.createElement("div");l.className="hotspot__label";\n    var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;\n    l.appendChild(i);l.style.left=(c.labelX||0)+"px";l.style.top=(c.labelY||0)+"px";\n    l.style.transform="scale("+(c.labelScale||1)+")";\n    a.appendChild(l);\n  }\n  if(c.type==="external"){a.href=c.url;a.target="_blank"}\n  else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close()}}\n  else if(c.type!=="area"){a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}\n  return a;\n}\n\nfunction renderArtboard(t){\n  var a=document.querySelector(".artboard--"+t);if(!a)return;\n  var c=a.querySelector(".hotspots-container");if(!c)return;\n  var width = window.innerWidth;\n  var configs = getConfigForWidth(width);\n  c.innerHTML="";\n  configs.forEach(function(h){c.appendChild(createHotspot(h))});\n}\n\nasync function renderPDF(u){\n  var c=document.getElementById("pdfContainer");\n  c.innerHTML="<div class=\"text-center p-4\">Loading...</div>";\n  try{\n    var r=await fetch(u);var b=await r.arrayBuffer();\n    var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";\n    for(var i=1;i<=p.numPages;i++){\n      var page=await p.getPage(i);var v=page.getViewport({scale:1.5});\n      var can=document.createElement("canvas");\n      can.width=v.width;can.height=v.height;can.style.width="100%";\n      await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;\n      c.appendChild(can);\n    }\n  }catch(e){c.innerHTML="<div class=\"alert alert-danger\">Error</div>"}\n}\n\ndocument.addEventListener("DOMContentLoaded",function(){\n  renderArtboard("desktop");renderArtboard("mobile");\n  var setActive=function(){\n    var width = window.innerWidth;\n    var isMobile = width <= 767;\n    var d=document.querySelector(".artboard--desktop");\n    var mb=document.querySelector(".artboard--mobile");\n    if(d&&mb){d.classList.toggle("active",!isMobile);mb.classList.toggle("active",isMobile)}\n  };\n  setActive();window.addEventListener("resize",setActive);\n  window.addEventListener("resize",function(){renderArtboard("desktop");renderArtboard("mobile")});\n});\n\nvar modal=document.getElementById("mediaModal");\nif(modal){\n  modal.addEventListener("show.bs.modal",async function(e){\n    var t=e.relatedTarget;var type=t?.getAttribute("data-type");var src=t?.getAttribute("data-src");\n    var vc=document.getElementById("videoContainer");var pc=document.getElementById("pdfContainer");var ic=document.getElementById("imageContainer");\n    vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");\n    if(type==="video"&&src){\n      vc.classList.remove("d-none");var yt=document.getElementById("youtubeVideo");\n      yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1";\n    }else if(type==="pdf"&&src){\n      pc.classList.remove("d-none");await renderPDF(src);\n    }else if(type==="image"&&src){\n      ic.classList.remove("d-none");document.getElementById("modalImage").src=src;\n    }\n  });\n  modal.addEventListener("hidden.bs.modal",function(){\n    var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";\n    document.getElementById("pdfContainer").innerHTML="";\n    document.getElementById("modalImage").src="";\n  });\n}';
+  return 'var breakpointConfigs = ' + JSON.stringify(breakpointConfigs) + ';\n\nfunction getConfigForWidth(width) {\n  var breakpoints = [320,375,390,428,480,667,768,800,844,926,1024,1280,1366,1920,2560,3840].sort((a,b)=>a-b);\n  var closest = breakpoints[0];\n  for(var i=0;i<breakpoints.length;i++){\n    if(width <= breakpoints[i]){ closest = breakpoints[i]; break; }\n    closest = breakpoints[i];\n  }\n  return breakpointConfigs[closest] || breakpointConfigs[1920];\n}\n\npdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";\n\nfunction createHotspot(c){\n  var a=document.createElement("a");a.className="hotspot";\n  a.style.left=c.x+"%";a.style.top=c.y+"%";\n  var d=document.createElement("div");d.className="hotspot__dot";\n  d.style.backgroundImage="url(\'images/"+c.dotImage+"\')";\n  d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";\n  d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";\n  a.appendChild(d);\n  if(c.type!=="area"&&c.labelImage){\n    var l=document.createElement("div");l.className="hotspot__label";\n    var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;\n    l.appendChild(i);l.style.left=(c.labelX||0)+"px";l.style.top=(c.labelY||0)+"px";\n    l.style.transform="scale("+(c.labelScale||1)+")";\n    a.appendChild(l);\n  }\n  if(c.type==="external"){a.href=c.url;a.target="_blank"}\n  else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close()}}\n  else if(c.type!=="area"){a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}\n  return a;\n}\n\nfunction renderArtboard(t){\n  var a=document.querySelector(".artboard--"+t);if(!a)return;\n  var c=a.querySelector(".hotspots-container");if(!c)return;\n  var width = window.innerWidth;\n  var configs = getConfigForWidth(width);\n  c.innerHTML="";\n  configs.forEach(function(h){c.appendChild(createHotspot(h))});\n}\n\nasync function renderPDF(u){\n  var c=document.getElementById("pdfContainer");\n  c.innerHTML="<div class=\"text-center p-4\">Loading...</div>";\n  try{\n    var r=await fetch(u);var b=await r.arrayBuffer();\n    var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";\n    for(var i=1;i<=p.numPages;i++){\n      var page=await p.getPage(i);var v=page.getViewport({scale:1.5});\n      var can=document.createElement("canvas");\n      can.width=v.width;can.height=v.height;can.style.width="100%";\n      await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;\n      c.appendChild(can);\n    }\n  }catch(e){c.innerHTML="<div class=\"alert alert-danger\">Error</div>"}\n}\n\ndocument.addEventListener("DOMContentLoaded",function(){\n  renderArtboard("desktop");renderArtboard("mobile");\n  var setActive=function(){\n    var width = window.innerWidth;\n    var isMobile = width <= 640;\n    var d=document.querySelector(".artboard--desktop");\n    var mb=document.querySelector(".artboard--mobile");\n    if(d&&mb){d.classList.toggle("active",!isMobile);mb.classList.toggle("active",isMobile)}\n  };\n  setActive();window.addEventListener("resize",setActive);\n  window.addEventListener("resize",function(){renderArtboard("desktop");renderArtboard("mobile")});\n});\n\nvar modal=document.getElementById("mediaModal");\nif(modal){\n  modal.addEventListener("show.bs.modal",async function(e){\n    var t=e.relatedTarget;var type=t?.getAttribute("data-type");var src=t?.getAttribute("data-src");\n    var vc=document.getElementById("videoContainer");var pc=document.getElementById("pdfContainer");var ic=document.getElementById("imageContainer");\n    vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");\n    if(type==="video"&&src){\n      vc.classList.remove("d-none");var yt=document.getElementById("youtubeVideo");\n      yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1";\n    }else if(type==="pdf"&&src){\n      pc.classList.remove("d-none");await renderPDF(src);\n    }else if(type==="image"&&src){\n      ic.classList.remove("d-none");document.getElementById("modalImage").src=src;\n    }\n  });\n  modal.addEventListener("hidden.bs.modal",function(){\n    var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";\n    document.getElementById("pdfContainer").innerHTML="";\n    document.getElementById("modalImage").src="";\n  });\n}';
 }
 
 function generateFinalCode() {
@@ -661,7 +784,6 @@ function generateFinalCode() {
 function copyCode() { navigator.clipboard.writeText(document.getElementById('htmlPre').textContent + '\n\n' + document.getElementById('cssPre').textContent + '\n\n' + document.getElementById('jsPre').textContent); updateStatus('Copied!'); }
 function closeModal() { document.getElementById('codeModal').style.display = 'none'; }
 
-// Draggable sidebar
 function initDraggableSidebar() {
   const sidebar = document.getElementById('sidebar');
   const handle = document.getElementById('sidebarResizeHandle');
@@ -685,10 +807,7 @@ function initDraggableSidebar() {
   }
 }
 
-// Search functionality
 document.getElementById('hotspotSearch')?.addEventListener('input', () => renderHotspotList());
-
-// Window resize handler for preview scaling
 window.addEventListener('resize', () => {
   const bp = breakpoints.find(b => b.id === currentBreakpointId);
   if (bp) {
