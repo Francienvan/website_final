@@ -13,7 +13,7 @@
     }
 
     body {
-      background: #dbe4f3;
+      background: #989fa7;
       min-height: 100vh;
       overflow-x: hidden;
     }
@@ -49,7 +49,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      overflow: visible;
+      overflow: hidden;
     }
 
     .hotspot {
@@ -67,6 +67,7 @@
       background-repeat: no-repeat;
       background-position: center;
       transition: transform 0.2s;
+      z-index: 10;
     }
 
     .hotspot:hover .hotspot__dot {
@@ -77,6 +78,7 @@
       position: absolute;
       pointer-events: none;
       transform-origin: top left;
+      z-index: 20;
     }
 
     .hotspot__label img {
