@@ -5,25 +5,149 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Francien van Everdingen</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/artboard-2.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #dbe4f3;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .artboard {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .artboard--desktop.active,
+    .artboard--mobile.active {
+      display: block;
+    }
+
+    .artboard__container {
+      position: relative;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 95%;
+    }
+
+    .artboard__image {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .hotspots-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .hotspot {
+      position: absolute;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .hotspot__dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: transform 0.2s;
+    }
+
+    .hotspot:hover .hotspot__dot {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .hotspot__label {
+      position: absolute;
+      pointer-events: none;
+      transform-origin: top left;
+    }
+
+    .hotspot__label img {
+      display: block;
+      max-width: none;
+    }
+
+    #pdfContainer {
+      max-height: 80vh;
+      overflow-y: auto;
+      background: #111;
+      padding: 10px;
+    }
+
+    #pdfContainer canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 auto 20px;
+    }
+
+    /* Prevent horizontal scroll caused by wide labels */
+    body {
+      overflow-x: hidden;
+    }
+
+    .artboard__container {
+      overflow-x: hidden;
+    }
+
+    @media (max-width: 640px) {
+      .artboard--desktop.active {
+        display: none;
+      }
+      .artboard--mobile.active {
+        display: block;
+      }
+    }
+
+    @media (min-width: 641px) {
+      .artboard--desktop.active {
+        display: block;
+      }
+      .artboard--mobile.active {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
   <main>
+    <!-- Desktop artwork (used for screens wider than 640px) -->
     <div class="artboard artboard--desktop">
       <div class="artboard__container">
-        <img src="images/bg.jpg" alt="Desktop artwork">
+        <img class="artboard__image" src="images/bg.jpg" alt="Desktop artwork">
         <div class="hotspots-container"></div>
       </div>
     </div>
+
+    <!-- Mobile artwork (used for screens up to 640px) -->
     <div class="artboard artboard--mobile">
       <div class="artboard__container">
-        <img src="images/mobile-bg.jpg" alt="Mobile artwork">
+        <img class="artboard__image" src="images/mobile-bg.jpg" alt="Mobile artwork">
         <div class="hotspots-container"></div>
       </div>
     </div>
   </main>
-  <div class="modal fade" id="mediaModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+
+  <!-- Modal for videos, PDFs and images -->
+  <div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content bg-dark text-white">
         <div class="modal-body p-0">
           <div id="videoContainer" class="ratio ratio-16x9 d-none">
@@ -34,12 +158,533 @@
             <img id="modalImage" style="max-width:100%">
           </div>
         </div>
-        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
     </div>
   </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/artboard-2.js"></script>
+  <script>
+    // --------------------------------------------------------------
+    // BREAKPOINT CONFIGURATIONS (generated from the visual editor)
+    // --------------------------------------------------------------
+    var breakpointConfigs = {
+      "320": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":53.375,"y":24.40196427662714,"dotSize":59,"labelX":6,"labelY":35,"labelScale":0.4},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":35.75,"y":57.68983766729428,"dotSize":38,"labelX":-95,"labelY":-79,"labelScale":0.44},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":35.25,"y":28.999915186674126,"dotSize":52,"labelX":-85,"labelY":12,"labelScale":0.44},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":10.25,"y":3.3622546774549225,"dotSize":54,"labelX":1,"labelY":42,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":76.375,"y":80.77420996386952,"dotSize":67,"labelX":-117,"labelY":17,"labelScale":0.54},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":73.8125,"y":7.17369769138127,"dotSize":40.5,"labelX":-60,"labelY":21,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":80.5,"y":66.0272420402694,"dotSize":93,"labelX":-227,"labelY":-42,"labelScale":0.68},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":62.625,"y":49.59538954760572,"dotSize":50.5,"labelX":-78,"labelY":-83,"labelScale":0.37},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":35.25,"y":13.550896476854444,"dotSize":44,"labelX":-59,"labelY":42,"labelScale":0.8},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":12.25,"y":88.09675504215222,"dotSize":39,"labelX":14,"labelY":-146,"labelScale":0.6},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":67.25,"y":97.65508116635286,"dotSize":34,"labelX":-85,"labelY":-40,"labelScale":0.4},
+        {"id":"m1","name":"Mobile Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":96.875,"y":14.602904008277783,"dotSize":28.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m2","name":"Mobile Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":93.75,"y":29.292741675572067,"dotSize":23.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m3","name":"Mobile Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":76.25,"y":41.72450935490984,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m4","name":"Mobile Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":40,"y":76.4764303767408,"dotSize":40,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m5","name":"Mobile Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":2.1875,"y":49.30512442114905,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m6","name":"Mobile Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":32.5,"y":42.19590182009398,"dotSize":29.5,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "375": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":53.375,"y":24.40196427662714,"dotSize":59,"labelX":6,"labelY":35,"labelScale":0.4},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":35.75,"y":57.68983766729428,"dotSize":38,"labelX":-95,"labelY":-79,"labelScale":0.44},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":35.25,"y":28.999915186674126,"dotSize":52,"labelX":-85,"labelY":12,"labelScale":0.44},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":10.25,"y":3.3622546774549225,"dotSize":54,"labelX":1,"labelY":42,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":76.375,"y":80.77420996386952,"dotSize":67,"labelX":-117,"labelY":17,"labelScale":0.54},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":73.8125,"y":7.17369769138127,"dotSize":40.5,"labelX":-60,"labelY":21,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":80.5,"y":66.0272420402694,"dotSize":93,"labelX":-227,"labelY":-42,"labelScale":0.68},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":62.625,"y":49.59538954760572,"dotSize":50.5,"labelX":-78,"labelY":-83,"labelScale":0.37},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":35.25,"y":13.550896476854444,"dotSize":44,"labelX":-59,"labelY":42,"labelScale":0.8},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":12.25,"y":88.09675504215222,"dotSize":39,"labelX":14,"labelY":-146,"labelScale":0.6},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":67.25,"y":97.65508116635286,"dotSize":34,"labelX":-85,"labelY":-40,"labelScale":0.4},
+        {"id":"m1","name":"Mobile Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":96.875,"y":14.602904008277783,"dotSize":28.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m2","name":"Mobile Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":93.75,"y":29.292741675572067,"dotSize":23.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m3","name":"Mobile Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":76.25,"y":41.72450935490984,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m4","name":"Mobile Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":40,"y":76.4764303767408,"dotSize":40,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m5","name":"Mobile Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":2.1875,"y":49.30512442114905,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m6","name":"Mobile Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":32.5,"y":42.19590182009398,"dotSize":29.5,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "390": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":53.375,"y":24.40196427662714,"dotSize":59,"labelX":6,"labelY":35,"labelScale":0.4},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":35.75,"y":57.68983766729428,"dotSize":38,"labelX":-95,"labelY":-79,"labelScale":0.44},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":34.22435897435898,"y":28.714872945306816,"dotSize":61.5,"labelX":-99,"labelY":14,"labelScale":0.5},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":10.25,"y":3.3622546774549225,"dotSize":54,"labelX":1,"labelY":42,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":76.375,"y":80.77420996386952,"dotSize":67,"labelX":-117,"labelY":17,"labelScale":0.54},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":73.8125,"y":7.17369769138127,"dotSize":40.5,"labelX":-60,"labelY":21,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":80.5,"y":66.0272420402694,"dotSize":107.5,"labelX":-258,"labelY":-43,"labelScale":0.77},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":62.625,"y":49.59538954760572,"dotSize":50.5,"labelX":-78,"labelY":-83,"labelScale":0.37},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":35.25,"y":13.550896476854444,"dotSize":44,"labelX":-59,"labelY":42,"labelScale":0.8},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":12.25,"y":88.09675504215222,"dotSize":39,"labelX":14,"labelY":-146,"labelScale":0.6},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":67.25,"y":97.65508116635286,"dotSize":34,"labelX":-85,"labelY":-40,"labelScale":0.4},
+        {"id":"m1","name":"Mobile Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":96.875,"y":14.602904008277783,"dotSize":28.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m2","name":"Mobile Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":93.75,"y":29.292741675572067,"dotSize":23.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m3","name":"Mobile Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":76.25,"y":41.72450935490984,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m4","name":"Mobile Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":40,"y":76.4764303767408,"dotSize":40,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m5","name":"Mobile Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":2.1875,"y":49.30512442114905,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m6","name":"Mobile Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":32.5,"y":42.19590182009398,"dotSize":29.5,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "428": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":53.375,"y":24.40196427662714,"dotSize":59,"labelX":6,"labelY":35,"labelScale":0.4},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":35.75,"y":57.68983766729428,"dotSize":38,"labelX":-95,"labelY":-79,"labelScale":0.44},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":34.22435897435898,"y":28.714872945306816,"dotSize":61.5,"labelX":-99,"labelY":14,"labelScale":0.5},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":10.25,"y":3.3622546774549225,"dotSize":54,"labelX":1,"labelY":42,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":76.375,"y":80.77420996386952,"dotSize":67,"labelX":-117,"labelY":17,"labelScale":0.54},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":73.8125,"y":7.17369769138127,"dotSize":40.5,"labelX":-60,"labelY":21,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":80.5,"y":66.0272420402694,"dotSize":107.5,"labelX":-258,"labelY":-43,"labelScale":0.77},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":62.625,"y":49.59538954760572,"dotSize":50.5,"labelX":-78,"labelY":-83,"labelScale":0.37},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":35.25,"y":13.550896476854444,"dotSize":44,"labelX":-59,"labelY":42,"labelScale":0.8},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":12.25,"y":88.09675504215222,"dotSize":39,"labelX":14,"labelY":-146,"labelScale":0.6},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":67.25,"y":97.65508116635286,"dotSize":34,"labelX":-85,"labelY":-40,"labelScale":0.4},
+        {"id":"m1","name":"Mobile Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":96.875,"y":14.602904008277783,"dotSize":28.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m2","name":"Mobile Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":93.75,"y":29.292741675572067,"dotSize":23.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m3","name":"Mobile Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":76.25,"y":41.72450935490984,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m4","name":"Mobile Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":40,"y":76.4764303767408,"dotSize":40,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m5","name":"Mobile Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":2.1875,"y":49.30512442114905,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"m6","name":"Mobile Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":32.5,"y":42.19590182009398,"dotSize":29.5,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "480": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":20,"labelX":-14,"labelY":0,"labelScale":0.3},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":22.5,"labelX":-79,"labelY":-50,"labelScale":0.3},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":20,"labelX":-83,"labelY":12,"labelScale":0.38},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":37.5,"labelX":0,"labelY":29,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":20,"labelX":-75,"labelY":-1,"labelScale":0.32},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.375,"y":56.27817224392729,"dotSize":25.5,"labelX":-63,"labelY":0,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80.57980861785856,"dotSize":20,"labelX":-145,"labelY":-48,"labelScale":0.42},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":58.125,"y":50.69577034143027,"dotSize":23,"labelX":-70,"labelY":-67,"labelScale":0.3},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":20,"labelX":-31,"labelY":18,"labelScale":0.42},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.339542541856424,"y":37.021810345580285,"dotSize":23.5,"labelX":19,"labelY":-110,"labelScale":0.46},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":20,"labelX":-80,"labelY":-36,"labelScale":0.31},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.02832413747906,"y":41.27679294964002,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":43.02151566462432,"y":9.38985050303676,"dotSize":30,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.36830277775952,"y":21.085586023482193,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.271181912781508,"y":86.3310345095212,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":28,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "667": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":38,"labelX":1,"labelY":19,"labelScale":0.34},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":30.5,"labelX":-106,"labelY":-67,"labelScale":0.41},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":33,"labelX":-83,"labelY":12,"labelScale":0.38},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":30.5,"labelX":-111,"labelY":2,"labelScale":0.49},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.375,"y":56.27817224392729,"dotSize":49.5,"labelX":-59,"labelY":14,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":30,"labelX":-188,"labelY":-59,"labelScale":0.54},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":58.125,"y":50.69577034143027,"dotSize":26.5,"labelX":-70,"labelY":-67,"labelScale":0.3},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":30.5,"labelX":-57,"labelY":31,"labelScale":0.68},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.339542541856424,"y":37.021810345580285,"dotSize":42.5,"labelX":19,"labelY":-110,"labelScale":0.46},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":23.5,"labelX":-80,"labelY":-36,"labelScale":0.37},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.02832413747906,"y":41.27679294964002,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":43.02151566462432,"y":9.38985050303676,"dotSize":30,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.36830277775952,"y":21.085586023482193,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.271181912781508,"y":86.3310345095212,"dotSize":20.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":28,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":26.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":22.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "768": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":38,"labelX":1,"labelY":19,"labelScale":0.34},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":30.5,"labelX":-106,"labelY":-67,"labelScale":0.41},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":33,"labelX":-83,"labelY":12,"labelScale":0.38},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":30.5,"labelX":-111,"labelY":2,"labelScale":0.49},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.375,"y":56.27817224392729,"dotSize":55.5,"labelX":-60,"labelY":37,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":30,"labelX":-190,"labelY":-59,"labelScale":0.54},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":58.125,"y":50.69577034143027,"dotSize":26.5,"labelX":-70,"labelY":-67,"labelScale":0.3},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":30.5,"labelX":-57,"labelY":31,"labelScale":0.68},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.339542541856424,"y":37.021810345580285,"dotSize":42.5,"labelX":19,"labelY":-110,"labelScale":0.46},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":23.5,"labelX":-80,"labelY":-36,"labelScale":0.37},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.02832413747906,"y":41.27679294964002,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":43.02151566462432,"y":9.38985050303676,"dotSize":30,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.36830277775952,"y":21.085586023482193,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.271181912781508,"y":86.3310345095212,"dotSize":20.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":28,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":26.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":22.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "800": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":38,"labelX":1,"labelY":19,"labelScale":0.34},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":30.5,"labelX":-106,"labelY":-67,"labelScale":0.41},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":33,"labelX":-83,"labelY":12,"labelScale":0.38},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":30.5,"labelX":-111,"labelY":2,"labelScale":0.49},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.375,"y":56.27817224392729,"dotSize":55.5,"labelX":-60,"labelY":37,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":30,"labelX":-190,"labelY":-59,"labelScale":0.54},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":58.125,"y":50.69577034143027,"dotSize":26.5,"labelX":-70,"labelY":-67,"labelScale":0.3},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":30.5,"labelX":-57,"labelY":31,"labelScale":0.68},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.339542541856424,"y":37.021810345580285,"dotSize":42.5,"labelX":19,"labelY":-110,"labelScale":0.46},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":23.5,"labelX":-80,"labelY":-36,"labelScale":0.37},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.02832413747906,"y":41.27679294964002,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":43.02151566462432,"y":9.38985050303676,"dotSize":30,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.36830277775952,"y":21.085586023482193,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.271181912781508,"y":86.3310345095212,"dotSize":20.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":28,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":26.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":22.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "844": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":38,"labelX":1,"labelY":19,"labelScale":0.34},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":30.5,"labelX":-106,"labelY":-67,"labelScale":0.41},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":33,"labelX":-83,"labelY":12,"labelScale":0.38},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":30.5,"labelX":-111,"labelY":2,"labelScale":0.49},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.375,"y":56.27817224392729,"dotSize":55.5,"labelX":-60,"labelY":37,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":30,"labelX":-190,"labelY":-59,"labelScale":0.54},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":58.125,"y":50.69577034143027,"dotSize":26.5,"labelX":-70,"labelY":-67,"labelScale":0.3},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":30.5,"labelX":-57,"labelY":31,"labelScale":0.68},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.339542541856424,"y":37.021810345580285,"dotSize":42.5,"labelX":19,"labelY":-110,"labelScale":0.46},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":23.5,"labelX":-80,"labelY":-36,"labelScale":0.37},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.02832413747906,"y":41.27679294964002,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":43.02151566462432,"y":9.38985050303676,"dotSize":30,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.36830277775952,"y":21.085586023482193,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.271181912781508,"y":86.3310345095212,"dotSize":20.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":28,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":26.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":22.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "926": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":38,"labelX":1,"labelY":19,"labelScale":0.34},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":30.5,"labelX":-106,"labelY":-67,"labelScale":0.41},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":33,"labelX":-83,"labelY":12,"labelScale":0.38},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.3},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":30.5,"labelX":-111,"labelY":2,"labelScale":0.49},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.375,"y":56.27817224392729,"dotSize":55.5,"labelX":-60,"labelY":37,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":30,"labelX":-190,"labelY":-59,"labelScale":0.54},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":58.125,"y":50.69577034143027,"dotSize":26.5,"labelX":-70,"labelY":-67,"labelScale":0.3},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":30.5,"labelX":-57,"labelY":31,"labelScale":0.68},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.339542541856424,"y":37.021810345580285,"dotSize":42.5,"labelX":19,"labelY":-110,"labelScale":0.46},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":23.5,"labelX":-80,"labelY":-36,"labelScale":0.37},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.02832413747906,"y":41.27679294964002,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":43.02151566462432,"y":9.38985050303676,"dotSize":30,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.36830277775952,"y":21.085586023482193,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.271181912781508,"y":86.3310345095212,"dotSize":20.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":28,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":26.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":22.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "1024": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":62,"labelX":0,"labelY":40,"labelScale":0.51},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":31,"labelX":-143,"labelY":-96,"labelScale":0.56},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":44.5,"labelX":-106,"labelY":10,"labelScale":0.5},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.32},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":95,"labelX":-151,"labelY":26,"labelScale":0.68},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":17,"y":56.8,"dotSize":71,"labelX":-63,"labelY":38,"labelScale":0.3},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":25.70703125,"y":81.2230338032954,"dotSize":46.5,"labelX":-260,"labelY":-88,"labelScale":0.76},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":57.5,"y":50,"dotSize":55.5,"labelX":-98,"labelY":-120,"labelScale":0.48},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":53,"labelX":-68,"labelY":49,"labelScale":0.98},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.589542541856424,"y":37.021810345580285,"dotSize":50.5,"labelX":34,"labelY":-174,"labelScale":0.74},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":30.5,"labelX":-127,"labelY":-55,"labelScale":0.54},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":20,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.27832413747906,"y":41.79862070571272,"dotSize":33,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":42.64651566462432,"y":9.563793088394327,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.86830277775952,"y":21.607413779554896,"dotSize":31.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.146181912781508,"y":86.3310345095212,"dotSize":31.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":36.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":38.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":38.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":43.5,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "1280": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":75,"labelX":0,"labelY":40,"labelScale":0.6},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":50,"labelX":-175,"labelY":-99,"labelScale":0.65},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":59,"labelX":-155,"labelY":11,"labelScale":0.7},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.5},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":95,"labelX":-207,"labelY":24,"labelScale":0.9},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":17,"y":56.8,"dotSize":125,"labelX":-79,"labelY":62,"labelScale":0.4},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":60,"labelX":-346,"labelY":-110,"labelScale":1},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":57.5,"y":50,"dotSize":80,"labelX":-135,"labelY":-147,"labelScale":0.6},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":70,"labelX":-100,"labelY":75,"labelScale":1},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.589542541856424,"y":37.021810345580285,"dotSize":82.5,"labelX":57,"labelY":-213,"labelScale":0.85},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":42,"labelX":-180,"labelY":-58,"labelScale":0.75},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":29.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.27832413747906,"y":41.79862070571272,"dotSize":33,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":42.64651566462432,"y":9.563793088394327,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.86830277775952,"y":21.607413779554896,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.146181912781508,"y":86.3310345095212,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":36.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "1366": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":75,"labelX":0,"labelY":40,"labelScale":0.6},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":50,"labelX":-175,"labelY":-99,"labelScale":0.65},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":59,"labelX":-155,"labelY":11,"labelScale":0.7},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":1,"labelY":45,"labelScale":0.5},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":95,"labelX":-207,"labelY":24,"labelScale":0.9},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":17,"y":56.8,"dotSize":121,"labelX":-85,"labelY":66,"labelScale":0.4},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":60,"labelX":-341,"labelY":-110,"labelScale":1},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":57.5,"y":50,"dotSize":80,"labelX":-135,"labelY":-147,"labelScale":0.6},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":70,"labelX":-100,"labelY":75,"labelScale":1},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.589542541856424,"y":37.021810345580285,"dotSize":82.5,"labelX":57,"labelY":-213,"labelScale":0.85},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":42,"labelX":-180,"labelY":-58,"labelScale":0.75},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":29.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.27832413747906,"y":41.79862070571272,"dotSize":33,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":42.64651566462432,"y":9.563793088394327,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.86830277775952,"y":21.607413779554896,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.146181912781508,"y":86.3310345095212,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":36.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "1920": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15,"y":26,"dotSize":75,"labelX":0,"labelY":40,"labelScale":0.86},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":38.71339889649748,"y":62.73379309809576,"dotSize":50,"labelX":-277,"labelY":-181,"labelScale":1.05},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":59.23780260017685,"y":71.42198278161979,"dotSize":59,"labelX":-235,"labelY":5,"labelScale":1.04},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.33486116182293,"y":40.96534481872111,"dotSize":59,"labelX":-17,"labelY":47,"labelScale":0.68},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":95,"labelX":-329,"labelY":6,"labelScale":1.44},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":17,"y":56.8,"dotSize":125,"labelX":-115,"labelY":63,"labelScale":0.56},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":60,"labelX":-422,"labelY":-140,"labelScale":1.22},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":57.5,"y":50,"dotSize":80,"labelX":-165,"labelY":-195,"labelScale":0.82},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":77,"labelX":-144,"labelY":71,"labelScale":1.86},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.589542541856424,"y":37.021810345580285,"dotSize":101.5,"labelX":81,"labelY":-371,"labelScale":1.55},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":42,"labelX":-250,"labelY":-126,"labelScale":1.13},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.53758009894831,"y":71.30862073481701,"dotSize":29.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":34.27832413747906,"y":41.79862070571272,"dotSize":40.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":42.64651566462432,"y":9.563793088394327,"dotSize":61,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.86830277775952,"y":21.607413779554896,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.146181912781508,"y":86.3310345095212,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.53758009894831,"y":52.393189649568995,"dotSize":36.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":47.980931823990176,"y":84.43681034072956,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "2560": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15.6527233891419,"y":26.756896657181436,"dotSize":101,"labelX":-12,"labelY":62,"labelScale":1.04},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":37.70711700490372,"y":63.187928008352145,"dotSize":50,"labelX":-340,"labelY":-236,"labelScale":1.31},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":60.13529726024696,"y":72.48164225570366,"dotSize":72,"labelX":-318,"labelY":35,"labelScale":1.4},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.06289308301382,"y":41.192412147969605,"dotSize":107,"labelX":-17,"labelY":95,"labelScale":1.03},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":95,"labelX":-207,"labelY":24,"labelScale":0.9},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.5648510739054,"y":56.49724133712742,"dotSize":140.5,"labelX":-135,"labelY":101,"labelScale":0.7},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":26,"y":80,"dotSize":95,"labelX":-500,"labelY":-193,"labelScale":1.86},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":58.1527233891419,"y":50.60551732574515,"dotSize":95.5,"labelX":-241,"labelY":-271,"labelScale":1.04},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.151982760560182,"dotSize":89,"labelX":-168,"labelY":87,"labelScale":2.19},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.589542541856424,"y":37.021810345580285,"dotSize":135,"labelX":66,"labelY":-400,"labelScale":1.64},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":36.5,"labelX":-288,"labelY":-145,"labelScale":1.27},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":36.97272902504291,"y":70.70310340907186,"dotSize":30.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":47.74074403853075,"y":85.35802041553644,"dotSize":26,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":42.75530289614797,"y":9.109655094085465,"dotSize":86,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.32436662014127,"y":21.00189645380975,"dotSize":40.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.363756375828808,"y":86.48241384095749,"dotSize":72,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":45.99364394133006,"y":52.998708485870466,"dotSize":53.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":77.20715408844181,"y":62.73379309809576,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.882713301224356,"y":29.3257758037608,"dotSize":59,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":33.94737895743933,"y":41.407237000666,"dotSize":43.5,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":108,"labelX":0,"labelY":0,"labelScale":1}
+      ],
+      "3840": [
+        {"id":"h1","name":"Boek Een Naslagwerkje","type":"video","url":"https://www.youtube-nocookie.com/embed/t-OnJP_u2HI","dotImage":"reddot-01.png","labelImage":"images/Boek-naslagwerkje.png","x":15.489542590613734,"y":27.362413794107045,"dotSize":71.5,"labelX":0,"labelY":40,"labelScale":0.6},
+        {"id":"h2","name":"Light Cone","type":"external","url":"https://lightcone.org/en/filmmaker-793-francien-van-everdingen","dotImage":"reddot-02.png","labelImage":"images/LightCone.png","x":37.81590326128119,"y":63.869137926518306,"dotSize":50,"labelX":-185,"labelY":-104,"labelScale":0.7},
+        {"id":"h3","name":"Allerlei","type":"external","url":"https://artoffice.info/kunstenaar/francien-van-everdingen/","dotImage":"reddot-03.png","labelImage":"images/Allerlei.png","x":60.29848078918442,"y":72.55732761004232,"dotSize":44.5,"labelX":-152,"labelY":22,"labelScale":0.7},
+        {"id":"h4","name":"Stof","type":"external","url":"https://www.etsy.com/shop/hitchhikehijabi","dotImage":"reddot-04.png","labelImage":"images/Stof.png","x":69.1716826223834,"y":40.51120688735209,"dotSize":59,"labelX":5,"labelY":44,"labelScale":0.44},
+        {"id":"h5","name":"Contact","type":"image","url":"images/contact-emailadres.png","dotImage":"reddot-04.png","labelImage":"images/Contact.png","x":95.76993592084135,"y":41.80310346065355,"dotSize":73,"labelX":-206,"labelY":13,"labelScale":0.9},
+        {"id":"h6","name":"Stichting Lezeren","type":"external","url":"http://www.lezeren.nl","dotImage":"reddot-05.png","labelImage":"images/StichtingLezeren.png","x":16.510457409386266,"y":56.345862068630986,"dotSize":98.5,"labelX":-94,"labelY":60,"labelScale":0.47},
+        {"id":"h7","name":"Nederlandse Les","type":"external","url":"https://preply.in/FRANCIEN6NL3194022810","dotImage":"reddot-06.png","labelImage":"images/Nederlandseles.png","x":25.83681913646209,"y":80,"dotSize":57.5,"labelX":-346,"labelY":-111,"labelScale":1},
+        {"id":"h8","name":"Boek Letters","type":"video","url":"https://www.youtube-nocookie.com/embed/ELwjwDY3hUg","dotImage":"reddot-08.png","labelImage":"images/Boek-letters.png","x":57.5,"y":50,"dotSize":80,"labelX":-135,"labelY":-147,"labelScale":0.6},
+        {"id":"h9","name":"Films","type":"pdf","url":"/images/Filmografie-Francien-van-Everdingen.pdf","dotImage":"reddot-09.png","labelImage":"images/Films.png","x":72.42679779299498,"y":14.000603429123895,"dotSize":70,"labelX":-93,"labelY":65,"labelScale":1.17},
+        {"id":"h10","name":"CV","type":"pdf","url":"/images/CV-Francien-van-Everdingen-website.pdf","dotImage":"reddot-10.png","labelImage":"images/CV.png","x":38.589542541856424,"y":37.021810345580285,"dotSize":100.5,"labelX":57,"labelY":-213,"labelScale":0.85},
+        {"id":"h11","name":"Exit","type":"exit","url":"#","dotImage":"reddot-10.png","labelImage":"images/Exit.png","x":83.42636169457094,"y":83.27293103431549,"dotSize":42,"labelX":-180,"labelY":-58,"labelScale":0.75},
+        {"id":"a1","name":"Area 1","type":"area","url":"#","dotImage":"reddot-11.png","labelImage":null,"x":37.02712268956204,"y":70.62741383776348,"dotSize":27,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a2","name":"Area 2","type":"area","url":"#","dotImage":"reddot-15.png","labelImage":null,"x":47.57756415013902,"y":85.05525866861139,"dotSize":29,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a3","name":"Area 3","type":"area","url":"#","dotImage":"reddot-16.png","labelImage":null,"x":42.64651566462432,"y":9.563793088394327,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a4","name":"Area 4","type":"area","url":"#","dotImage":"reddot-17.png","labelImage":null,"x":57.21557932360787,"y":21.38034481387039,"dotSize":36,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a5","name":"Area 5","type":"area","url":"#","dotImage":"reddot-18.png","labelImage":null,"x":4.146181912781508,"y":86.3310345095212,"dotSize":46,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a6","name":"Area 6","type":"area","url":"#","dotImage":"reddot-19.png","labelImage":null,"x":46.21121616154116,"y":52.847327580938014,"dotSize":31,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a7","name":"Area 7","type":"area","url":"#","dotImage":"reddot-20.png","labelImage":null,"x":76.77200516234721,"y":62.73379309809576,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a8","name":"Area 8","type":"area","url":"#","dotImage":"reddot-21.png","labelImage":null,"x":56.66513883817706,"y":29.477155135197087,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a9","name":"Area 9","type":"area","url":"#","dotImage":"reddot-22.png","labelImage":null,"x":33.78419549351161,"y":40.95310341214639,"dotSize":41,"labelX":0,"labelY":0,"labelScale":1},
+        {"id":"a10","name":"Area 10","type":"area","url":"#","dotImage":"reddot-23.png","labelImage":null,"x":85.45392043379971,"y":24.868534497394403,"dotSize":50,"labelX":0,"labelY":0,"labelScale":1}
+      ]
+    };
+
+    // Helper to get the configuration that best matches the current screen width
+    function getConfigForWidth(width) {
+      var breakpoints = [320, 375, 390, 428, 480, 667, 768, 800, 844, 926, 1024, 1280, 1366, 1920, 2560, 3840];
+      breakpoints.sort(function(a, b) { return a - b; });
+      var closest = breakpoints[0];
+      for (var i = 0; i < breakpoints.length; i++) {
+        if (width <= breakpoints[i]) {
+          closest = breakpoints[i];
+          break;
+        }
+        closest = breakpoints[i];
+      }
+      return breakpointConfigs[closest] || breakpointConfigs[1920];
+    }
+
+    // Create the hotspot element from its configuration
+    function createHotspot(c) {
+      var a = document.createElement("a");
+      a.className = "hotspot";
+      a.style.left = c.x + "%";
+      a.style.top = c.y + "%";
+
+      var d = document.createElement("div");
+      d.className = "hotspot__dot";
+      d.style.backgroundImage = "url('images/" + c.dotImage + "')";
+      d.style.width = c.dotSize + "px";
+      d.style.height = c.dotSize + "px";
+      d.style.marginLeft = -(c.dotSize / 2) + "px";
+      d.style.marginTop = -(c.dotSize / 2) + "px";
+      a.appendChild(d);
+
+      if (c.type !== "area" && c.labelImage) {
+        var l = document.createElement("div");
+        l.className = "hotspot__label";
+        var i = document.createElement("img");
+        i.src = c.labelImage;
+        i.alt = c.name;
+        l.appendChild(i);
+        l.style.left = (c.labelX || 0) + "px";
+        l.style.top = (c.labelY || 0) + "px";
+        l.style.transform = "scale(" + (c.labelScale || 1) + ")";
+        a.appendChild(l);
+      }
+
+      if (c.type === "external") {
+        a.href = c.url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+      } else if (c.type === "exit") {
+        a.href = "#";
+        a.onclick = function(e) { e.preventDefault(); window.close(); return false; };
+      } else if (c.type !== "area") {
+        a.href = "#";
+        a.setAttribute("data-bs-toggle", "modal");
+        a.setAttribute("data-bs-target", "#mediaModal");
+        a.setAttribute("data-type", c.type);
+        a.setAttribute("data-src", c.url);
+      }
+      return a;
+    }
+
+    // Render hotspots for the given artboard (desktop or mobile)
+    function renderArtboard(type) {
+      var artboard = document.querySelector(".artboard--" + type);
+      if (!artboard) return;
+      var container = artboard.querySelector(".hotspots-container");
+      if (!container) return;
+      var width = window.innerWidth;
+      var configs = getConfigForWidth(width);
+      container.innerHTML = "";
+      for (var i = 0; i < configs.length; i++) {
+        container.appendChild(createHotspot(configs[i]));
+      }
+    }
+
+    // PDF rendering (used inside the modal)
+    async function renderPDF(url) {
+      var pdfContainer = document.getElementById("pdfContainer");
+      pdfContainer.innerHTML = '<div class="text-center p-4 text-white">Loading PDF...</div>';
+      try {
+        var response = await fetch(url);
+        var arrayBuffer = await response.arrayBuffer();
+        var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        pdfContainer.innerHTML = "";
+        for (var i = 1; i <= pdf.numPages; i++) {
+          var page = await pdf.getPage(i);
+          var viewport = page.getViewport({ scale: 1.5 });
+          var canvas = document.createElement("canvas");
+          var ctx = canvas.getContext("2d");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          canvas.style.width = "100%";
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          pdfContainer.appendChild(canvas);
+        }
+      } catch (err) {
+        pdfContainer.innerHTML = '<div class="alert alert-danger m-3">Error loading PDF. Please try again later.</div>';
+      }
+    }
+
+    // Activate the correct artboard based on screen width
+    function setActiveArtboard() {
+      var width = window.innerWidth;
+      var isMobile = width <= 640;
+      var desktopArtboard = document.querySelector(".artboard--desktop");
+      var mobileArtboard = document.querySelector(".artboard--mobile");
+      if (desktopArtboard && mobileArtboard) {
+        desktopArtboard.classList.toggle("active", !isMobile);
+        mobileArtboard.classList.toggle("active", isMobile);
+      }
+    }
+
+    // Initialisation
+    document.addEventListener("DOMContentLoaded", function() {
+      renderArtboard("desktop");
+      renderArtboard("mobile");
+      setActiveArtboard();
+      window.addEventListener("resize", function() {
+        setActiveArtboard();
+        renderArtboard("desktop");
+        renderArtboard("mobile");
+      });
+    });
+
+    // Modal logic
+    var modalElement = document.getElementById("mediaModal");
+    if (modalElement) {
+      modalElement.addEventListener("show.bs.modal", async function(event) {
+        var trigger = event.relatedTarget;
+        var type = trigger?.getAttribute("data-type");
+        var src = trigger?.getAttribute("data-src");
+
+        var videoContainer = document.getElementById("videoContainer");
+        var pdfContainer = document.getElementById("pdfContainer");
+        var imageContainer = document.getElementById("imageContainer");
+
+        videoContainer.classList.add("d-none");
+        pdfContainer.classList.add("d-none");
+        imageContainer.classList.add("d-none");
+
+        if (type === "video" && src) {
+          videoContainer.classList.remove("d-none");
+          var youtubeIframe = document.getElementById("youtubeVideo");
+          var separator = src.includes("?") ? "&" : "?";
+          youtubeIframe.src = src + separator + "autoplay=1&rel=0";
+        } else if (type === "pdf" && src) {
+          pdfContainer.classList.remove("d-none");
+          await renderPDF(src);
+        } else if (type === "image" && src) {
+          imageContainer.classList.remove("d-none");
+          document.getElementById("modalImage").src = src;
+        }
+      });
+
+      modalElement.addEventListener("hidden.bs.modal", function() {
+        var youtubeIframe = document.getElementById("youtubeVideo");
+        if (youtubeIframe) youtubeIframe.src = "";
+        document.getElementById("pdfContainer").innerHTML = "";
+        document.getElementById("modalImage").src = "";
+      });
+    }
+  </script>
 </body>
 </html>
