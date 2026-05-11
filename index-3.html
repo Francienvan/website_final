@@ -551,8 +551,8 @@
       d.style.backgroundImage = "url('images/" + c.dotImage + "')";
       d.style.width = c.dotSize + "px";
       d.style.height = c.dotSize + "px";
-      d.style.marginLeft = -(c.dotSize / 2) + "px";
-      d.style.marginTop = -(c.dotSize / 2) + "px";
+      //d.style.marginLeft = -(c.dotSize / 2) + "px";
+      //d.style.marginTop = -(c.dotSize / 2) + "px";
       a.appendChild(d);
 
       if (c.type !== "area" && c.labelImage) {
@@ -562,8 +562,8 @@
         i.src = c.labelImage;
         i.alt = c.name;
         l.appendChild(i);
-        l.style.left = (c.labelX || 0) + "px";
-        l.style.top = (c.labelY || 0) + "px";
+        //l.style.left = (c.labelX || 0) + "px";
+        //l.style.top = (c.labelY || 0) + "px";
         l.style.transform = "scale(" + (c.labelScale || 1) + ")";
         a.appendChild(l);
       }
