@@ -180,7 +180,7 @@
 // ============================================
 // BREAKPOINTS - Landscape phones use desktop artwork
 // ============================================
-const breakpoints = [
+const breakpointsList = [
   // PORTRAIT PHONES - Mobile artwork (17 hotspots)
   { id: 'bp1', name: '320×480 (Portrait)', width: 320, height: 480, image: 'images/mobile-bg.jpg', type: 'mobile' },
   { id: 'bp3', name: '375×667 (Portrait)', width: 375, height: 667, image: 'images/mobile-bg.jpg', type: 'mobile' },
@@ -203,7 +203,7 @@ const breakpoints = [
 ];
 
 // ============================================
-// ORIGINAL 11 HOTSPOTS WITH LABELS - Using your exact values from generated code
+// ORIGINAL 11 HOTSPOTS WITH LABELS
 // ============================================
 const originalHotspots = [
   { id: 'h1', name: 'Boek Een Naslagwerkje', type: 'video', url: 'https://www.youtube-nocookie.com/embed/t-OnJP_u2HI', dotImage: 'reddot-01.png', labelImage: 'images/Boek-naslagwerkje.png', hasLabel: true },
@@ -326,7 +326,14 @@ savedDesktopValues[3840] = {
   a10: { x: 85.45392043379971, y: 24.868534497394403, dotSize: 50 }
 };
 
-// Mobile 480x320 values (landscape phone using desktop values)
+// Desktop 1366x768 values (copy from 1920 for now)
+savedDesktopValues[1366] = savedDesktopValues[1920];
+savedDesktopValues[1280] = savedDesktopValues[1920];
+savedDesktopValues[1024] = savedDesktopValues[1920];
+savedDesktopValues[800] = savedDesktopValues[1920];
+savedDesktopValues[768] = savedDesktopValues[1920];
+
+// Landscape phones use desktop values
 savedDesktopValues[480] = savedDesktopValues[1920];
 savedDesktopValues[667] = savedDesktopValues[1920];
 savedDesktopValues[844] = savedDesktopValues[1920];
@@ -358,15 +365,16 @@ let hotspotsData = [];
 let selectedId = null;
 let currentBreakpointId = 'bp14';
 let isDraggingDot = false, isDraggingLabel = false, isResizingDot = false, isResizingLabel = false;
-let dragTargetId = null, dragStart = {};
-let customizedBreakpoints = new Set();
+let dragTargetId = null;
+let dragStart = { x: 0, y: 0, startX: 0, startY: 0, startVal: 0 };
+let customizedBreakpointsSet = new Set();
 
 function loadConfig() {
-  const saved = localStorage.getItem('breakpointHotspotConfigV4');
+  const saved = localStorage.getItem('breakpointHotspotConfigV5');
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      if (parsed.customized) customizedBreakpoints = new Set(parsed.customized);
+      if (parsed.customized) customizedBreakpointsSet = new Set(parsed.customized);
       if (parsed.data) hotspotsData = parsed.data;
       updateStatus('Config loaded');
       return;
@@ -374,84 +382,105 @@ function loadConfig() {
   }
   
   hotspotsData = [];
-  breakpoints.forEach(bp => {
+  for (let i = 0; i < breakpointsList.length; i++) {
+    const bp = breakpointsList[i];
     let bpHotspots = [];
     if (bp.type === 'desktop') {
       // Desktop breakpoints: 11 original + 10 areas = 21 hotspots
-      bpHotspots = [...originalHotspots.map(h => {
+      for (let j = 0; j < originalHotspots.length; j++) {
+        const h = originalHotspots[j];
         const savedVals = savedDesktopValues[bp.width]?.[h.id] || savedDesktopValues[1920][h.id] || { x: 50, y: 50, dotSize: 50, labelX: 0, labelY: 0, labelScale: 1 };
-        return {
+        bpHotspots.push({
           id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage,
           labelImage: h.labelImage, hasLabel: h.hasLabel,
           x: savedVals.x, y: savedVals.y, dotSize: savedVals.dotSize,
           labelX: savedVals.labelX || 0, labelY: savedVals.labelY || 0, labelScale: savedVals.labelScale || 1
-        };
-      }), ...desktopAreas.map(a => {
+        });
+      }
+      for (let j = 0; j < desktopAreas.length; j++) {
+        const a = desktopAreas[j];
         const savedVals = savedDesktopValues[bp.width]?.[a.id] || savedDesktopValues[1920][a.id] || { x: 50, y: 50, dotSize: 50 };
-        return {
+        bpHotspots.push({
           id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage,
           hasLabel: false, labelImage: null,
           x: savedVals.x, y: savedVals.y, dotSize: savedVals.dotSize,
           labelX: 0, labelY: 0, labelScale: 1
-        };
-      })];
+        });
+      }
     } else {
       // Mobile breakpoints: 11 original + 6 mobile areas = 17 hotspots
-      bpHotspots = [...originalHotspots.map(h => ({
-        id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage,
-        labelImage: h.labelImage, hasLabel: h.hasLabel,
-        x: mobileValues[h.id]?.x || 50, y: mobileValues[h.id]?.y || 50,
-        dotSize: mobileValues[h.id]?.dotSize || 50,
-        labelX: mobileValues[h.id]?.labelX || 0, labelY: mobileValues[h.id]?.labelY || 0,
-        labelScale: mobileValues[h.id]?.labelScale || 1
-      })), ...mobileAreas.map(a => ({
-        id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage,
-        hasLabel: false, labelImage: null,
-        x: mobileValues[a.id]?.x || 50, y: mobileValues[a.id]?.y || 50,
-        dotSize: mobileValues[a.id]?.dotSize || 40,
-        labelX: 0, labelY: 0, labelScale: 1
-      }))];
+      for (let j = 0; j < originalHotspots.length; j++) {
+        const h = originalHotspots[j];
+        const mv = mobileValues[h.id];
+        bpHotspots.push({
+          id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage,
+          labelImage: h.labelImage, hasLabel: h.hasLabel,
+          x: mv.x, y: mv.y, dotSize: mv.dotSize,
+          labelX: mv.labelX || 0, labelY: mv.labelY || 0, labelScale: mv.labelScale || 1
+        });
+      }
+      for (let j = 0; j < mobileAreas.length; j++) {
+        const a = mobileAreas[j];
+        const mv = mobileValues[a.id];
+        bpHotspots.push({
+          id: a.id, name: a.name, type: a.type, url: a.url, dotImage: a.dotImage,
+          hasLabel: false, labelImage: null,
+          x: mv.x, y: mv.y, dotSize: mv.dotSize,
+          labelX: 0, labelY: 0, labelScale: 1
+        });
+      }
     }
     hotspotsData.push({ breakpointId: bp.id, hotspots: bpHotspots });
-  });
+  }
   saveConfig();
 }
 
 function saveConfig() { 
-  localStorage.setItem('breakpointHotspotConfigV4', JSON.stringify({ data: hotspotsData, customized: Array.from(customizedBreakpoints) })); 
+  localStorage.setItem('breakpointHotspotConfigV5', JSON.stringify({ data: hotspotsData, customized: Array.from(customizedBreakpointsSet) })); 
   updateCustomizedIndicator();
 }
 
 function markAsCustomized() {
-  customizedBreakpoints.add(currentBreakpointId);
+  customizedBreakpointsSet.add(currentBreakpointId);
   updateCustomizedIndicator();
   saveConfig();
 }
 
 function updateCustomizedIndicator() {
-  document.querySelectorAll('.breakpoint-btn').forEach(btn => {
+  const btns = document.querySelectorAll('.breakpoint-btn');
+  for (let i = 0; i < btns.length; i++) {
+    const btn = btns[i];
     const bpId = btn.getAttribute('data-bp-id');
-    if (customizedBreakpoints.has(bpId)) {
+    if (customizedBreakpointsSet.has(bpId)) {
       btn.classList.add('customized');
     } else {
       btn.classList.remove('customized');
     }
-  });
+  }
 }
 
 function getCurrentHotspots() {
-  const bpData = hotspotsData.find(bp => bp.breakpointId === currentBreakpointId);
-  return bpData ? bpData.hotspots : [];
+  for (let i = 0; i < hotspotsData.length; i++) {
+    if (hotspotsData[i].breakpointId === currentBreakpointId) {
+      return hotspotsData[i].hotspots;
+    }
+  }
+  return [];
 }
 
 function updateHotspotInCurrentBreakpoint(updatedHotspot) {
-  const bpData = hotspotsData.find(bp => bp.breakpointId === currentBreakpointId);
-  if (bpData) {
-    const index = bpData.hotspots.findIndex(h => h.id === updatedHotspot.id);
-    if (index !== -1) {
-      bpData.hotspots[index] = { ...bpData.hotspots[index], ...updatedHotspot };
-      markAsCustomized();
-      saveConfig();
+  for (let i = 0; i < hotspotsData.length; i++) {
+    if (hotspotsData[i].breakpointId === currentBreakpointId) {
+      const bpData = hotspotsData[i];
+      for (let j = 0; j < bpData.hotspots.length; j++) {
+        if (bpData.hotspots[j].id === updatedHotspot.id) {
+          bpData.hotspots[j] = { ...bpData.hotspots[j], ...updatedHotspot };
+          markAsCustomized();
+          saveConfig();
+          return;
+        }
+      }
+      break;
     }
   }
 }
@@ -460,7 +489,7 @@ function updateStatus(msg) {
   const el = document.getElementById('status'); 
   if(el) { 
     el.innerHTML = '✅ ' + msg; 
-    setTimeout(() => { 
+    setTimeout(function() { 
       if(el.innerHTML === '✅ ' + msg) el.innerHTML = '✅ Ready · Select breakpoint, then drag hotspots'; 
     }, 2000); 
   } 
@@ -472,39 +501,52 @@ function renderBreakpointSelector() {
   if (!container) return;
   container.innerHTML = '';
   copySelect.innerHTML = '';
-  breakpoints.forEach(bp => {
+  for (let i = 0; i < breakpointsList.length; i++) {
+    const bp = breakpointsList[i];
     const btn = document.createElement('button');
     btn.className = 'breakpoint-btn' + (currentBreakpointId === bp.id ? ' active' : '');
     btn.setAttribute('data-bp-id', bp.id);
     btn.textContent = bp.name;
-    btn.onclick = () => switchBreakpoint(bp.id);
+    btn.onclick = (function(id) { return function() { switchBreakpoint(id); }; })(bp.id);
     container.appendChild(btn);
     
     const option = document.createElement('option');
     option.value = bp.id;
     option.textContent = bp.name;
     copySelect.appendChild(option);
-  });
+  }
   updateCustomizedIndicator();
-  const currentBp = breakpoints.find(b => b.id === currentBreakpointId);
-  document.getElementById('currentBpIndicator').innerHTML = `Current: ${currentBp?.name || ''} (${currentBp?.type === 'desktop' ? '21 hotspots' : '17 hotspots'})`;
+  let currentBp = null;
+  for (let i = 0; i < breakpointsList.length; i++) {
+    if (breakpointsList[i].id === currentBreakpointId) {
+      currentBp = breakpointsList[i];
+      break;
+    }
+  }
+  document.getElementById('currentBpIndicator').innerHTML = 'Current: ' + (currentBp ? currentBp.name : '') + ' (' + (currentBp && currentBp.type === 'desktop' ? '21 hotspots' : '17 hotspots') + ')';
 }
 
 function switchBreakpoint(breakpointId) {
   currentBreakpointId = breakpointId;
-  const bp = breakpoints.find(b => b.id === breakpointId);
-  if (bp) {
+  let currentBp = null;
+  for (let i = 0; i < breakpointsList.length; i++) {
+    if (breakpointsList[i].id === breakpointId) {
+      currentBp = breakpointsList[i];
+      break;
+    }
+  }
+  if (currentBp) {
     const frame = document.getElementById('artboardFrame');
     const image = document.getElementById('artworkImage');
     const previewArea = document.getElementById('previewArea');
-    frame.style.width = bp.width + 'px';
+    frame.style.width = currentBp.width + 'px';
     frame.style.maxWidth = '95%';
-    image.src = bp.image;
+    image.src = currentBp.image;
     
     const maxPreviewWidth = previewArea.clientWidth - 40;
-    if (bp.width > maxPreviewWidth) {
-      const scale = maxPreviewWidth / bp.width;
-      frame.style.transform = `scale(${scale})`;
+    if (currentBp.width > maxPreviewWidth) {
+      const scale = maxPreviewWidth / currentBp.width;
+      frame.style.transform = 'scale(' + scale + ')';
     } else {
       frame.style.transform = 'scale(1)';
     }
@@ -512,32 +554,45 @@ function switchBreakpoint(breakpointId) {
   renderBreakpointSelector();
   renderHotspotList();
   renderCanvas();
-  const bp = breakpoints.find(b => b.id === breakpointId);
-  updateStatus(`Switched to ${bp.name} (${bp.type === 'desktop' ? '21 hotspots' : '17 hotspots'})`);
+  updateStatus('Switched to ' + currentBp.name + ' (' + (currentBp.type === 'desktop' ? '21 hotspots' : '17 hotspots') + ')');
 }
 
 function renderHotspotList() {
   const container = document.getElementById('hotspotList');
-  const searchTerm = document.getElementById('hotspotSearch').value.toLowerCase();
+  const searchInput = document.getElementById('hotspotSearch');
+  const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
   if (!container) return;
   container.innerHTML = '';
   const hotspots = getCurrentHotspots();
-  const filtered = hotspots.filter(h => h.name.toLowerCase().includes(searchTerm));
-  filtered.forEach(h => {
+  const filtered = [];
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].name.toLowerCase().includes(searchTerm)) {
+      filtered.push(hotspots[i]);
+    }
+  }
+  for (let i = 0; i < filtered.length; i++) {
+    const h = filtered[i];
     const item = document.createElement('div');
     item.className = 'hotspot-item' + (selectedId === h.id ? ' selected' : '');
-    item.onclick = () => selectHotspot(h.id);
+    item.onclick = (function(id) { return function() { selectHotspot(id); }; })(h.id);
     item.innerHTML = '<div class="hotspot-name"><span>' + h.name + '</span><span class="badge">' + (h.type === 'area' ? 'Area' : h.type) + '</span></div><div class="hotspot-coords">X:' + (h.x || 50) + '% Y:' + (h.y || 50) + '% | Dot:' + (h.dotSize || 50) + 'px</div>';
     container.appendChild(item);
-  });
+  }
 }
 
 function selectHotspot(id) {
   selectedId = id;
   renderHotspotList();
   renderCanvas();
-  const hotspot = getCurrentHotspots().find(h => h.id === id);
-  if (hotspot) updateStatus(`Selected: ${hotspot.name}`);
+  const hotspots = getCurrentHotspots();
+  let hotspot = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === id) {
+      hotspot = hotspots[i];
+      break;
+    }
+  }
+  if (hotspot) updateStatus('Selected: ' + hotspot.name);
 }
 
 function renderCanvas() {
@@ -545,36 +600,37 @@ function renderCanvas() {
   if (!container) return;
   container.innerHTML = '';
   const hotspots = getCurrentHotspots();
-  hotspots.forEach(hotspot => {
+  for (let i = 0; i < hotspots.length; i++) {
+    const hotspot = hotspots[i];
     const wrapper = document.createElement('div');
     wrapper.className = 'hotspot-edit' + (selectedId === hotspot.id ? ' selected' : '');
     wrapper.setAttribute('data-id', hotspot.id);
     wrapper.style.position = 'absolute';
-    wrapper.style.left = `calc(${hotspot.x || 50}% - ${(hotspot.dotSize || 50) / 2}px)`;
-    wrapper.style.top = `calc(${hotspot.y || 50}% - ${(hotspot.dotSize || 50) / 2}px)`;
-    wrapper.style.width = `${hotspot.dotSize || 50}px`;
-    wrapper.style.height = `${hotspot.dotSize || 50}px`;
+    wrapper.style.left = 'calc(' + (hotspot.x || 50) + '% - ' + ((hotspot.dotSize || 50) / 2) + 'px)';
+    wrapper.style.top = 'calc(' + (hotspot.y || 50) + '% - ' + ((hotspot.dotSize || 50) / 2) + 'px)';
+    wrapper.style.width = (hotspot.dotSize || 50) + 'px';
+    wrapper.style.height = (hotspot.dotSize || 50) + 'px';
     
     const dot = document.createElement('div');
     dot.className = 'hotspot-dot-edit';
     dot.style.width = '100%';
     dot.style.height = '100%';
-    dot.style.backgroundImage = `url('images/${hotspot.dotImage}')`;
+    dot.style.backgroundImage = 'url(\'images/' + hotspot.dotImage + '\')';
     wrapper.appendChild(dot);
     
     const dotResize = document.createElement('div');
     dotResize.className = 'dot-resize';
     dotResize.title = 'Drag to resize red dot';
-    dotResize.onmousedown = (e) => { e.stopPropagation(); startDotResize(e, hotspot.id); };
+    dotResize.onmousedown = (function(id) { return function(e) { e.stopPropagation(); startDotResize(e, id); }; })(hotspot.id);
     wrapper.appendChild(dotResize);
     
     if (hotspot.hasLabel && hotspot.labelImage) {
       const labelDiv = document.createElement('div');
       labelDiv.className = 'label-edit';
       labelDiv.style.position = 'absolute';
-      labelDiv.style.left = `${hotspot.labelX || 0}px`;
-      labelDiv.style.top = `${hotspot.labelY || 0}px`;
-      labelDiv.style.transform = `scale(${hotspot.labelScale || 1})`;
+      labelDiv.style.left = (hotspot.labelX || 0) + 'px';
+      labelDiv.style.top = (hotspot.labelY || 0) + 'px';
+      labelDiv.style.transform = 'scale(' + (hotspot.labelScale || 1) + ')';
       labelDiv.style.transformOrigin = 'top left';
       const img = document.createElement('img');
       img.src = hotspot.labelImage;
@@ -586,32 +642,48 @@ function renderCanvas() {
       const labelResize = document.createElement('div');
       labelResize.className = 'label-resize';
       labelResize.title = 'Drag to resize label';
-      labelResize.onmousedown = (e) => { e.stopPropagation(); startLabelResize(e, hotspot.id); };
+      labelResize.onmousedown = (function(id) { return function(e) { e.stopPropagation(); startLabelResize(e, id); }; })(hotspot.id);
       wrapper.appendChild(labelResize);
       
-      labelDiv.onmousedown = (e) => { e.stopPropagation(); startDragLabel(e, hotspot.id); };
+      labelDiv.onmousedown = (function(id) { return function(e) { e.stopPropagation(); startDragLabel(e, id); }; })(hotspot.id);
     }
     
-    wrapper.onmousedown = (e) => { 
+    wrapper.onmousedown = (function(id) { return function(e) { 
       if(e.target === dotResize) return;
-      startDragDot(e, hotspot.id); 
-    };
+      startDragDot(e, id); 
+    }; })(hotspot.id);
     
     container.appendChild(wrapper);
-  });
+  }
 }
 
 function startDragDot(e, id) { 
   isDraggingDot = true; 
   dragTargetId = id; 
-  const h = getCurrentHotspots().find(h => h.id === id); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === id) {
+      h = hotspots[i];
+      break;
+    }
+  }
+  if (!h) return;
   dragStart = { x: e.clientX, y: e.clientY, startX: h.x || 50, startY: h.y || 50 }; 
   document.addEventListener('mousemove', onDragDot); 
   document.addEventListener('mouseup', stopDragDot); 
 }
+
 function onDragDot(e) { 
   if(!isDraggingDot) return; 
-  const h = getCurrentHotspots().find(h => h.id === dragTargetId); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === dragTargetId) {
+      h = hotspots[i];
+      break;
+    }
+  }
   if(!h) return; 
   const rect = document.getElementById('artworkContainer').getBoundingClientRect(); 
   let newX = dragStart.startX + ((e.clientX - dragStart.x) / rect.width) * 100; 
@@ -621,8 +693,10 @@ function onDragDot(e) {
   updateHotspotInCurrentBreakpoint(h); 
   renderCanvas(); 
 }
+
 function stopDragDot() { 
   isDraggingDot = false; 
+  dragTargetId = null;
   document.removeEventListener('mousemove', onDragDot); 
   document.removeEventListener('mouseup', stopDragDot); 
   updateStatus('Position updated'); 
@@ -631,14 +705,30 @@ function stopDragDot() {
 function startDragLabel(e, id) { 
   isDraggingLabel = true; 
   dragTargetId = id; 
-  const h = getCurrentHotspots().find(h => h.id === id); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === id) {
+      h = hotspots[i];
+      break;
+    }
+  }
+  if (!h) return;
   dragStart = { x: e.clientX, y: e.clientY, startX: h.labelX || 0, startY: h.labelY || 0 }; 
   document.addEventListener('mousemove', onDragLabel); 
   document.addEventListener('mouseup', stopDragLabel); 
 }
+
 function onDragLabel(e) { 
   if(!isDraggingLabel) return; 
-  const h = getCurrentHotspots().find(h => h.id === dragTargetId); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === dragTargetId) {
+      h = hotspots[i];
+      break;
+    }
+  }
   if(!h) return; 
   h.labelX = dragStart.startX + (e.clientX - dragStart.x); 
   h.labelY = dragStart.startY + (e.clientY - dragStart.y);
@@ -647,8 +737,10 @@ function onDragLabel(e) {
   updateHotspotInCurrentBreakpoint(h); 
   renderCanvas(); 
 }
+
 function stopDragLabel() { 
   isDraggingLabel = false; 
+  dragTargetId = null;
   document.removeEventListener('mousemove', onDragLabel); 
   document.removeEventListener('mouseup', stopDragLabel); 
   updateStatus('Label position updated'); 
@@ -658,14 +750,30 @@ function startDotResize(e, id) {
   e.preventDefault(); e.stopPropagation(); 
   isResizingDot = true; 
   dragTargetId = id; 
-  const h = getCurrentHotspots().find(h => h.id === id); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === id) {
+      h = hotspots[i];
+      break;
+    }
+  }
+  if (!h) return;
   dragStart = { x: e.clientX, y: e.clientY, startVal: h.dotSize || 50 }; 
   document.addEventListener('mousemove', onDotResize); 
   document.addEventListener('mouseup', stopDotResize); 
 }
+
 function onDotResize(e) { 
   if(!isResizingDot) return; 
-  const h = getCurrentHotspots().find(h => h.id === dragTargetId); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === dragTargetId) {
+      h = hotspots[i];
+      break;
+    }
+  }
   if(!h) return; 
   let delta = (e.clientX - dragStart.x + e.clientY - dragStart.y)/2; 
   let newSize = dragStart.startVal + delta; 
@@ -673,8 +781,10 @@ function onDotResize(e) {
   updateHotspotInCurrentBreakpoint(h); 
   renderCanvas(); 
 }
+
 function stopDotResize() { 
   isResizingDot = false; 
+  dragTargetId = null;
   document.removeEventListener('mousemove', onDotResize); 
   document.removeEventListener('mouseup', stopDotResize); 
   updateStatus('Dot resized'); 
@@ -683,14 +793,30 @@ function stopDotResize() {
 function startLabelResize(e, id) { 
   isResizingLabel = true; 
   dragTargetId = id; 
-  const h = getCurrentHotspots().find(h => h.id === id); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === id) {
+      h = hotspots[i];
+      break;
+    }
+  }
+  if (!h) return;
   dragStart = { x: e.clientX, y: e.clientY, startVal: h.labelScale || 1 }; 
   document.addEventListener('mousemove', onLabelResize); 
   document.addEventListener('mouseup', stopLabelResize); 
 }
+
 function onLabelResize(e) { 
   if(!isResizingLabel) return; 
-  const h = getCurrentHotspots().find(h => h.id === dragTargetId); 
+  const hotspots = getCurrentHotspots();
+  let h = null;
+  for (let i = 0; i < hotspots.length; i++) {
+    if (hotspots[i].id === dragTargetId) {
+      h = hotspots[i];
+      break;
+    }
+  }
   if(!h) return; 
   let delta = (e.clientX - dragStart.x + e.clientY - dragStart.y)/100; 
   let newScale = dragStart.startVal + delta; 
@@ -698,8 +824,10 @@ function onLabelResize(e) {
   updateHotspotInCurrentBreakpoint(h); 
   renderCanvas(); 
 }
+
 function stopLabelResize() { 
   isResizingLabel = false; 
+  dragTargetId = null;
   document.removeEventListener('mousemove', onLabelResize); 
   document.removeEventListener('mouseup', stopLabelResize); 
   updateStatus('Label scaled'); 
@@ -711,21 +839,32 @@ function copyFromBreakpoint() {
     updateStatus('Cannot copy from the same breakpoint');
     return;
   }
-  const sourceData = hotspotsData.find(bp => bp.breakpointId === sourceId);
-  const targetData = hotspotsData.find(bp => bp.breakpointId === currentBreakpointId);
+  let sourceData = null;
+  let targetData = null;
+  for (let i = 0; i < hotspotsData.length; i++) {
+    if (hotspotsData[i].breakpointId === sourceId) sourceData = hotspotsData[i];
+    if (hotspotsData[i].breakpointId === currentBreakpointId) targetData = hotspotsData[i];
+  }
   if (sourceData && targetData) {
     targetData.hotspots = JSON.parse(JSON.stringify(sourceData.hotspots));
     markAsCustomized();
     saveConfig();
     renderHotspotList();
     renderCanvas();
-    updateStatus(`Copied from ${breakpoints.find(b=>b.id===sourceId).name}`);
+    let sourceName = '';
+    for (let i = 0; i < breakpointsList.length; i++) {
+      if (breakpointsList[i].id === sourceId) {
+        sourceName = breakpointsList[i].name;
+        break;
+      }
+    }
+    updateStatus('Copied from ' + sourceName);
   }
 }
 
 function resetAllBreakpoints() {
   if (confirm('Reset ALL breakpoints to default positions? This cannot be undone.')) {
-    customizedBreakpoints.clear();
+    customizedBreakpointsSet.clear();
     loadConfig();
     renderBreakpointSelector();
     renderHotspotList();
@@ -761,17 +900,29 @@ function generateCSS() {
 
 function generateJS() {
   const breakpointConfigs = {};
-  breakpoints.forEach(bp => {
-    const bpData = hotspotsData.find(d => d.breakpointId === bp.id);
-    if (bpData) {
-      breakpointConfigs[bp.width] = bpData.hotspots.map(h => ({
-        id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, labelImage: h.labelImage,
-        x: h.x || 50, y: h.y || 50, dotSize: h.dotSize || 50,
-        labelX: h.labelX || 0, labelY: h.labelY || 0, labelScale: h.labelScale || 1
-      }));
+  for (let i = 0; i < breakpointsList.length; i++) {
+    const bp = breakpointsList[i];
+    let bpData = null;
+    for (let j = 0; j < hotspotsData.length; j++) {
+      if (hotspotsData[j].breakpointId === bp.id) {
+        bpData = hotspotsData[j];
+        break;
+      }
     }
-  });
-  return 'var breakpointConfigs = ' + JSON.stringify(breakpointConfigs) + ';\n\nfunction getConfigForWidth(width) {\n  var breakpoints = [320,375,390,428,480,667,768,800,844,926,1024,1280,1366,1920,2560,3840].sort((a,b)=>a-b);\n  var closest = breakpoints[0];\n  for(var i=0;i<breakpoints.length;i++){\n    if(width <= breakpoints[i]){ closest = breakpoints[i]; break; }\n    closest = breakpoints[i];\n  }\n  return breakpointConfigs[closest] || breakpointConfigs[1920];\n}\n\npdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";\n\nfunction createHotspot(c){\n  var a=document.createElement("a");a.className="hotspot";\n  a.style.left=c.x+"%";a.style.top=c.y+"%";\n  var d=document.createElement("div");d.className="hotspot__dot";\n  d.style.backgroundImage="url(\'images/"+c.dotImage+"\')";\n  d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";\n  d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";\n  a.appendChild(d);\n  if(c.type!=="area"&&c.labelImage){\n    var l=document.createElement("div");l.className="hotspot__label";\n    var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;\n    l.appendChild(i);l.style.left=(c.labelX||0)+"px";l.style.top=(c.labelY||0)+"px";\n    l.style.transform="scale("+(c.labelScale||1)+")";\n    a.appendChild(l);\n  }\n  if(c.type==="external"){a.href=c.url;a.target="_blank"}\n  else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close()}}\n  else if(c.type!=="area"){a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}\n  return a;\n}\n\nfunction renderArtboard(t){\n  var a=document.querySelector(".artboard--"+t);if(!a)return;\n  var c=a.querySelector(".hotspots-container");if(!c)return;\n  var width = window.innerWidth;\n  var configs = getConfigForWidth(width);\n  c.innerHTML="";\n  configs.forEach(function(h){c.appendChild(createHotspot(h))});\n}\n\nasync function renderPDF(u){\n  var c=document.getElementById("pdfContainer");\n  c.innerHTML="<div class=\"text-center p-4\">Loading...</div>";\n  try{\n    var r=await fetch(u);var b=await r.arrayBuffer();\n    var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";\n    for(var i=1;i<=p.numPages;i++){\n      var page=await p.getPage(i);var v=page.getViewport({scale:1.5});\n      var can=document.createElement("canvas");\n      can.width=v.width;can.height=v.height;can.style.width="100%";\n      await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;\n      c.appendChild(can);\n    }\n  }catch(e){c.innerHTML="<div class=\"alert alert-danger\">Error</div>"}\n}\n\ndocument.addEventListener("DOMContentLoaded",function(){\n  renderArtboard("desktop");renderArtboard("mobile");\n  var setActive=function(){\n    var width = window.innerWidth;\n    var isMobile = width <= 640;\n    var d=document.querySelector(".artboard--desktop");\n    var mb=document.querySelector(".artboard--mobile");\n    if(d&&mb){d.classList.toggle("active",!isMobile);mb.classList.toggle("active",isMobile)}\n  };\n  setActive();window.addEventListener("resize",setActive);\n  window.addEventListener("resize",function(){renderArtboard("desktop");renderArtboard("mobile")});\n});\n\nvar modal=document.getElementById("mediaModal");\nif(modal){\n  modal.addEventListener("show.bs.modal",async function(e){\n    var t=e.relatedTarget;var type=t?.getAttribute("data-type");var src=t?.getAttribute("data-src");\n    var vc=document.getElementById("videoContainer");var pc=document.getElementById("pdfContainer");var ic=document.getElementById("imageContainer");\n    vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");\n    if(type==="video"&&src){\n      vc.classList.remove("d-none");var yt=document.getElementById("youtubeVideo");\n      yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1";\n    }else if(type==="pdf"&&src){\n      pc.classList.remove("d-none");await renderPDF(src);\n    }else if(type==="image"&&src){\n      ic.classList.remove("d-none");document.getElementById("modalImage").src=src;\n    }\n  });\n  modal.addEventListener("hidden.bs.modal",function(){\n    var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";\n    document.getElementById("pdfContainer").innerHTML="";\n    document.getElementById("modalImage").src="";\n  });\n}';
+    if (bpData) {
+      const configs = [];
+      for (let k = 0; k < bpData.hotspots.length; k++) {
+        const h = bpData.hotspots[k];
+        configs.push({
+          id: h.id, name: h.name, type: h.type, url: h.url, dotImage: h.dotImage, labelImage: h.labelImage,
+          x: h.x || 50, y: h.y || 50, dotSize: h.dotSize || 50,
+          labelX: h.labelX || 0, labelY: h.labelY || 0, labelScale: h.labelScale || 1
+        });
+      }
+      breakpointConfigs[bp.width] = configs;
+    }
+  }
+  return 'var breakpointConfigs = ' + JSON.stringify(breakpointConfigs) + ';\n\nfunction getConfigForWidth(width) {\n  var breakpoints = [320,375,390,428,480,667,768,800,844,926,1024,1280,1366,1920,2560,3840].sort(function(a,b){return a-b;});\n  var closest = breakpoints[0];\n  for(var i=0;i<breakpoints.length;i++){\n    if(width <= breakpoints[i]){ closest = breakpoints[i]; break; }\n    closest = breakpoints[i];\n  }\n  return breakpointConfigs[closest] || breakpointConfigs[1920];\n}\n\npdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";\n\nfunction createHotspot(c){\n  var a=document.createElement("a");a.className="hotspot";\n  a.style.left=c.x+"%";a.style.top=c.y+"%";\n  var d=document.createElement("div");d.className="hotspot__dot";\n  d.style.backgroundImage="url(\'images/"+c.dotImage+"\')";\n  d.style.width=c.dotSize+"px";d.style.height=c.dotSize+"px";\n  d.style.marginLeft=-(c.dotSize/2)+"px";d.style.marginTop=-(c.dotSize/2)+"px";\n  a.appendChild(d);\n  if(c.type!=="area"&&c.labelImage){\n    var l=document.createElement("div");l.className="hotspot__label";\n    var i=document.createElement("img");i.src=c.labelImage;i.alt=c.name;\n    l.appendChild(i);l.style.left=(c.labelX||0)+"px";l.style.top=(c.labelY||0)+"px";\n    l.style.transform="scale("+(c.labelScale||1)+")";\n    a.appendChild(l);\n  }\n  if(c.type==="external"){a.href=c.url;a.target="_blank"}\n  else if(c.type==="exit"){a.href="#";a.onclick=function(e){e.preventDefault();window.close()}}\n  else if(c.type!=="area"){a.href="#";a.setAttribute("data-bs-toggle","modal");a.setAttribute("data-bs-target","#mediaModal");a.setAttribute("data-type",c.type);a.setAttribute("data-src",c.url)}\n  return a;\n}\n\nfunction renderArtboard(t){\n  var a=document.querySelector(".artboard--"+t);if(!a)return;\n  var c=a.querySelector(".hotspots-container");if(!c)return;\n  var width = window.innerWidth;\n  var configs = getConfigForWidth(width);\n  c.innerHTML="";\n  configs.forEach(function(h){c.appendChild(createHotspot(h))});\n}\n\nasync function renderPDF(u){\n  var c=document.getElementById("pdfContainer");\n  c.innerHTML="<div class=\"text-center p-4\">Loading...</div>";\n  try{\n    var r=await fetch(u);var b=await r.arrayBuffer();\n    var p=await pdfjsLib.getDocument({data:b}).promise;c.innerHTML="";\n    for(var i=1;i<=p.numPages;i++){\n      var page=await p.getPage(i);var v=page.getViewport({scale:1.5});\n      var can=document.createElement("canvas");\n      can.width=v.width;can.height=v.height;can.style.width="100%";\n      await page.render({canvasContext:can.getContext("2d"),viewport:v}).promise;\n      c.appendChild(can);\n    }\n  }catch(e){c.innerHTML="<div class=\"alert alert-danger\">Error</div>"}\n}\n\ndocument.addEventListener("DOMContentLoaded",function(){\n  renderArtboard("desktop");renderArtboard("mobile");\n  var setActive=function(){\n    var width = window.innerWidth;\n    var isMobile = width <= 640;\n    var d=document.querySelector(".artboard--desktop");\n    var mb=document.querySelector(".artboard--mobile");\n    if(d&&mb){d.classList.toggle("active",!isMobile);mb.classList.toggle("active",isMobile)}\n  };\n  setActive();window.addEventListener("resize",setActive);\n  window.addEventListener("resize",function(){renderArtboard("desktop");renderArtboard("mobile")});\n});\n\nvar modal=document.getElementById("mediaModal");\nif(modal){\n  modal.addEventListener("show.bs.modal",async function(e){\n    var t=e.relatedTarget;var type=t?.getAttribute("data-type");var src=t?.getAttribute("data-src");\n    var vc=document.getElementById("videoContainer");var pc=document.getElementById("pdfContainer");var ic=document.getElementById("imageContainer");\n    vc.classList.add("d-none");pc.classList.add("d-none");ic.classList.add("d-none");\n    if(type==="video"&&src){\n      vc.classList.remove("d-none");var yt=document.getElementById("youtubeVideo");\n      yt.src=src+(src.includes("?")?"&":"?")+"autoplay=1";\n    }else if(type==="pdf"&&src){\n      pc.classList.remove("d-none");await renderPDF(src);\n    }else if(type==="image"&&src){\n      ic.classList.remove("d-none");document.getElementById("modalImage").src=src;\n    }\n  });\n  modal.addEventListener("hidden.bs.modal",function(){\n    var yt=document.getElementById("youtubeVideo");if(yt)yt.src="";\n    document.getElementById("pdfContainer").innerHTML="";\n    document.getElementById("modalImage").src="";\n  });\n}';
 }
 
 function generateFinalCode() {
@@ -781,8 +932,16 @@ function generateFinalCode() {
   document.getElementById('codeModal').style.display = 'flex';
   updateStatus('Code generated!');
 }
-function copyCode() { navigator.clipboard.writeText(document.getElementById('htmlPre').textContent + '\n\n' + document.getElementById('cssPre').textContent + '\n\n' + document.getElementById('jsPre').textContent); updateStatus('Copied!'); }
-function closeModal() { document.getElementById('codeModal').style.display = 'none'; }
+function copyCode() { 
+  const html = document.getElementById('htmlPre').textContent;
+  const css = document.getElementById('cssPre').textContent;
+  const js = document.getElementById('jsPre').textContent;
+  navigator.clipboard.writeText(html + '\n\n' + css + '\n\n' + js); 
+  updateStatus('Copied!'); 
+}
+function closeModal() { 
+  document.getElementById('codeModal').style.display = 'none'; 
+}
 
 function initDraggableSidebar() {
   const sidebar = document.getElementById('sidebar');
@@ -807,16 +966,26 @@ function initDraggableSidebar() {
   }
 }
 
-document.getElementById('hotspotSearch')?.addEventListener('input', () => renderHotspotList());
-window.addEventListener('resize', () => {
-  const bp = breakpoints.find(b => b.id === currentBreakpointId);
-  if (bp) {
+const searchInput = document.getElementById('hotspotSearch');
+if (searchInput) {
+  searchInput.addEventListener('input', function() { renderHotspotList(); });
+}
+
+window.addEventListener('resize', function() {
+  let currentBp = null;
+  for (let i = 0; i < breakpointsList.length; i++) {
+    if (breakpointsList[i].id === currentBreakpointId) {
+      currentBp = breakpointsList[i];
+      break;
+    }
+  }
+  if (currentBp) {
     const previewArea = document.getElementById('previewArea');
     const frame = document.getElementById('artboardFrame');
     const maxPreviewWidth = previewArea.clientWidth - 40;
-    if (bp.width > maxPreviewWidth) {
-      const scale = maxPreviewWidth / bp.width;
-      frame.style.transform = `scale(${scale})`;
+    if (currentBp.width > maxPreviewWidth) {
+      const scale = maxPreviewWidth / currentBp.width;
+      frame.style.transform = 'scale(' + scale + ')';
     } else {
       frame.style.transform = 'scale(1)';
     }
@@ -826,12 +995,22 @@ window.addEventListener('resize', () => {
 document.getElementById('generateCodeBtn')?.addEventListener('click', generateFinalCode);
 document.getElementById('resetViewBtn')?.addEventListener('click', resetAllBreakpoints);
 document.getElementById('copyBreakpointBtn')?.addEventListener('click', copyFromBreakpoint);
-document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', function() { 
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); 
-  this.classList.add('active'); 
-  document.querySelectorAll('.code-content').forEach(c=>c.classList.remove('active')); 
-  document.getElementById(this.getAttribute('data-tab')+'Code').classList.add('active'); 
-}));
+
+const tabBtns = document.querySelectorAll('.tab-btn');
+for (let i = 0; i < tabBtns.length; i++) {
+  tabBtns[i].addEventListener('click', function() {
+    for (let j = 0; j < tabBtns.length; j++) {
+      tabBtns[j].classList.remove('active');
+    }
+    this.classList.add('active');
+    const codeContents = document.querySelectorAll('.code-content');
+    for (let j = 0; j < codeContents.length; j++) {
+      codeContents[j].classList.remove('active');
+    }
+    const tab = this.getAttribute('data-tab');
+    document.getElementById(tab + 'Code').classList.add('active');
+  });
+}
 
 loadConfig();
 renderBreakpointSelector();
