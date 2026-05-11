@@ -562,8 +562,8 @@
         i.src = c.labelImage;
         i.alt = c.name;
         l.appendChild(i);
-        //l.style.left = (c.labelX || 0) + "px";
-        //l.style.top = (c.labelY || 0) + "px";
+        l.style.left = (c.labelX || 0) + "px";
+        l.style.top = (c.labelY || 0) + "px";
         l.style.transform = "scale(" + (c.labelScale || 1) + ")";
         a.appendChild(l);
       }
